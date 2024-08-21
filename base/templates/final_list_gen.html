@@ -1,0 +1,523 @@
+
+{% extends "main.html" %}
+{% load static %}
+{% block styles %}
+<!-- Page JS Plugins CSS -->
+<link rel="stylesheet" href="{% static '/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css'%}">
+<link rel="stylesheet" href="{% static '/js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css'%}">
+<link rel="stylesheet" href="{% static '/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css'%}">
+{% endblock styles %}
+
+{% block content %}
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-header block-header-default">
+          <h3 class="block-title">{{ title }}</h3>
+        </div>
+        <div class="block-content block-content-full">
+          <div class="row">
+            <div class="col-lg-12 space-y-2">
+              <!-- Form Inline - Default Style -->
+              <form class="row row-cols-auto g-3 align-items-center" onsubmit="return false;">
+              {% csrf_token %}
+                <div class="col-3">
+                    <label class="form-label form-control-sm" for="ddAreaOffice">Select AO</label>
+                  
+                  <select class="form-control form-control-sm" name="ddAreaOffice" id="ddAreaOffice" required="">
+                    <option>Select</option>
+                  </select>
+                </div>
+                <div class="col-3">
+                    <label class="form-label form-control-sm" for="province">Select Province</label>
+                  
+                  <select class="form-control form-control-sm" name="province" id="ddProvinces" required="">
+                    <option>Select</option>
+                  </select>
+                </div>
+                <div class="col-3">
+                    <label class="form-label form-control-sm" for="district">Select District</label>
+                  
+                  <select class="form-control form-control-sm" name="district" id="ddDistrict">
+                    <option>Select</option>
+                  </select>
+                </div>
+                <div class="col-3">
+                    <label class="form-label form-control-sm" for="nahia">Select Nahia</label>
+                  
+                  <select class="form-control form-control-sm" name="nahia" id="ddNahia" required="">
+                    <option>Select</option>
+                    
+                    
+                  </select>
+                </div>
+                <div class="col-3">
+                  <button id="Analyze" class="form-control form-control-sm btn btn-primary btn-sm">Analyze</button>
+                </div>
+                <div class="col-3">
+                    <button id="ApproveFinalList" class="form-control form-control-sm btn btn-primary btn-sm" disabled>Approve Final List</button>
+                </div>
+                
+                
+
+              </form>
+              <!-- END Form Inline - Default Style -->
+
+              
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      <div class="block block-rounded">
+          <div class="col-12">
+            <!-- Portfolio -->
+            <div class="block block-rounded h-100 mb-0">
+              <div class="block-header block-header-default">
+                <h3 class="block-title">Analysis <small class="text text-muted" id="sampleSize"></small></h3>
+                <div class="block-options">
+                  <button type="button" class="btn-block-option">
+                    <i class="si si-wrench"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="block-content">
+            <table class="table table-borderless table-striped table-vcenter fs-sm">
+                <tbody>
+                    <tr>
+                        <td style="width: 32px;">
+                            <i id="inclusion_icon" class="fa fa-circle"></i>
+                        </td>
+                        <td style="width: 250px;">
+                            <span class="fw-semibold">Inclusion Error</span>
+                        </td>
+                        <td class="d-none d-sm-table-cell" style="width: 250px;">
+                            <div class="progress mb-0" style="height: 10px;" role="progressbar">
+                                <div id="inclusion_progress" class="progress-bar" style="width: 0%"></div>
+                            </div>
+                        </td>
+                        <td id="inclusion_value" class="text-end">
+                            0%
+                        </td>
+                        <td class="d-none d-sm-table-cell text-end text-muted">
+                            <!-- Optional additional data -->
+                            Acceptable Range: 0% - 10%
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <i id="exclusion_icon" class="fa fa-circle"></i>
+                        </td>
+                        <td>
+                            <span class="fw-semibold">Exclusion Error</span>
+                        </td>
+                        <td class="d-none d-sm-table-cell">
+                            <div class="progress mb-0" style="height: 10px;" role="progressbar">
+                                <div id="exclusion_progress" class="progress-bar" style="width: 0%"></div>
+                            </div>
+                        </td>
+                        <td id="exclusion_value" class="text-end">
+                            0%
+                        </td>
+                        <td class="d-none d-sm-table-cell text-end text-muted">
+                            <!-- Optional additional data -->
+                             Acceptable Range: 0%-15%
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <i id="hh_not_found_icon" class="fa fa-circle"></i>
+                        </td>
+                        <td>
+                            <span class="fw-semibold">Household Not Found</span>
+                        </td>
+                        <td class="d-none d-sm-table-cell">
+                            <div class="progress mb-0" style="height: 10px;" role="progressbar">
+                                <div id="hh_not_found_progress" class="progress-bar" style="width: 0%"></div>
+                            </div>
+                        </td>
+                        <td id="hh_not_found_value" class="text-end">
+                            0%
+                        </td>
+                        <td class="d-none d-sm-table-cell text-end text-muted">
+                            Acceptable Range: 0% - 5%
+                        </td>
+                    </tr>
+                    <tr>
+                      <td style="width: 32px;">
+                          <i id="sample_coverage_icon" class="fa fa-circle"></i>
+                      </td>
+                      <td style="width: 250px;">
+                          <span class="fw-semibold">Sample Reached by TPM</span>
+                      </td>
+                      <td class="d-none d-sm-table-cell" style="width: 250px;">
+                          <div class="progress mb-0" style="height: 10px;" role="progressbar">
+                              <div id="sample_coverage" class="progress-bar" style="width: 0%"></div>
+                          </div>
+                      </td>
+                      <td id="sample_coverage_value" class="text-end">
+                          0%
+                      </td>
+                      <td class="d-none d-sm-table-cell text-end text-muted">
+                          Acceptable Range: 95% - 100%
+                      </td>
+                  </tr>
+                </tbody>
+            </table>
+
+              </div>
+                <div class="block-content">
+                <h3 class="block-title">Key summary statistics of all assessment:</h3>
+
+                <ul class="list-group push" id="SummaryData">
+                  <!-- Dynamic content will be inserted here -->
+               </ul>
+              </div>
+            </div>
+            <!-- END Portfolio -->
+          </div>
+      </div>
+      <div class="block block-rounded">
+        <div class="block-header block-header-default">
+          <h3 class="block-title">
+            Results of sample
+          </h3>
+          
+        </div>
+        <div class="block-content block-content-full overflow-x-auto">
+        <div class="table-responsive" id="sampleTable">
+          <table id="SampleData" class="table table-striped table-sm" style="width:100%">
+
+          </table>
+        </div>
+        </div>
+      </div>
+      <div class="block block-rounded">
+        <div class="block-header block-header-default">
+          <h3 class="block-title">
+            Results of remaining data
+          </h3>
+          
+        </div>
+        <div class="block-content block-content-full overflow-x-auto">
+        <div class="table-responsive" id="remaining">
+          <table id="RemaningData" class="table table-striped table-sm" style="width:100%">
+
+          </table>
+        </div>
+        </div>
+      </div>
+      <div class="block block-rounded">
+        <div class="block-header block-header-default">
+          <h3 class="block-title">
+            Total Data
+          </h3>
+          
+        </div>
+        <div class="block-content block-content-full overflow-x-auto">
+        <div class="table-responsive" id="totalData">
+          <table id="CombinedData" class="table table-striped table-sm" style="width:100%">
+
+          </table>
+        </div>
+        </div>
+      </div>
+  </div>
+
+{% endblock content %}
+{% block scripts %}
+<script src="{%static '/js/plugins/datatables/dataTables.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-responsive/js/dataTables.responsive.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons/dataTables.buttons.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-jszip/jszip.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons/buttons.print.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons/buttons.html5.min.js'%}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      // Fetch data from the API when the page loads
+
+      function createTable(tableEl, data, columnsToRemove = []) {
+        // Assuming responseData is an array of objects
+        const keys = Object.keys(data[0]);
+        let columns = keys.map(key => ({
+            data: key,
+            title: key.replace(/_/g, ' ') // Convert snake_case to readable format
+        }));
+    
+        // Remove columns from columnsToRemove array
+        if (columnsToRemove.length > 0) {
+            columns = columns.filter(column => !columnsToRemove.includes(column.data));
+        }
+    
+        // if datatable exists destroy it 
+        if ($.fn.DataTable.isDataTable(`#${tableEl}`)) {
+            $(`#${tableEl}`).DataTable().destroy();
+        }
+    
+        $(`#${tableEl}`).DataTable({
+            data: data,
+            columns: columns,
+            layout: {
+              top1Start: {
+                  buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+              },
+            },
+            fixedHeader: true, // Correct option for fixed headers
+            searching: true, // Correct option for enabling search
+            paging: true, // Enable pagination
+            ordering: false, // Enable column sorting
+            footer: true // Assumes that the table has a footer element
+        });
+    }
+      function summaryDisplay(uiel, data){
+        const listGroup = document.querySelector(`#${uiel}`);
+
+        // Delete any child item in the listGroup element
+        while (listGroup.firstChild) {
+          listGroup.removeChild(listGroup.firstChild);
+        }
+
+        for (const [key, value] of Object.entries(data)) {
+            if (typeof value === 'object') {
+                // Handle nested objects separately
+                for (const [subKey, subValue] of Object.entries(value)) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    listItem.innerHTML = `
+                        ${subKey.replace(/_/g, ' ')}
+                        <span class="badge rounded-pill bg-black-50">${subValue}</span>
+                    `;
+                    listGroup.appendChild(listItem);
+                }
+            } else {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                listItem.innerHTML = `
+                    ${key.replace(/_/g, ' ')}
+                    <span class="badge rounded-pill bg-black-50">${value}</span>
+                `;
+                listGroup.appendChild(listItem);
+            }
+        }
+      }
+      function Analysis(data) {
+        // Filter data as per the selected AO, Province, District, and Nahia
+        let selectedAO = document.getElementById('ddAreaOffice').value;
+        let selectedProvince = document.getElementById('ddProvinces').value;
+        let selectedDistrict = document.getElementById('ddDistrict').value;
+        let selectedNahia = document.getElementById('ddNahia').value;
+    
+        let filteredData = data.counts.filter(item => 
+            item.cp_id__SB_ao === selectedAO && 
+            item.cp_id__SB_province === selectedProvince && 
+            item.cp_id__SB_district === selectedDistrict && 
+            item.cp_id__SB_nahia === selectedNahia
+        );
+    
+        let x = filteredData[0];
+    
+        // Calculate values
+        const inclusionError = (x.cp_inclusion_error / x.total_tpm) * 100;
+        const exclusionError = (x.cp_exculsion_error / x.total_tpm) * 100;
+        const hhNotFound = (x.tpm_hh_not_found / x.sample_count) * 100;
+        const sampleCoverage = (x.total_tpm / x.sample_count) * 100;
+    
+        // Clear previous classes
+        document.getElementById('inclusion_icon').className = 'fa fa-circle';
+        document.getElementById('inclusion_progress').className = 'progress-bar';
+        document.getElementById('exclusion_icon').className = 'fa fa-circle';
+        document.getElementById('exclusion_progress').className = 'progress-bar';
+        document.getElementById('hh_not_found_icon').className = 'fa fa-circle';
+        document.getElementById('hh_not_found_progress').className = 'progress-bar';
+        document.getElementById('sample_coverage_icon').className = 'fa fa-circle';
+        document.getElementById('sample_coverage').className = 'progress-bar';
+
+        const sampleSize = x.sample_count;
+
+        document.getElementById('sampleSize').textContent = `Sample Size: ${sampleSize}`;
+    
+        // Update inclusion error
+        document.getElementById('inclusion_value').textContent = `${inclusionError.toFixed(2)}% (${x.cp_inclusion_error})`;
+        document.getElementById('inclusion_progress').style.width = `${inclusionError.toFixed(2)}%`;
+        if (inclusionError <= 10) {
+            document.getElementById('inclusion_icon').classList.add('text-success');
+            document.getElementById('inclusion_progress').classList.add('bg-success');
+        } else {
+            document.getElementById('inclusion_icon').classList.add('text-danger');
+            document.getElementById('inclusion_progress').classList.add('bg-danger');
+        }
+    
+        // Update exclusion error
+        document.getElementById('exclusion_value').textContent = `${exclusionError.toFixed(2)}% (${x.cp_exculsion_error})`;
+        document.getElementById('exclusion_progress').style.width = `${exclusionError.toFixed(2)}%`;
+        if (exclusionError <= 15) {
+            document.getElementById('exclusion_icon').classList.add('text-success');
+            document.getElementById('exclusion_progress').classList.add('bg-success');
+        } else {
+            document.getElementById('exclusion_icon').classList.add('text-danger');
+            document.getElementById('exclusion_progress').classList.add('bg-danger');
+        }
+    
+        // Update household not found
+        document.getElementById('hh_not_found_value').textContent = `${hhNotFound.toFixed(2)}% (${x.tpm_hh_not_found})`;
+        document.getElementById('hh_not_found_progress').style.width = `${hhNotFound.toFixed(2)}%`;
+        if (hhNotFound === 0) {
+            document.getElementById('hh_not_found_icon').classList.add('text-success');
+            document.getElementById('hh_not_found_progress').classList.add('bg-success');
+        } else {
+            document.getElementById('hh_not_found_icon').classList.add('text-danger');
+            document.getElementById('hh_not_found_progress').classList.add('bg-danger');
+        }
+    
+        // Update sample coverage
+        document.getElementById('sample_coverage_value').textContent = `${sampleCoverage.toFixed(2)}% (${x.total_tpm})`;
+        document.getElementById('sample_coverage').style.width = `${sampleCoverage.toFixed(2)}%`;
+        if (sampleCoverage >= 95) {
+            document.getElementById('sample_coverage_icon').classList.add('text-success');
+            document.getElementById('sample_coverage').classList.add('bg-success');
+        } else {
+            document.getElementById('sample_coverage_icon').classList.add('text-danger');
+            document.getElementById('sample_coverage').classList.add('bg-danger');
+        }
+
+        data = {
+            'area_office': selectedAO,
+            'province': selectedProvince,
+            'district': selectedDistrict,
+            'nahia': selectedNahia,
+            'error_type': 'inclusion'
+        };
+
+        fetch('/final_list_data_analysis/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+            sample = data.common_data
+            remaining = data.non_common_data
+            
+            const combinedData = [...sample, ...remaining];
+
+            createTable('CombinedData', combinedData, columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id']);
+
+            createTable('SampleData', sample,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'])
+            createTable('RemaningData', sample,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'])
+
+            summaryDisplay('SummaryData', data.counts)
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+    
+
+      fetch('/filal_list_locations/')
+          .then(response => response.json())
+          .then(data => {
+              let counts = data.counts;
+
+              // Populate Area Office dropdown with a default "Select" option
+              let areaOfficeDropdown = document.getElementById('ddAreaOffice');
+              areaOfficeDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+              let areaOffices = [...new Set(counts.map(item => item.cp_id__SB_ao))];
+              areaOffices.forEach(ao => {
+                  let option = new Option(ao, ao);
+                  areaOfficeDropdown.appendChild(option);
+              });
+
+              // Event listener for Area Office dropdown
+              areaOfficeDropdown.addEventListener('change', function () {
+                  let selectedAO = this.value;
+
+                  // Filter provinces based on selected Area Office
+                  let filteredProvinces = [...new Set(counts
+                      .filter(item => item.cp_id__SB_ao === selectedAO)
+                      .map(item => item.cp_id__SB_province)
+                      .filter(province => province !== null))];
+
+                  // Populate Provinces dropdown with a default "Select" option
+                  let provincesDropdown = document.getElementById('ddProvinces');
+                  provincesDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+                  filteredProvinces.forEach(province => {
+                      let option = new Option(province, province);
+                      provincesDropdown.appendChild(option);
+                  });
+
+                  // Clear the lower-level dropdowns and input fields
+                  document.getElementById('ddDistrict').innerHTML = '<option value="">Select</option>';
+                  document.getElementById('ddNahia').innerHTML = '<option value="">Select</option>';
+                  document.getElementById('totalRecords').value = '';
+                  document.getElementById('sampleSize').value = '';
+              });
+
+              // Event listener for Provinces dropdown
+              document.getElementById('ddProvinces').addEventListener('change', function () {
+                  let selectedAO = document.getElementById('ddAreaOffice').value;
+                  let selectedProvince = this.value;
+
+                  // Filter districts based on selected Province
+                  let filteredDistricts = [...new Set(counts
+                      .filter(item => item.cp_id__SB_ao === selectedAO && item.cp_id__SB_province === selectedProvince)
+                      .map(item => item.cp_id__SB_district)
+                      .filter(district => district !== null))];
+
+                  // Populate District dropdown with a default "Select" option
+                  let districtsDropdown = document.getElementById('ddDistrict');
+                  districtsDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+                  filteredDistricts.forEach(district => {
+                      let option = new Option(district, district);
+                      districtsDropdown.appendChild(option);
+                  });
+
+                  // Clear the Nahia dropdown and input fields
+                  document.getElementById('ddNahia').innerHTML = '<option value="">Select</option>';
+                  document.getElementById('totalRecords').value = '';
+                  document.getElementById('sampleSize').value = '';
+              });
+
+              // Event listener for District dropdown
+              document.getElementById('ddDistrict').addEventListener('change', function () {
+                  let selectedAO = document.getElementById('ddAreaOffice').value;
+                  let selectedProvince = document.getElementById('ddProvinces').value;
+                  let selectedDistrict = this.value;
+
+                  // Filter Nahias based on selected District
+                  let filteredNahias = counts
+                      .filter(item => item.cp_id__SB_ao === selectedAO && item.cp_id__SB_province === selectedProvince && item.cp_id__SB_district === selectedDistrict)
+                      .map(item => ({ nahia: item.cp_id__SB_nahia}));
+
+                  // Populate Nahia dropdown with a default "Select" option
+                  let nahiaDropdown = document.getElementById('ddNahia');
+                  nahiaDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+                  filteredNahias.forEach(nahiaData => {
+                      let option = new Option(nahiaData.nahia, nahiaData.nahia);
+                      nahiaDropdown.appendChild(option);
+                  });
+
+              });
+              analysisel = document.getElementById('Analyze');
+              analysisel.addEventListener('click', function () {
+              Analysis(data);
+
+              });
+          })
+          .catch(error => console.error('Error fetching data:', error));
+          
+          
+          
+          
+  
+  });
+  
+
+</script>
+
+{% endblock scripts%}

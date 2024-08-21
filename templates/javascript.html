@@ -1,0 +1,29 @@
+{% load static %}
+    <!-- jQuery (required for jQuery Validation plugins) -->
+    <script src="{% static '/js/lib/jquery.min.js' %}"></script>
+    <script src="{% static 'js/codebase.app.min.js' %}"></script>
+    <script src="{% static  'js/plugins/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
+
+    <script>
+        {% if messages %}
+          {% for message in messages %}
+            {% if message.tags %}
+              Codebase.helpers('jq-notify', {
+                align: 'right',             // 'right', 'left', 'center'
+                from: 'top',                // 'top', 'bottom'
+                type: '{% if message.tags == 'warning' or message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}', // 'info', 'success', 'warning', 'danger'
+                icon: 'fa fa-info me-2',    // Icon class
+                message: '{{ message }}'
+              });
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      
+      
+      </script>
+
+    <script src="{% static 'js/plugins/chart.js/chart.umd.js' %}"></script>
+
+    <!-- Page JS Code -->
+    <script src="{% static 'js/pages/be_pages_dashboard.min.js' %}"></script>
+ 

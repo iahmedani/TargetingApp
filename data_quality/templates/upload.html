@@ -1,0 +1,36 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-content block-content-full">
+          <div class="py-3 text-center">
+            <h1 class="h3 fw-extrabold mb-1">
+              Data Quality Asessment
+            </h1>
+            <h2 class="fs-sm fw-medium text-muted mb-0">
+             Please import data in CSV and check for data quality
+            </h2>
+          </div>
+        </div>
+      </div>
+      <div class="block block-rounded">
+        <div class="block-content block-content-full">
+          <div class="py-3 text-center">
+            <form class="row row-cols-lg-auto g-3 align-items-center" action="{% url 'data_quality:dqa' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-12">
+                  <label class="visually-hidden" for="example-if-email">Email</label>
+                  <input type="file" class="form-control" name="file" accept=".csv">
+                </div>
+                
+                <div>
+                    <button class="btn btn-primary" type="submit">Import</button>
+                </div>
+            </form>
+            
+          </div>
+        </div>
+      </div>
+        
+</div>
+{% endblock content %}

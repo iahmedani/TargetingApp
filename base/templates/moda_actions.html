@@ -1,0 +1,147 @@
+
+{% extends "main.html" %}
+{% load static %}
+
+{% block styles %}
+<!-- Page JS Plugins CSS -->
+<link rel="stylesheet" href="{% static '/js/plugins/sweetalert2/sweetalert2.min.css'%}">
+{% endblock styles %}
+
+
+
+{% block content %}
+<div class="content">
+    <div class="row">
+      <div class="col-12">
+        <!-- With Links -->
+        <div class="block block-rounded">
+          <div class="block-header block-header-default">
+            <h3 class="block-title">{{ title }}</h3>
+          </div>
+          <div class="block-content">
+            <div class="list-group push">
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center " href="#" data_url="{% url 'media_files:upload_province' %}">
+                Upload Province to MoDa
+              </a>
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center " href="#" data_url="{% url 'media_files:upload_district' %}">
+                Upload District to MoDa
+              </a>
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center " href="#" data_url="{% url 'media_files:upload_cfac' %}">
+                Upload CFAC List to MoDa
+              </a>
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center " href="#" data_url="{% url 'media_files:upload_villages' %}">
+                Upload Village List to MoDa
+              </a>
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center " href="#" data_url="{% url 'media_files:upload_cp' %}">
+                Upload CP List to MoDa
+              </a>
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center " href="#" data_url="{% url 'media_files:upload_tpm' %}">
+                Upload TPM List to MoDa
+              </a>
+              
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-muted" href="javascript:void(0)" >
+                Upload TPM Staff to MoDa
+                <span class="badge rounded-pill bg-black-50">disabled</span>
+              </a>
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-muted " href="javascript:void(0)" >
+                Upload CP Staff List to MoDa
+                <span class="badge rounded-pill bg-black-50">disabled</span>
+
+              </a>
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center bg-gd-lake" href="#" data_url="{% url 'media_files:upload_sample' %}">
+                Upload Sample to MoDa
+              </a>
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center bg-gd-sea" href="#" data_url="{% url 'media_files:user_access' %}">
+                Update MoDa User Access
+              </a>
+            </div>
+          </div>
+        </div>
+        <!-- END With Links -->
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block scripts %}
+<!-- Page JS Plugins -->
+<script src="{% static '/js/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+      
+
+      // Use event delegation to handle clicks on list-group-item elements
+      $(document).on('click', '.list-group-item', function(e) {
+          // Prevent default action
+          e.preventDefault();
+          
+          // Check if the click event is triggered
+          console.log("Item clicked!");
+
+          // Get the URL from the data attribute
+          let url = $(this).attr('data_url');
+          console.log("URL: ", url);
+          
+          if (!url) {
+              console.error("URL not found in the data_url attribute.");
+              return;
+          }
+          
+          // Show SweetAlert to indicate that the process has started
+          Swal.fire({
+              title: 'Processing...',
+              text: 'Please wait while the process completes.',
+              allowOutsideClick: false,
+              didOpen: () => {
+                  Swal.showLoading();
+              }
+          });
+
+          // Fetch the URL and handle the response
+          fetch(url)
+              .then(response => {
+                  console.log("Response received:", response);
+                  if (!response.ok) {
+                      throw new Error("Network response was not ok");
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                console.log(data)
+                  // Close the loading alert
+                  Swal.close();
+
+                  // Show result based on the response status
+                  if (data.success) {
+                      Swal.fire({
+                          title: 'Success',
+                          text: data.success,
+                          icon: 'success'
+                      });
+                  } else {
+                      Swal.fire({
+                          title: 'Error',
+                          text: data.error,
+                          icon: 'error'
+                      });
+                  }
+              })
+              .catch(error => {
+                  // Close the loading alert
+                  Swal.close();
+
+                  // Show error alert if something goes wrong
+                  Swal.fire({
+                      title: 'Error',
+                      text: 'An error occurred. Please try again.',
+                      icon: 'error'
+                  });
+                  console.error('Error:', error);
+              });
+      });
+  });
+</script>
+
+
+{% endblock scripts %}

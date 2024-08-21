@@ -1,0 +1,60 @@
+
+<!doctype html>
+{% load static %}
+<html lang="en">
+  
+{% include "head.html" %}
+{% block styles %}
+{% endblock styles %}
+
+  <body>
+   
+    <div id="page-container" class="sidebar-o enable-page-overlay side-scroll page-header-modern main-content-boxed">
+      <!-- Side Overlay-->
+      
+      
+      <!-- END Side Overlay -->
+
+      <!-- Sidebar -->
+      <!--
+        Helper classes
+
+        Adding .smini-hide to an element will make it invisible (opacity: 0) when the sidebar is in mini mode
+        Adding .smini-show to an element will make it visible (opacity: 1) when the sidebar is in mini mode
+          If you would like to disable the transition, just add the .no-transition along with one of the previous 2 classes
+
+        Adding .smini-hidden to an element will hide it when the sidebar is in mini mode
+        Adding .smini-visible to an element will show it only when the sidebar is in mini mode
+        Adding 'smini-visible-block' to an element will show it (display: block) only when the sidebar is in mini mode
+      -->
+      {% include "sidebar.html" %}
+      
+      <!-- END Sidebar -->
+
+      <!-- Header -->
+      {% include "navbar.html" %}
+      
+      <!-- END Header -->
+
+      <!-- Main Container -->
+      <main id="main-container">
+        <!-- Page Content -->
+        {% block content %}
+        {% endblock content %}
+        <!-- END Page Content -->
+      </main>
+      <!-- END Main Container -->
+
+      <!-- Footer -->
+      {% include "footer.html" %}
+      
+      <!-- END Footer -->
+    </div>
+    <!-- END Page Container -->
+
+    {% include "javascript.html" %}
+    {% block scripts %}
+    {% endblock scripts %}
+    
+  </body>
+</html>
