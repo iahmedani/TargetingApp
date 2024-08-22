@@ -245,9 +245,8 @@ class SampleAdmin(admin.ModelAdmin):
     
 @admin.register(ModaProjects)
 class ModaProjectsAdmin(admin.ModelAdmin):
-    list_display = ('project_id', 'project_name','area_office', 'created_at', 'updated_at', 'created_by')
-    search_fields = ('project_name','area_office', 'created_by__username')  # Assuming created_by is linked to the User model
-    list_filter = ('area_office','created_at', 'updated_at', 'created_by')  
+    list_display = ('project_id', 'project_name','area_office')
+    search_fields = ('project_name','area_office')  # Assuming created_by is linked to the User model
 
 class ModaUserResource(resources.ModelResource):
     class Meta:
@@ -255,18 +254,18 @@ class ModaUserResource(resources.ModelResource):
         
 @admin.register(ModaUser)
 class ModaUserAdmin(ImportExportModelAdmin,admin.ModelAdmin):
-    list_display = ('moda_username', 'moda_email', 'first_name', 'last_name', 'user_type', 'area_office', 'organization_short_name', 'is_active', 'access_given', 'created_at', 'updated_at', 'created_by')
-    search_fields = ('moda_username', 'moda_email', 'first_name', 'last_name', 'created_by__username')
-    list_filter = ('user_type', 'area_office', 'is_active', 'access_given', 'created_at', 'updated_at', 'created_by') 
+    list_display = ('moda_username', 'moda_email', 'first_name', 'last_name', 'user_type', 'area_office', 'organization_short_name', 'is_active', 'access_given')
+    search_fields = ('moda_username', 'moda_email', 'first_name', 'last_name')
+    list_filter = ('user_type', 'area_office', 'is_active', 'access_given') 
     
     # not make name plural in admin view
 
 @admin.register(CFACList)
 class CFACListAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_classes = [CFACListResource]
-    list_display = ('list_name', 'name', 'label', 'ao', 'province', 'district', 'CFAC_FP1', 'FP1_Number', 'CFAC_FP2', 'FP2_Number', 'Province_code', 'District_code', 'CFAC_Name', 'created_at', 'updated_at', 'created_by')
+    list_display = ('list_name', 'name', 'label', 'ao', 'province', 'district', 'CFAC_FP1', 'FP1_Number', 'CFAC_FP2', 'FP2_Number', 'Province_code', 'District_code', 'CFAC_Name')
     search_fields = ('name', 'label', 'province', 'district', 'CFAC_Name')
-    list_filter = ('ao', 'province', 'district', 'created_at', 'updated_at')
+    list_filter = ('ao', 'province', 'district')
 
 class CPListResource(resources.ModelResource):
     class Meta:

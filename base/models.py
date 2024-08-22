@@ -454,7 +454,7 @@ class TPMCSVData(models.Model):
 
 
 class ApprovedList(models.Model):
-    ben_id = models.ForeignKey(CSVData, on_delete=models.RESTRICT)
+    cp_id = models.ForeignKey(CSVData, on_delete=models.RESTRICT)
     moda_id = models.IntegerField(unique=True, null=True)
     remarks = models.CharField(max_length=255, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -528,9 +528,6 @@ class ModaProjects(models.Model):
     project_id = models.IntegerField(unique=True)
     project_name = models.CharField(max_length=255)
     area_office = models.CharField(max_length=5, choices=AREA_OFFICE , null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete= models.CASCADE )
     
     def __str__(self):
         return self.project_name
@@ -559,9 +556,7 @@ class ModaUser(models.Model):
     organization_short_name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     access_given = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete= models.CASCADE )
+
     
     def __str__(self):
         return self.moda_username
@@ -593,9 +588,7 @@ class CFACList(models.Model):
     Province_code = models.CharField(max_length=255)
     District_code = models.CharField(max_length=255)
     CFAC_Name = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete= models.CASCADE )
+
     
     
     def __str__(self):
@@ -633,7 +626,7 @@ class CP_list(models.Model):  # Replace YourModelName with the desired model nam
     class Meta:
         verbose_name = 'CP List'
         verbose_name_plural = 'CP List'
-        unique_together = ('name', 'province')
+        unique_together = ('name', 'ao')
         
         
 class TPM_list(models.Model):
@@ -653,7 +646,7 @@ class TPM_list(models.Model):
     class Meta:
         verbose_name = 'TPM List'
         verbose_name_plural = 'TPM List'
-        unique_together = ('name', 'province')
+        unique_together = ('name', 'ao')
         
 class Province(models.Model):
     AREA_OFFICE = (
