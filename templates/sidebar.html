@@ -91,6 +91,12 @@
               </a>
             </li>
             <li class="nav-main-item">
+              <a class="nav-main-link {% if '/data_quality/excel_upload_view/' == request.path %} active {% endif %}" href="{% url 'data_quality:excel_import'%}">
+                <i class="nav-main-link-icon fa fa-list-check"></i>
+                <span class="nav-main-link-name">Standard Data Quality Check</span>
+              </a>
+            </li>
+            <li class="nav-main-item">
               <a class="nav-main-link {% if '/import_data/' == request.path %} active {% endif %}" href="{% url 'import_data' %}">
                 <i class="nav-main-link-icon fa fa-file-import"></i>
                 <span class="nav-main-link-name">Import Data</span>
