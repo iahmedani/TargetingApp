@@ -10,7 +10,7 @@ import time
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, JsonResponse
-from .models import CPDataModel, TPMDataModel, TPMCSVData, CSVData, Sample  # Adjust the models as needed
+from .models import CPDataModel, TPMDataModel, TPMCSVData, CSVData, Sample, CPDataModel1, Sample1  # Adjust the models as needed
 
 import pandas as pd
 import numpy as np
@@ -154,7 +154,7 @@ class CSVImportView(View):
             df = pd.read_csv(csv_file)
             
             # Replace '/' with '_' in column names
-            df.columns = df.columns.str.replace('/', '_')
+            df.columns = df.columns.str.replace('-', '_')
             
             if 'ben_id' in df.columns:
                 messages.error(request, 'Seems like wrong file is sent for process.')
@@ -188,26 +188,30 @@ class CSVImportView(View):
         # Add import_status column
         df['import_status'] = ''
 
-        # Convert 'Yes'/'No' to boolean
-        bool_columns = [
-            'is_principal', 'cfac_consulted', 'ag_work', 'child_5', 'plw', 'vul'
-        ] + [f'cfac_Q{i}' for i in range(1, 14)] + [f'A{i}' for i in range(1, 14)] + \
-          [f'female_status_{i}' for i in range(1, 9)] + [f'HH_head_{i}' for i in [1, 2, 3, 5, 6]] + \
-          ['cfac_exclusion', 'exclusion_1']
+        # # Convert 'Yes'/'No' to boolean
+        # bool_columns = [
+        #     'is_principal', 'cfac_consulted', 'ag_work', 'child_5', 'plw', 'vul'
+        # ] + [f'cfac_Q{i}' for i in range(1, 14)] + [f'A{i}' for i in range(1, 14)] + \
+        #   ['cfac_exclusion', 'exclusion_1']
         
-        for col in bool_columns:
-            if col in df.columns:
-                df[col] = df[col].map({'Yes': True, 'No': False})
-
+        # for col in bool_columns:
+        #     if col in df.columns:
+        #         df[col] = df[col].map({'Yes': True, 'No': False})
+        
+        
+        df.rename(columns={'KEY': 'key'}, inplace=True)
+        
+        df['observation'] = df['observation'].map({1:True, 2:False})
+        df['ag_work'] = df['ag_work'].map({1:True, 2:False})
         # Convert date columns
-        date_columns = ['data_assess', '_submission_time', '_date_modified']
+        date_columns = ['data_assess', 'SubmissionDate','start','end','today']
         for col in date_columns:
             if col in df.columns:
                 df[col] = pd.to_datetime(df[col], errors='coerce', utc=True)
 
         # Convert integer columns
         int_columns = ['ben_age', 'p_age', 'alter_age', 'child_5Num', 'c1age', 'c2age', 'c3age', 'c4age', 'c5age',
-                       'pbw_num', 'CFAC_Calculation', 'CP_Calculation', 'difference', '_duration', '_xform_id']
+                       'pbw_num', 'CFAC_Calculation', 'CP_Calculation', 'difference']
         for col in int_columns:
             if col in df.columns:
                 df[col] = pd.to_numeric(df[col], errors='coerce').astype('Int64')
@@ -215,7 +219,7 @@ class CSVImportView(View):
         error_rows = []
 
         # Get valid field names from the model
-        valid_fields = set(f.name for f in CSVData._meta.get_fields())
+        valid_fields = set(f.name for f in CPDataModel1._meta.get_fields())
 
         # Get the current timezone
         current_tz = timezone.get_current_timezone()
@@ -235,16 +239,16 @@ class CSVImportView(View):
 
                     if is_update:
                         try:
-                            obj = CSVData.objects.get(_id=valid_data['_id'])
+                            obj = CPDataModel1.objects.get(key=valid_data['key'])
                             for key, value in valid_data.items():
                                 setattr(obj, key, value)
                             obj.save()
                             df.at[index, 'import_status'] = 'Updated'
-                        except CSVData.DoesNotExist:
+                        except CPDataModel1.DoesNotExist:
                             df.at[index, 'import_status'] = 'Not found - Update skipped'
                     else:
-                        obj, created = CSVData.objects.get_or_create(
-                            _id=valid_data['_id'],
+                        obj, created = CPDataModel1.objects.get_or_create(
+                            key=valid_data['key'],
                             defaults=valid_data
                         )
                         df.at[index, 'import_status'] = 'Created' if created else 'Already exists'
@@ -397,7 +401,7 @@ class TPMCSVImportView(View):
 class CSVDataCountView(View):
     def get(self, request):
         # Perform the aggregation
-        counts = CSVData.objects.exclude(
+        counts = CPDataModel1.objects.exclude(
             assessmentType='Replacement Assessment'
         ).values(
             'SB_ao', 'SB_province', 'SB_district', 'SB_area', 'SB_nahia'
@@ -417,7 +421,7 @@ class CSVDataCountView(View):
         # Prepare the result
         result = {
             'counts': list(counts),
-            'total': CSVData.objects.count()
+            'total': CPDataModel1.objects.count()
         }
 
         # Return JSON response
@@ -480,6 +484,8 @@ class GenerateSampleView(View):
         province = data.get('province')
         district = data.get('district')
         nahia = data.get('nahia')
+        if nahia == 'null' or nahia is None:
+            nahia = None  # Assign None to nahia if 'null' is passed
         sample_size = data.get('sampleSize')
 
         if not all([area_office, province, district, sample_size]):
@@ -490,13 +496,13 @@ class GenerateSampleView(View):
         except ValueError:
             return JsonResponse({'error': 'sampleSize must be an integer'}, status=400)
 
-        queryset = CSVData.objects.filter(
+        queryset = CPDataModel1.objects.filter(
             SB_ao=area_office,
             SB_province=province,
             SB_district=district
         ).exclude(assessmentType='Replacement Assessment')
 
-        if nahia:
+        if nahia is not None:
             # Urban area: Simple random sampling
             sample = list(queryset.filter(SB_nahia=nahia).order_by('?')[:sample_size])
             message = "Urban area: Simple random sampling based on nahia."
@@ -588,13 +594,13 @@ class ApproveSampleView(View):
             return JsonResponse({'error': 'Missing remarks parameter'}, status=400)
         
         # Get CSVData objects for the given sample_ids
-        csv_data_objects = CSVData.objects.filter(_id__in=sample_ids)
+        csv_data_objects = CPDataModel1.objects.filter(id__in=sample_ids)
         
         if not csv_data_objects.exists():
-            return JsonResponse({'error': 'No CSVData found for the given ids'}, status=404)
+            return JsonResponse({'error': 'No data in CPDataModel1 found for the given ids'}, status=404)
         
         # Prepare base query for existing samples
-        existing_csv_data = CSVData.objects.filter(
+        existing_csv_data = CPDataModel1.objects.filter(
             SB_ao__in=csv_data_objects.values('SB_ao'),
             SB_province__in=csv_data_objects.values('SB_province'),
             SB_district__in=csv_data_objects.values('SB_district')
@@ -607,7 +613,7 @@ class ApproveSampleView(View):
             )
         
         # Check if there are any existing samples
-        existing_samples = Sample.objects.filter(cp_id__in=existing_csv_data).exists()
+        existing_samples = Sample1.objects.filter(cp_id__in=existing_csv_data).exists()
 
         if existing_samples:
             return JsonResponse({
@@ -618,10 +624,11 @@ class ApproveSampleView(View):
         # Create new Sample objects
         new_samples = []
         for csv_data in csv_data_objects:
-            new_sample = Sample(
+            new_sample = Sample1(
                 is_urban=is_urban,
-                ben_id=csv_data._id,  # Assuming ben_id is the same as CSVData _id
+                ben_id=csv_data.id,  # Assuming ben_id is the same as CSVData _id
                 sample_type=sample_type,
+                key = csv_data.key,
                 cp_id=csv_data,
                 remarks=remarks,
                 created_by=request.user  # Assuming you're using authentication
@@ -629,7 +636,7 @@ class ApproveSampleView(View):
             new_samples.append(new_sample)
 
         # Bulk create the new samples
-        Sample.objects.bulk_create(new_samples)
+        Sample1.objects.bulk_create(new_samples)
 
         return JsonResponse({
             'message': 'Samples approved successfully',

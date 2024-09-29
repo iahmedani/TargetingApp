@@ -241,18 +241,38 @@
                   footer: true,
                   fixedColumns: true,
                 columns: [
-                  { "data": "_id", "title": "MoDa ID" },
+                  { "data": "id", "title": "ID" },
+                  {"data": function (data, type, row, meta) {
+                    return data.SB_ao + '_'+ data.id
+                    },"title":'MODA_ID'},
                   { "data": "name_ben", "title": "Name Ben" },
                   { "data": "ben_fath", "title": "Ben Fath" },
                   { "data": "ben_gender", "title": "Gender" },
                   { "data": "ben_age", "title": "Age" },
                   { "data": "mob", "title": "Mobile" },
-                  { "data": "id_doc", "title": "ID Doc" },
+                  { "data": function (data, type, row, meta){
+                    doc_type = {
+                      1: 'Paper Tazkira',
+                      7: 'Electronic Tazkira',
+                      2:'Passport',
+                      3:'Driving License',
+                      4:'Election Card',
+                      5:'SCOPE Card',
+                      6:'Other ID'
+                    }
+                    return doc_type[data.id_doc]
+                  },  "title": "ID Doc" },
                   { "data": "id_number", "title": "ID Number" },
                   { "data": "SB_ao", "title": "AO" },
                   { "data": "SB_province", "title": "Province" },
                   { "data": "SB_district", "title": "District" },
-                  { "data": "SB_area", "title": "Urban" },
+                  { "data": function(data, type, row, meta){
+                    if (data.SB_urban === '1') {
+                        return 'Urban';
+                    } else {
+                        return 'Rural';
+                    }
+                  },"title": "Area" },
                   { "data": "SB_nahia", "title": "Nahia" },
                   { "data": "SB_B_3", "title": "Village" },
                   { "data": "SB_cfac_name", "title": "CFAC Name" },
@@ -288,7 +308,7 @@
           function ApproveSample(data, is_urban, remarks){
             const csrftoken = getCookie('csrftoken');
 
-            const ids = data.map(item => item._id);
+            const ids = data.map(item => item.id);
 
             data = {
                 'ids': ids,
@@ -308,9 +328,9 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                if (data.message === 'Sample approved successfully') {
-                    alert('Sample approved successfully');
+                //console.log(data);
+                if (data.message === 'Samples approved successfully') {
+                    alert('Samples approved successfully');
                 } else {
                     alert(data.error);
                 }

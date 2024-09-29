@@ -250,7 +250,8 @@ def std_data_analysis(request):
             output,
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-        response['Content-Disposition'] = 'attachment; filename="processed_data.xlsx"'
+        processed_file_name = f'{file_name.strip(".xlsx")}_processed.xlsx'
+        response['Content-Disposition'] = f'attachment; filename="{processed_file_name}"'
 
         return response
     else:

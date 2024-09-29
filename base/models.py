@@ -12,6 +12,7 @@ class CPDataModel(models.Model):
     phonenumber = models.CharField(max_length=20, null=True)
     username = models.CharField(max_length=100, null=True)
     email = models.EmailField(null=True)
+    tit = models.CharField(max_length=1, null=True)
     assessmentType = models.CharField(max_length=50)
     data_assess = models.DateTimeField()
     SB_ao = models.CharField(max_length=10)
@@ -20,7 +21,7 @@ class CPDataModel(models.Model):
     SB_B_2 = models.CharField(max_length=50)
     district = models.CharField(max_length=50)
     SB_area = models.IntegerField()
-    SB_nahia = models.IntegerField()
+    SB_nahia = models.IntegerField(null=True)
     SB_cfac_name = models.CharField(max_length=255, null=True)
     SB_Name_of_the_village_Gozar_Elder = models.CharField(max_length=255, null=True)
     SB_Mobile_of_the_village_Gozar_Elder = models.CharField(max_length=20, null=True)
@@ -28,32 +29,21 @@ class CPDataModel(models.Model):
     SB_Mobile_of_the_village_Gozar_Elder_001 = models.CharField(max_length=20, null=True)
     SB_B_3 = models.CharField(max_length=255, null=True)
     cp = models.CharField(max_length=150)
+    infonote = models.CharField(max_length=1, null=True)
     ass_modality = models.IntegerField(max_length=255)
     name_ben = models.CharField(max_length=255)
     ben_fath = models.CharField(max_length=255)
     ben_gender = models.CharField(max_length=10)
     ben_age = models.IntegerField()
-    female_status_1 = models.BooleanField(null=True)
-    female_status_2 = models.BooleanField(null=True)
-    female_status_3 = models.BooleanField(null=True)
-    female_status_4 = models.BooleanField(null=True)
-    female_status_5 = models.BooleanField(null=True)
-    female_status_6 = models.BooleanField(null=True)
-    female_status_7 = models.BooleanField(null=True)
-    female_status_8 = models.BooleanField(null=True)
-    mob = models.CharField(max_length=10)
+    female_status = models.CharField(max_length=15, null=True)
+    mob = models.CharField(max_length=10, null=True)
     id_doc = models.CharField(max_length=10)
     id_doc_other = models.CharField(max_length=255,  null=True)
-    id_number = models.CharField(max_length=100)
-    HH_head_1 = models.BooleanField(null=True)
-    HH_head_2 = models.BooleanField(null=True)
-    HH_head_3 = models.BooleanField(null=True)
-    HH_head_4 = models.BooleanField(null=True)
-    HH_head_5 = models.BooleanField(null=True)
-    HH_head_6 = models.BooleanField(null=True)
+    id_number = models.CharField(max_length=100, null=True)
+    HH_head = models.CharField(max_length=25, null=True)
     date_return = models.DateField(null=True)
-    iom_id = models.CharField(max_length=100)
-    is_principal = models.BooleanField()
+    iom_id = models.CharField(max_length=100, null=True)
+    is_principal = models.BooleanField(null=True)
     name_p = models.CharField(max_length=255,null=True)
     p_fath = models.CharField(max_length=255,null=True)
     p_gender = models.CharField(max_length=10, null=True)
@@ -77,8 +67,8 @@ class CPDataModel(models.Model):
     cfac_Q13 = models.BooleanField(null=True)
     cfac_exclusion = models.BooleanField(null=True)
     ass_modality = models.BooleanField(null=True)
-    observation = models.BooleanField()
-    ag_work = models.BooleanField()
+    observation = models.BooleanField(null=True)
+    ag_work = models.BooleanField(null=True)
     alter_name = models.CharField(max_length=255,null=True)
     atlter_fath = models.CharField(max_length=255,null=True)
     alter_gender = models.CharField(max_length=10,null=True)
@@ -124,26 +114,176 @@ class CPDataModel(models.Model):
     CP_Calculation = models.IntegerField()
     difference = models.IntegerField()
     FO_shortcut = models.CharField(max_length=255)
-    vul = models.CharField(max_length=3)
+    vul = models.CharField(max_length=10)
+    vul_note = models.CharField(max_length=10, null=True)
+    display = models.CharField(max_length=255, null=True)
     display_1 = models.CharField(max_length=255, null=True)
     comm = models.CharField(max_length=255, null=True)
     meta_instanceID = models.CharField(max_length=255, null=True)
-    _id = models.IntegerField(unique=True)
-    _uuid = models.CharField(max_length=255)
-    _submission_time = models.DateTimeField()
-    _duration = models.IntegerField()
-    _submitted_by = models.CharField(max_length=255)
-    _xform_id = models.IntegerField()
+    key = models.CharField(max_length=100, null=True)
+    note = models.CharField(max_length=100, null=True)
+    isValidated = models.BooleanField(null=True)
+    id_r = models.CharField(max_length=100, null=True)
+    # _id = models.IntegerField(unique=True)
+    # _uuid = models.CharField(max_length=255)
+    # _submission_time = models.DateTimeField()
+    SubmissionDate = models.DateTimeField()
+    formhub_uuid = models.UUIDField(null=True)
+    # _duration = models.IntegerField()
+    # _submitted_by = models.CharField(max_length=255)
+    # _xform_id = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by =  models.ForeignKey(settings.AUTH_USER_MODEL,  on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.username
+        return self.key
     
-    verbose_name = 'CP Data'
+    verbose_name = 'CP Data '
     verbose_name_plural = 'CP Data'
+
+class CPDataModel1(models.Model):
+    MODALITY = [
+        (1, 'FOOD'),
+        (2, 'CBT'),
+    ]
+    start = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True)
+    today = models.DateField(null=True)
+    deviceid = models.CharField(max_length=100, null=True)
+    phonenumber = models.CharField(max_length=20, null=True)
+    username = models.CharField(max_length=100, null=True)
+    email = models.EmailField(null=True)
+    tit = models.CharField(max_length=1, null=True)
+    assessmentType = models.CharField(max_length=50)
+    data_assess = models.DateTimeField()
+    SB_ao = models.CharField(max_length=10)
+    SB_B_1 = models.CharField(max_length=50)
+    SB_province = models.CharField(max_length=50)
+    SB_B_2 = models.CharField(max_length=50)
+    SB_district = models.CharField(max_length=50)
+    SB_area = models.IntegerField()
+    SB_nahia = models.IntegerField(null=True)
+    SB_cfac_name = models.CharField(max_length=255, null=True)
+    SB_Name_of_the_village_Gozar_Elder = models.CharField(max_length=255, null=True)
+    SB_Mobile_of_the_village_Gozar_Elder = models.CharField(max_length=20, null=True)
+    SB_Name_of_the_village_Gozar_Elder_001 = models.CharField(max_length=255, null=True)
+    SB_Mobile_of_the_village_Gozar_Elder_001 = models.CharField(max_length=20, null=True)
+    SB_B_3 = models.CharField(max_length=255, null=True)
+    cp = models.CharField(max_length=150)
+    infonote = models.CharField(max_length=1, null=True)
+    ass_modality = models.IntegerField(choices=MODALITY)
+    name_ben = models.CharField(max_length=255)
+    ben_fath = models.CharField(max_length=255)
+    ben_gender = models.CharField(max_length=10)
+    ben_age = models.IntegerField()
+    female_status = models.CharField(max_length=15, null=True)
+    mob = models.CharField(max_length=10, null=True)
+    id_doc = models.CharField(max_length=10)
+    id_doc_other = models.CharField(max_length=255,  null=True)
+    id_number = models.CharField(max_length=100, null=True)
+    HH_head = models.CharField(max_length=25, null=True)
+    date_return = models.DateField(null=True)
+    iom_id = models.CharField(max_length=100, null=True)
+    is_principal = models.BooleanField(null=True)
+    name_p = models.CharField(max_length=255,null=True)
+    p_fath = models.CharField(max_length=255,null=True)
+    p_gender = models.CharField(max_length=10, null=True)
+    p_age = models.IntegerField(null=True)
+    p_mob = models.CharField(max_length=10, null=True)
+    p_id_doc = models.CharField(max_length=255, null=True)
+    p_id_doc_other = models.CharField(max_length=255, null=True)
+    p_id_number = models.CharField(max_length=100, null=True)
+    cfac_Q1 = models.BooleanField(null=True)
+    cfac_Q2 = models.BooleanField(null=True)
+    cfac_Q3 = models.BooleanField(null=True)
+    cfac_Q4 = models.BooleanField(null=True)
+    cfac_Q5 = models.BooleanField(null=True)
+    cfac_Q6 = models.BooleanField(null=True)
+    cfac_Q7 = models.BooleanField(null=True)
+    cfac_Q8 = models.BooleanField(null=True)
+    cfac_Q9 = models.BooleanField(null=True)
+    cfac_Q10 = models.BooleanField(null=True)
+    cfac_Q11 = models.BooleanField(null=True)
+    cfac_Q12 = models.BooleanField(null=True)
+    cfac_Q13 = models.BooleanField(null=True)
+    cfac_exclusion = models.BooleanField(null=True)
+    # ass_modality = models.BooleanField(null=True)
+    observation = models.BooleanField(null=True)
+    ag_work = models.BooleanField(null=True)
+    alter_name = models.CharField(max_length=255,null=True)
+    atlter_fath = models.CharField(max_length=255,null=True)
+    alter_gender = models.CharField(max_length=10,null=True)
+    alter_age = models.IntegerField(null=True)
+    alter_mob = models.CharField(max_length=10,null=True)
+    alter_id_doc = models.CharField(max_length=255,null=True)
+    alter_id_doc_other = models.CharField(max_length=255, null=True)
+    alter_id_number = models.CharField(max_length=255,null=True)
+    A1 = models.BooleanField()
+    A2 = models.BooleanField()
+    A3 = models.BooleanField()
+    A4 = models.BooleanField()
+    A5 = models.BooleanField()
+    A6 = models.BooleanField()
+    A7 = models.BooleanField()
+    A8 = models.BooleanField()
+    A9 = models.BooleanField()
+    A10 = models.BooleanField()
+    A11 = models.BooleanField()
+    A12 = models.BooleanField()
+    A13 = models.BooleanField()
+    exclusion_1 = models.BooleanField()
+    child_5 = models.BooleanField()
+    child_5Num = models.IntegerField(null=True)
+    c1age = models.IntegerField(null=True)
+    c1gen = models.CharField(max_length=10, null=True)
+    c2age = models.IntegerField(null=True)
+    c2gen = models.CharField(max_length=10, null=True)
+    c3age = models.IntegerField(null=True)
+    c3gen = models.CharField(max_length=10,null=True)
+    c4age = models.IntegerField(null=True)
+    c4gen = models.CharField(max_length=10,null=True)
+    c5age = models.IntegerField(null=True)
+    c5gen = models.CharField(max_length=10,null=True)
+    plw = models.BooleanField()
+    pbw_num = models.IntegerField(null=True)
+    name_surv = models.CharField(max_length=255)
+    mob_sur = models.CharField(max_length=10)
+    tpm_org = models.CharField(max_length=255, null=True)
+    tpm_name_surv = models.CharField(max_length=255, null=True)
+    tpm_mob_sur = models.CharField(max_length=20, null=True)
+    CFAC_Calculation = models.IntegerField()
+    CP_Calculation = models.IntegerField()
+    difference = models.IntegerField()
+    FO_shortcut = models.CharField(max_length=255)
+    vul = models.CharField(max_length=10)
+    vul_note = models.CharField(max_length=10, null=True)
+    display = models.CharField(max_length=255, null=True)
+    display_1 = models.CharField(max_length=255, null=True)
+    comm = models.CharField(max_length=255, null=True)
+    meta_instanceID = models.CharField(max_length=255, null=True)
+    key = models.CharField(max_length=100, unique=True)
+    note = models.CharField(max_length=100, null=True)
+    isValidated = models.BooleanField(null=True)
+    id_r = models.CharField(max_length=100, null=True)
+    # _id = models.IntegerField(unique=True)
+    # _uuid = models.CharField(max_length=255)
+    # _submission_time = models.DateTimeField()
+    SubmissionDate = models.DateTimeField()
+    formhub_uuid = models.UUIDField(null=True)
+    # _duration = models.IntegerField()
+    # _submitted_by = models.CharField(max_length=255)
+    # _xform_id = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    # created_by =  models.ForeignKey(settings.AUTH_USER_MODEL,  on_delete=models.CASCADE, )
     
+    def __str__(self):
+        return str(self.id)
+    
+    class Meta:
+        verbose_name = "CP Data"
+        verbose_name_plural = "CP Data"
 
 class TPMDataModel(models.Model):
     start = models.DateTimeField(null=True)
@@ -220,9 +360,9 @@ class TPMDataModel(models.Model):
     
     def __str__(self):
         return self.username
-    
-    verbose_name = 'TPM Data'
-    verbose_name_plural = 'TPM Data'
+    class Meta:
+        verbose_name = 'TPM Data'
+        verbose_name_plural = 'TPM Data'
     
 
 
@@ -347,9 +487,34 @@ class CSVData(models.Model):
     def __str__(self):
         return f"{self.name_ben} - {self._id}"
 
+    # class Meta:
+    #     verbose_name = "CP Data"
+    #     verbose_name_plural = "CP Data"
+
+class Sample1(models.Model):
+    TYPE_LIST = (
+        ('Regular', 'Regular'),
+        ('Borderline', 'Borderline')
+    )
+    is_urban = models.BooleanField()
+    ben_id = models.IntegerField(unique=True)
+    sample_type = models.CharField(max_length=20,choices=TYPE_LIST)
+    cp_id = models.ForeignKey(CPDataModel1, on_delete=models.RESTRICT, null=True)
+    key = models.CharField(max_length=100, null=True)
+    remarks = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by =  models.ForeignKey(settings.AUTH_USER_MODEL,  on_delete=models.DO_NOTHING)
+    
+    def __str__(self):
+        if self.is_urban:
+            return 'Urban'
+        else:
+            return 'Rural'
+        
     class Meta:
-        verbose_name = "CP Data"
-        verbose_name_plural = "CP Data"
+        verbose_name = 'Sample'
+        verbose_name_plural = 'Samples'
 
 class Sample(models.Model):
     TYPE_LIST = (

@@ -2,7 +2,7 @@ import csv
 from django.http import HttpResponse
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
-from .models import CPDataModel, TPMDataModel, TargetingForms, CSVData, TPMCSVData, Sample, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District
+from .models import CPDataModel1, TPMDataModel, TargetingForms, CSVData, TPMCSVData, Sample1, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District
 from django.utils.translation import ngettext
 from import_export import resources
 
@@ -82,10 +82,10 @@ class TargetingFormsAdmin(admin.ModelAdmin):
     search_fields = ('form_type', 'form_id', 'area_office', 'created_by__username')
     list_filter = ('form_type', 'area_office', 'created_at', 'updated_at', 'created_by')
     
-@admin.register(CSVData)
+@admin.register(CPDataModel1)
 class CSVDataAdmin(admin.ModelAdmin):
-    list_display = ('name_ben', 'ben_fath', 'ben_gender', 'ben_age', '_id')
-    search_fields = ('name_ben', 'ben_fath', '_id')
+    list_display = ('name_ben', 'ben_fath', 'ben_gender', 'ben_age', 'key')
+    search_fields = ('name_ben', 'ben_fath', 'key')
     list_filter = ('ben_gender', 'assessmentType', 'SB_ao', 'SB_province')
 
     fieldsets = (
@@ -103,12 +103,7 @@ class CSVDataAdmin(admin.ModelAdmin):
         ('Beneficiary Information', {
             'fields': ('name_ben', 'ben_fath', 'ben_gender', 'ben_age', 'mob', 'id_doc', 'id_doc_other', 'id_number')
         }),
-        ('Female Status', {
-            'fields': tuple(f'female_status_{i}' for i in range(1, 9))
-        }),
-        ('Household Head', {
-            'fields': tuple(f'HH_head_{i}' for i in [1, 2, 3, 5, 6])
-        }),
+        
         ('Return Information', {
             'fields': ('date_return', 'iom_id', 'is_principal')
         }),
@@ -116,7 +111,7 @@ class CSVDataAdmin(admin.ModelAdmin):
             'fields': ('name_p', 'p_fath', 'p_gender', 'p_age', 'p_mob', 'p_id_doc', 'p_id_doc_other', 'p_id_number')
         }),
         ('CFAC Information', {
-            'fields': tuple(f'cfac_Q{i}' for i in range(1, 14)) + ('cfac_exclusion', 'cfac_consulted')
+            'fields': tuple(f'cfac_Q{i}' for i in range(1, 14)) + ('cfac_exclusion', )
         }),
         ('Observation', {
             'fields': ('observation',)
@@ -144,16 +139,12 @@ class CSVDataAdmin(admin.ModelAdmin):
         ('Additional Fields', {
             'fields': ('FO_shortcut', 'vul', 'display_1', 'comm')
         }),
-        ('Metadata', {
-            'fields': ('meta_instanceID', 'meta_instanceName', '_id', '_uuid', '_submission_time',
-                       '_date_modified', '_version', '_duration', '_submitted_by', '_xform_id')
-        }),
     )
 
-    readonly_fields = ('_id', '_uuid', '_submission_time', '_date_modified', '_version', '_duration', '_submitted_by', '_xform_id')
+   
 
     def get_queryset(self, request):
-        return super().get_queryset(request).order_by('_id')
+        return super().get_queryset(request).order_by('key')
     
     actions = [export_as_csv]
 
@@ -205,7 +196,7 @@ class TPMCSVDataAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).order_by('_id')
     
-@admin.register(Sample)
+@admin.register(Sample1)
 class SampleAdmin(admin.ModelAdmin):
     list_display = ('ben_id', 'get_SB_ao', 'get_SB_province', 'get_district', 'get_nahia', 'get_cfac_name', 'is_urban', 'remarks', 'created_by', 'created_at')
     search_fields = ('get_SB_ao', 'get_SB_province', 'get_district')
