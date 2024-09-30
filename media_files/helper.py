@@ -249,6 +249,26 @@ def cpSerializer(data):
         'status': data.status,
         'province': data.province,
     }
+    
+            
+# def cfacSerializer(data):
+#     #list_name	name	label::English	label::Dari	label::Pashto	ao	status	province
+#     return {
+#         'list_name': data.list_name,
+#         'name': data.name,
+#         'label': data.label_english,
+#         'ao': data.ao,
+#         'province': data.province,
+#         'district': data.district,
+#         'CFAC_FP1':data.CFAC_FP1,
+#         'FP1_Number':data.FP1_Number,
+#         'CFAC_FP2':data.CFAC_FP2,
+#         'FP2_Number':data.FP2_Number,
+#         'Province_code':data.Province_code,
+#         'District_code':data.District_code,
+#         'CFAC_Name':data.CFAC_Name
+        
+#     }
 
 def uploadcpInCsv(user):
     # Filter plans from the last six months
@@ -302,7 +322,7 @@ def uploadCFACInCsv(user):
         raise Exception('No CFAC found')
 
     # Serialize the plans and return
-    cfac_list = [cpSerializer(cfac) for cfac in cfacs]
+    cfac_list = [cfacSerializer(cfac) for cfac in cfacs]
     
     df = pd.DataFrame(cfac_list)
     file_name = 'static/moda_media_files/cfacList.csv'
@@ -329,9 +349,9 @@ def villagesSerializer(data):
         'cfac_code': data.cfac_code,
         'Province': data.province,
         'District': data.district,
-        'Province_code': data.Province_code,
-        'District_code': data.District_code,
-        'CFAC_Name': data.CFAC_Name,
+        'Province_code': data.province_code,
+        'District_code': data.district_code,
+        'CFAC_Name': data.cfac_name,
         'ao': data.ao,
     }
 
