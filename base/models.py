@@ -632,7 +632,17 @@ class ApprovedList(models.Model):
     
     def __str__(self):
         return self.ben_id.username
+
+class MediaFilesType(models.Model):
+    file_name = models.CharField(max_length=255)
     
+    def __str__(self):
+        return self.file_name
+    
+    class Meta:
+        verbose_name = 'Media File'
+        verbose_name_plural = 'Media Files'
+
 class TargetingForms(models.Model):
     FORM_TYPE = (
         ('CP', 'CP'),
@@ -651,6 +661,7 @@ class TargetingForms(models.Model):
     form_id = models.IntegerField(unique=True)
     columns_list = models.TextField(null=True)
     area_office = models.CharField(max_length=5, choices=AREA_OFFICE)
+    moda_media_files = models.ManyToManyField(MediaFilesType, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete= models.CASCADE )
@@ -890,3 +901,13 @@ class District(models.Model):
     class Meta:
         verbose_name = 'District'
         verbose_name_plural = 'Districts'
+        
+class media_files(models.Model):
+    file_name = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return self.file_name
+    
+    class Meta:
+        verbose_name = 'Media File'
+        verbose_name_plural = 'Media Files'

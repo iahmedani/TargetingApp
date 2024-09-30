@@ -152,19 +152,21 @@ def uploadProvinceInCsv(user):
 
     forms = TargetingForms.objects.all()
     for form in forms:
-        try:
-            del_upload_media(form.form_id, 'province.csv', file_name)
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='province.csv', status='Success', created_by=user)
-        except Exception as e:
-            print(f'Error uploading media: {e}')
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='province.csv', status='Failed', created_by=user)
+        mediaList = form.moda_media_files.values_list('file_name', flat=True)
+        if 'province' in mediaList:
+            try:
+                del_upload_media(form.form_id, 'province.csv', file_name)
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='province.csv', status='Success', created_by=user)
+            except Exception as e:
+                print(f'Error uploading media: {e}')
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='province.csv', status='Failed', created_by=user)
 
 def districtSerializer(data):
     # list_name	name	label::English	label::Dari	label::Pashto	ao	status	province
     return {
         'list_name': data.list_name,
         'name': data.name,
-        'label::English': data.label_english,
+        'label': data.label_english,
         'label::Dari': data.label_dari,
         'label::Pashto': data.label_pashto,
         'ao': data.ao,
@@ -191,12 +193,14 @@ def uploadDistrictInCsv(user):
 
     forms = TargetingForms.objects.all()
     for form in forms:
-        try:
-            del_upload_media(form.form_id, 'district.csv', file_name)
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='district.csv', status='Success', created_by=user)
-        except Exception as e:
-            print(f'Error uploading media: {e}')
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='district.csv', status='Failed', created_by=user)
+        mediaList = form.moda_media_files.values_list('file_name', flat=True)
+        if 'district' in mediaList:
+            try:
+                del_upload_media(form.form_id, 'district.csv', file_name)
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='district.csv', status='Success', created_by=user)
+            except Exception as e:
+                print(f'Error uploading media: {e}')
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='district.csv', status='Failed', created_by=user)
 
 def tpmSerializer(data):
     #list_name	name	label::English	label::Dari	label::Pashto	ao	status	province
@@ -230,19 +234,21 @@ def uploadtpmInCsv(user):
 
     forms = TargetingForms.objects.all()
     for form in forms:
-        try:
-            del_upload_media(form.form_id, 'tpm_org.csv', file_name)
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='tpm_org.csv', status='Success', created_by=user)
-        except Exception as e:
-            print(f'Error uploading media: {e}')
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='tpm_org.csv', status='Failed', created_by=user)
+        mediaList = form.moda_media_files.values_list('file_name', flat=True)
+        if 'tpm_org' in mediaList:
+            try:
+                del_upload_media(form.form_id, 'tpm_org.csv', file_name)
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='tpm_org.csv', status='Success', created_by=user)
+            except Exception as e:
+                print(f'Error uploading media: {e}')
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='tpm_org.csv', status='Failed', created_by=user)
             
 def cpSerializer(data):
     #list_name	name	label::English	label::Dari	label::Pashto	ao	status	province
     return {
         'list_name': data.list_name,
         'name': data.name,
-        'label::English': data.label_english,
+        'label': data.label_english,
         'label::Dari': data.label_dari,
         'label::Pashto': data.label_pashto,
         'ao': data.ao,
@@ -250,25 +256,6 @@ def cpSerializer(data):
         'province': data.province,
     }
     
-            
-# def cfacSerializer(data):
-#     #list_name	name	label::English	label::Dari	label::Pashto	ao	status	province
-#     return {
-#         'list_name': data.list_name,
-#         'name': data.name,
-#         'label': data.label_english,
-#         'ao': data.ao,
-#         'province': data.province,
-#         'district': data.district,
-#         'CFAC_FP1':data.CFAC_FP1,
-#         'FP1_Number':data.FP1_Number,
-#         'CFAC_FP2':data.CFAC_FP2,
-#         'FP2_Number':data.FP2_Number,
-#         'Province_code':data.Province_code,
-#         'District_code':data.District_code,
-#         'CFAC_Name':data.CFAC_Name
-        
-#     }
 
 def uploadcpInCsv(user):
     # Filter plans from the last six months
@@ -289,12 +276,14 @@ def uploadcpInCsv(user):
 
     forms = TargetingForms.objects.all()
     for form in forms:
-        try:
-            del_upload_media(form.form_id, 'cp.csv', file_name)
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='cpList.csv', status='Success', created_by=user)
-        except Exception as e:
-            print(f'Error uploading media: {e}')
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='cpList.csv', status='Failed', created_by=user)
+        mediaList = form.moda_media_files.values_list('file_name', flat=True)
+        if 'cpList' in mediaList:
+            try:
+                del_upload_media(form.form_id, 'cpList.csv', file_name)
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='cpList.csv', status='Success', created_by=user)
+            except Exception as e:
+                print(f'Error uploading media: {e}')
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='cpList.csv', status='Failed', created_by=user)
             
 def cfacSerializer(data):
     #list_name	name	label	ao	province	district	CFAC_FP1	FP1_Number	CFAC_FP2	FP2_Number	Province_code	District_code	CFAC_Name
@@ -333,12 +322,14 @@ def uploadCFACInCsv(user):
 
     forms = TargetingForms.objects.all()
     for form in forms:
-        try:
-            del_upload_media(form.form_id, 'cfacList.csv', file_name)
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='cfacList.csv', status='Success', created_by=user)
-        except Exception as e:
-            print(f'Error uploading media: {e}')
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='cfacList.csv', status='Failed', created_by=user)
+        mediaList = form.moda_media_files.values_list('file_name', flat=True)
+        if 'cfacList' in mediaList:
+            try:
+                del_upload_media(form.form_id, 'cfacList.csv', file_name)
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='cfacList.csv', status='Success', created_by=user)
+            except Exception as e:
+                print(f'Error uploading media: {e}')
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='cfacList.csv', status='Failed', created_by=user)
             
 def villagesSerializer(data):
     #list_name	name	label	cfac_code	Province	District	Province_code	District_code	CFAC_Name	ao
@@ -372,12 +363,14 @@ def uploadVillageInCsv(user):
 
     forms = TargetingForms.objects.all()
     for form in forms:
-        try:
-            del_upload_media(form.form_id, 'villageList.csv', file_name)
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='villageList.csv', status='Success', created_by=user)
-        except Exception as e:
-            print(f'Error uploading media: {e}')
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='villageList.csv', status='Failed', created_by=user)
+        mediaList = form.moda_media_files.values_list('file_name', flat=True)
+        if 'villageList' in mediaList:
+            try:
+                del_upload_media(form.form_id, 'villageList.csv', file_name)
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='villageList.csv', status='Success', created_by=user)
+            except Exception as e:
+                print(f'Error uploading media: {e}')
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='villageList.csv', status='Failed', created_by=user)
             
 def SampleSerializer(data):
     #_id, ao, B_1, B_2, area, nahia, cfac_name, Name_of_the_village_Gozar_Elder, Name_of_the_village_Gozar_Elder, Name_of_the_village_Gozar_Elder_001, Mobile_of_the_village_Gozar_Elder_001, B_3, cp, name_ben, ben_fath, ben_gender, ben_age, mob, id_doc, id_doc_other, id_number, HH_head, date_return, iom_id, alter_name, alter_gender, alter_age, alter_mob, alter_id_doc, alter_id_doc_other, alter_id_number
@@ -459,27 +452,29 @@ def uploadSample(user):
     for form in forms:
         ao = form.area_office
         x = area_office[ao]
+        mediaList = form.moda_media_files.values_list('file_name', flat=True)
+        if 'samples' in mediaList:
     # Filter plans from the last six months
-        Samples = Sample1.objects.filter(cp_id__SB_ao=ao)
-        print(Samples)
-        if not Samples:
-            raise Exception('No Sample found')
-        # Serialize the plans and return
-        sample_list = [SampleSerializer(sample) for sample in Samples]
-        
-        df = pd.DataFrame(sample_list)
-        file_name = 'static/moda_media_files/BenTargeting.csv'
-        df.to_csv(file_name, index=False, header=True, encoding='utf-8-sig')
-        
-        # Clean memory
-        del df, sample_list, Samples
+            Samples = Sample1.objects.filter(cp_id__SB_ao=ao)
+            print(Samples)
+            if not Samples:
+                raise Exception('No Sample found')
+            # Serialize the plans and return
+            sample_list = [SampleSerializer(sample) for sample in Samples]
+            
+            df = pd.DataFrame(sample_list)
+            file_name = 'static/moda_media_files/BenTargeting.csv'
+            df.to_csv(file_name, index=False, header=True, encoding='utf-8-sig')
+            
+            # Clean memory
+            del df, sample_list, Samples
 
-        try:
-            del_upload_media(form.form_id, 'BenTargeting.csv', file_name)
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='BenTargeting.csv', status='Success', created_by=user)
-        except Exception as e:
-            print(f'Error uploading media: {e}')
-            UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='BenTargeting.csv', status='Failed', created_by=user)
+            try:
+                del_upload_media(form.form_id, 'BenTargeting.csv', file_name)
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='BenTargeting.csv', status='Success', created_by=user)
+            except Exception as e:
+                print(f'Error uploading media: {e}')
+                UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='BenTargeting.csv', status='Failed', created_by=user)
             
 def get_correct_username(email):
     url = f'{BASE_MODA_URL}users'
