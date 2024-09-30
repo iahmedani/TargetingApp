@@ -178,8 +178,8 @@ def std_data_analysis(request):
         dup_id_num = find_duplicate_id_number(df)
         dup_id_num = add_error_remarks(
             dup_id_num,
-            'Duplicate ID Number',
-            'Duplicate ID number identified based on paper or electronic tazkira. Please review the entries and determine if the data is valid, or if the duplicate records should be removed.'
+            'Duplicate ID Number:',
+            'Duplicate ID number identified based on paper or electronic tazkira (column name id_number). Please review the entries and determine if the data is valid, or if the duplicate records should be removed.'
         )
 
         # Section Three: Duplicate Mobile Number
@@ -187,31 +187,31 @@ def std_data_analysis(request):
         dup_mob_rows = add_error_remarks(
             dup_mob_rows,
             'Duplicate Mobile Number',
-            'Duplicate mobile number detected. Please review and determine whether the mobile numbers need correction or if any duplicates should be removed.'
+            'Duplicate mobile number detected (column name mob). Please review and determine whether the mobile numbers need correction or if any duplicates should be removed.'
         )
 
         # Section Four: Q5/A5 error
         a5_error = find_q5_a5_error(df)
         a5_error = add_error_remarks(
             a5_error,
-            'Vulnerability Q5 Error',
-            'Inconsistency found in Vulnerability Question 5. The household is marked as disabled, but Question 5 indicates "No". Please review the data and correct this discrepancy.'
+            'Vulnerability Q5 Error: (The head of the household has a disability.)',
+            'Inconsistency found in Vulnerability Question 5 (column A5). The household is marked as disabled (column HH_head has value 3), but Question 5 indicates "No". Please review the data and correct this discrepancy.'
         )
 
         # Section Five: Q6/A6 Error
         a6_error = find_q6_a6_error(df)
         a6_error = add_error_remarks(
             a6_error,
-            'Vulnerability Q6 Error',
-            'Vulnerability Question 6 has a potential issue: either Q6 is marked "Yes" but there are fewer than 4 children under 5, or Q6 is marked "No" but there are more than 3 children under 5. Please verify the data and make necessary corrections.'
+            'Vulnerability Q6 Error: (The household has more than 3 children under the age of 5.)',
+            'Vulnerability Question 6 has a potential issue: either Q6 (column name A6 is marked 1) is marked "Yes" but there are fewer (in column child_5Num) than 4 children under 5, or Q6 is marked "No" but there are more than 3 children under 5. Please verify the data and make necessary corrections.'
         )
 
         # Section Six: Children Under 5 Error
         child_5_error = find_child_under_5_error(df)
         child_5_error = add_error_remarks(
             child_5_error,
-            'Child Under 5 Error',
-            'Discrepancy found: The household is marked as having a child under 5, but the number of children under 5 is recorded as 0. Please verify and correct this error in the data.'
+            'Child Under 5 Error (Do you have  children under 5 in this HH? )',
+            'Discrepancy found: The household is marked as having a child under 5 (column name child_5 has value 1), but the number of children under 5 is recorded as 0. Please verify and correct this error in the data.'
         )
 
         # Section Seven: Potential Head of Household Duplication
