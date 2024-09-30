@@ -395,3 +395,80 @@ def process_excel_file(request):
         return response
     else:
         return HttpResponse("No file URL provided", status=400)
+
+
+def deduplicate_upload(request):
+    if request.method == 'POST':
+        if 'excel_file' not in request.FILES:
+            messages.error(request, 'No file selected')
+            return redirect('upload_excel')
+        
+        excel_dqa_file = request.FILES['excel_file']
+        
+        # Check if the uploaded file is an Excel (.xlsx) file
+        if not excel_dqa_file.name.endswith('.xlsx'):
+            messages.error(request, 'Please upload a valid .xlsx file')
+            return redirect('upload_excel')
+
+        # Generate a unique filename by appending the current timestamp
+        original_filename = excel_dqa_file.name
+        file_extension = os.path.splitext(original_filename)[1]  # Get the file extension
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")  # Get the current timestamp
+        unique_filename = f"{os.path.splitext(original_filename)[0]}_{timestamp}{file_extension}"
+
+        # Define the folder to save the file in
+        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'excel_files'))
+        
+        # Save the file with the unique filename
+        filename = fs.save(unique_filename, excel_dqa_file)
+        file_url = fs.url(filename)
+
+        # Display success message
+        messages.success(request, f'File uploaded successfully: {file_url}')
+        
+        context = {'file_url': file_url}
+        return render(request, 'deduplicate.html', context=context)
+        
+        
+    # Render the file upload form if the request method is GET
+    return render(request, 'deduplicate.html')
+
+
+def deduplicate_export(request):
+    file_url = request.GET.get('file_url')
+    if file_url:
+        # Extract the filename from the file URL
+        file_name = os.path.basename(file_url)
+
+        # Construct the full file path based on MEDIA_ROOT
+        file_path = os.path.join(settings.MEDIA_ROOT, 'excel_files', file_name)
+
+        # Step 1: Load the Excel file
+        df = load_excel_file(file_path)
+        
+        df_deduplicated = df.drop_duplicates()
+
+       
+        # Step 13: Prepare data for Excel output
+        output = BytesIO()
+        output_file_name = f"{os.path.splitext(file_name)[0]}_output.xlsx"
+        df_dict = {
+            'deduplicate_data': df_deduplicated,
+            'original_data': df
+        }
+
+        # Save to Excel
+        save_to_excel(df_dict, output)
+
+        # Set up the HttpResponse
+        response = HttpResponse(
+            output.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{output_file_name}"'
+
+        return response
+    else:
+        return HttpResponse("No file URL provided", status=400)
+
+
