@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import pandas as pd
 from datetime import datetime
-from base.models import Province, TargetingForms, District, CP_list, TPM_list, CFACList, VillageList, ModaProjects, ModaUser, Sample
+from base.models import Province, TargetingForms, District, CP_list, TPM_list, CFACList, VillageList, ModaProjects, ModaUser, Sample1
 from .models import UploadLogs
 
 
@@ -369,26 +369,41 @@ def SampleSerializer(data):
         'Kabul Area Office':'KAO',
         'Faizabad Area Office':'FAO'
     }
+    doc_type = {
+                      '1':'Paper Tazkira',
+                      '7':'Electronic Tazkira',
+                      '2':'Passport',
+                      '3':'Driving License',
+                      '4':'Election Card',
+                      '5':'SCOPE Card',
+                      '6':'Other ID'
+                    }
+    area_type_dict = {
+        '1':'Urban',
+        '2':'Rural'
+    }
     return {
-        '_id': data.ben_id,
-        'ao': area_office[data.cp_id.SB_ao],
-        'B_1': data.cp_id.SB_B_1,
-        'B_2': data.cp_id.SB_B_2,
-        'area': data.cp_id.SB_area,
-        'nahia': data.cp_id.SB_nahia,
-        'cfac_name': data.cp_id.SB_cfac_name,
-        'Name_of_the_village_Gozar_Elder': data.cp_id.SB_Name_of_the_village_Gozar_Elder,
-        'Name_of_the_village_Gozar_Elder': data.cp_id.SB_Name_of_the_village_Gozar_Elder,
-        'Name_of_the_village_Gozar_Elder_001': data.cp_id.SB_Name_of_the_village_Gozar_Elder_001,
-        'Mobile_of_the_village_Gozar_Elder_001': data.cp_id.SB_Mobile_of_the_village_Gozar_Elder_001,
-        'B_3': data.cp_id.SB_B_3,
+        '_id': data.cp_id.SB_ao + '_' + str(data.cp_id),
+        'SB-ao': data.cp_id.SB_ao,
+        'SB-B_1': data.cp_id.SB_province,
+        'SB-B_2': data.cp_id.SB_district,
+        'SB-province':data.cp_id.SB_B_1,
+        'SB-district': data.cp_id.SB_B_2,
+        'SB-area': area_type_dict[str(data.cp_id.SB_area)],
+        'SB-nahia': data.cp_id.SB_nahia,
+        'SB-cfac_name': data.cp_id.SB_cfac_name,
+        'SB-Name_of_the_village_Gozar_Elder': data.cp_id.SB_Name_of_the_village_Gozar_Elder,
+        'SB-Name_of_the_village_Gozar_Elder': data.cp_id.SB_Name_of_the_village_Gozar_Elder,
+        'SB-Name_of_the_village_Gozar_Elder_001': data.cp_id.SB_Name_of_the_village_Gozar_Elder_001,
+        'SB-Mobile_of_the_village_Gozar_Elder_001': data.cp_id.SB_Mobile_of_the_village_Gozar_Elder_001,
+        'SB-B_3': data.cp_id.SB_B_3,
         'cp': data.cp_id.cp,
         'name_ben': data.cp_id.name_ben,
         'ben_fath': data.cp_id.ben_fath,
         'ben_gender': data.cp_id.ben_gender,
         'ben_age': data.cp_id.ben_age,
         'mob': data.cp_id.mob,
-        'id_doc': data.cp_id.id_doc,
+        'id_doc': doc_type[str(data.cp_id.id_doc)],
         'id_doc_other': data.cp_id.id_doc_other,
         'id_number': data.cp_id.id_number,
         'date_return': data.cp_id.date_return,
@@ -399,7 +414,8 @@ def SampleSerializer(data):
         'alter_mob': data.cp_id.alter_mob,
         'alter_id_doc': data.cp_id.alter_id_doc,
         'alter_id_doc_other': data.cp_id.alter_id_doc_other,
-        'alter_id_number': data.cp_id.alter_id_number
+        'alter_id_number': data.cp_id.alter_id_number,
+        'key': data.cp_id.key
     }
 
 def uploadSample(user):
@@ -424,7 +440,8 @@ def uploadSample(user):
         ao = form.area_office
         x = area_office[ao]
     # Filter plans from the last six months
-        Samples = Sample.objects.filter(cp_id__SB_ao=x)
+        Samples = Sample1.objects.filter(cp_id__SB_ao=ao)
+        print(Samples)
         if not Samples:
             raise Exception('No Sample found')
         # Serialize the plans and return

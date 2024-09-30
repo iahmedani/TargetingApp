@@ -256,3 +256,142 @@ def std_data_analysis(request):
         return response
     else:
         return HttpResponse("No file URL provided", status=400)
+
+
+def cfac_excel_upload_view(request):
+    if request.method == 'POST':
+        if 'excel_file' not in request.FILES:
+            messages.error(request, 'No file selected')
+            return redirect('upload_excel')
+        
+        excel_dqa_file = request.FILES['excel_file']
+        
+        # Check if the uploaded file is an Excel (.xlsx) file
+        if not excel_dqa_file.name.endswith('.xlsx'):
+            messages.error(request, 'Please upload a valid .xlsx file')
+            return redirect('upload_excel')
+
+        # Generate a unique filename by appending the current timestamp
+        original_filename = excel_dqa_file.name
+        file_extension = os.path.splitext(original_filename)[1]  # Get the file extension
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")  # Get the current timestamp
+        unique_filename = f"{os.path.splitext(original_filename)[0]}_{timestamp}{file_extension}"
+
+        # Define the folder to save the file in
+        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'excel_files'))
+        
+        # Save the file with the unique filename
+        filename = fs.save(unique_filename, excel_dqa_file)
+        file_url = fs.url(filename)
+
+        # Display success message
+        messages.success(request, f'File uploaded successfully: {file_url}')
+        
+        context = {'file_url': file_url}
+        return render(request, 'upload_excel_cfac.html', context=context)
+        
+        
+    # Render the file upload form if the request method is GET
+    return render(request, 'upload_excel_cfac.html')
+
+
+
+from .cfac_village_list_utils import (
+    load_excel_file,
+    clean_dataframe,
+    check_required_columns,
+    ensure_remarks_column,
+    map_province_and_district_codes,
+    add_remarks_for_missing_codes,
+    check_missing_focal_point_contacts,
+    create_cfac_codes,
+    create_cfac_list,
+    create_village_codes,
+    create_village_list,
+    save_to_excel,
+)
+
+def process_excel_file(request):
+    file_url = request.GET.get('file_url')
+    if file_url:
+        # Extract the filename from the file URL
+        file_name = os.path.basename(file_url)
+
+        # Construct the full file path based on MEDIA_ROOT
+        file_path = os.path.join(settings.MEDIA_ROOT, 'excel_files', file_name)
+
+        # Step 1: Load the Excel file
+        df = load_excel_file(file_path)
+
+        # Step 2: Clean the DataFrame
+        df = clean_dataframe(df)
+
+        # Step 3: Check for required columns
+        required_columns = ['AO', 'Area', 'Province', 'District', 'Village', 'Nahia', 'CFAC Name',
+                            'CFAC FP 1', 'FP1 Number', 'CFAC FP2', 'FP2 Number', 'Remarks']
+        columns_present, missing_columns = check_required_columns(df, required_columns)
+        if not columns_present:
+            return HttpResponse(f"Missing required columns: {', '.join(missing_columns)}", status=400)
+
+        # Ensure 'Remarks' column exists
+        df = ensure_remarks_column(df)
+
+        # Step 4: Map province and district codes
+        province_file = os.path.join(settings.MEDIA_ROOT, 'data_files', 'province.csv')
+        district_file = os.path.join(settings.MEDIA_ROOT, 'data_files', 'district.csv')
+        df = map_province_and_district_codes(df, province_file, district_file)
+
+        # Step 5: Add remarks for missing codes
+        df = add_remarks_for_missing_codes(df)
+
+        # Step 6: Check for missing focal point contacts
+        df = check_missing_focal_point_contacts(df)
+
+        # Step 7: Separate valid and error rows
+        df['Remarks'] = df['Remarks'].fillna('').astype(str)
+        df_valid = df[df['Remarks'] == '']
+        df_errors = df[df['Remarks'] != '']
+
+        # Step 8: Separate data by area type
+        urban_df = df_valid[df_valid['Area'] == 'Urban Area'].copy()
+        rural_df = df_valid[df_valid['Area'] == 'Rural Area'].copy()
+
+        # Step 9: Create CFAC codes
+        urban_df = create_cfac_codes(urban_df, is_urban=True)
+        rural_df = create_cfac_codes(rural_df, is_urban=False)
+
+        # Step 10: Create CFAC list
+        cfac_df = pd.concat([urban_df, rural_df], ignore_index=True)
+        cfac_list = create_cfac_list(cfac_df)
+
+        # Step 11: Create village codes
+        urban_df = create_village_codes(urban_df, is_urban=True)
+        rural_df = create_village_codes(rural_df, is_urban=False)
+
+        # Step 12: Create village list
+        village_df = pd.concat([urban_df, rural_df], ignore_index=True)
+        village_list = create_village_list(village_df)
+
+        # Step 13: Prepare data for Excel output
+        output = BytesIO()
+        output_file_name = f"{os.path.splitext(file_name)[0]}_output.xlsx"
+        df_dict = {
+            'cfac_list': cfac_list,
+            'village_list': village_list,
+            'original_data': df,
+            'errors': df_errors,
+        }
+
+        # Save to Excel
+        save_to_excel(df_dict, output)
+
+        # Set up the HttpResponse
+        response = HttpResponse(
+            output.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{output_file_name}"'
+
+        return response
+    else:
+        return HttpResponse("No file URL provided", status=400)

@@ -1,0 +1,52 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-content block-content-full">
+          <div class="py-3 text-center">
+            <h1 class="h3 fw-extrabold mb-1">
+              CFAC & Village Data List Preparation
+            </h1>
+            
+          </div>
+        </div>
+      </div>
+      <div class="block block-rounded">
+        <div class="block-content block-content-full">
+          <div class="py-3 text-center">
+            <form class="row row-cols-lg-auto g-3 align-items-center" action="{% url 'data_quality:cfac_excel_import' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-12">
+                  <label class="visually-hidden" for="example-if-email">Excel File</label>
+                  <input type="file" class="form-control" name="excel_file" accept=".xlsx">
+                </div>
+                
+                <div>
+                    <button class="btn btn-primary" type="submit">Import</button>
+                </div>
+            </form>
+            
+            
+          </div>
+          {% if file_url %}
+            <a class="btn btn-primary" href="{% url 'data_quality:cfac_village_list_prep' %}?file_url={{ file_url }}">Prepare CFAC and Village Data</a>
+            {% endif %}
+
+        </div>
+      </div>
+      <h1 class="h3 fw-extrabold mb-1">
+        Important Notes:
+      </h1>
+      <h2 class="fs-sm fw-medium text-muted mb-0">
+        Please import data in Excel with only one sheet and it should have these 
+        ['AO', 'Area', 'Province', 'District', 'Village', 'Nahia', 'CFAC Name','CFAC FP 1', 'FP1 Number', 'CFAC FP2', 'FP2 Number', 'Remarks'] columns.
+       </h2>
+       <h2 class="fs-sm fw-medium text-muted mb-0">
+         Area Office should be in short form
+       </h2>
+       <h2 class="fs-sm fw-medium text-muted mb-0">
+         Province and District should be consistent with the data in the database
+       </h2>
+        
+</div>
+{% endblock content %}
