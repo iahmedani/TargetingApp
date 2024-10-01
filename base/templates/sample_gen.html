@@ -19,7 +19,7 @@
             <div class="col-lg-12 space-y-2">
               <!-- Form Inline - Default Style -->
               <form class="row row-cols-auto g-3 align-items-center" onsubmit="return false;">
-                <input type="hidden" name="csrfmiddlewaretoken" value="HzZLDWUbSHdbFsaO0rZygf6sl7WooozPms5HiuILKTIpuKha9H9VMbpbXOepCzgQ">
+                {% csrf_token %}
                 <div class="col-2">
                     <label class="form-label" for="ddAreaOffice">Select AO</label>
                   
@@ -217,7 +217,7 @@
           
           
           
-          function initializeDataTable(data) {
+          function initializeDataTable(data, instruction) {
             // If the DataTable already exists, destroy it
             if ($.fn.DataTable.isDataTable('#Samples')) {
                 $('#Samples').DataTable().destroy();
@@ -228,11 +228,27 @@
         
             // Reinitialize the DataTable with new data
             $('#Samples').DataTable({
+                title: 'Households Sampled for TPM Spot-check',
                 data: data,  // Load the data into the DataTable
                 layout: {
+                  
                   top1Start: {
-                      buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                  }
+                      buttons: [{
+                        'extend':'copy',
+                        messageTop: instruction
+                      },{
+                        extend:'csv',
+                        messageTop: instruction,
+                        filename: `TPM_Spot_Check_Households_Sampled_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}`
+                      },{
+                        
+                        extend:'excel',
+                        messageTop: instruction,
+                        filename: `TPM_Spot_Check_Households_Sampled_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}`
+                      }
+                      ]
+                  },
+    
               },
                   searchable: true,
                   fixedHeight: true,
@@ -353,6 +369,7 @@
           if (nahia === '' || nahia === '0') {
             nahia = null;
         }
+        
           
           let data = {
               'sampleSize': sampleSize,
@@ -373,9 +390,8 @@
           })
           .then(response => response.json())
           .then(data => {
-              console.log(data);
               // from data.sample[0] get all keys and console console.log
-              initializeDataTable(data.sample);
+              initializeDataTable(data.sample, data.instruction);
               
 
               SampleMessage = document.getElementById('SampleMessage');
@@ -384,7 +400,8 @@
               ApproveSampleEl = document.getElementById('ApproveSample');
 
               ApproveSampleEl.addEventListener('click', function () {
-                  let is_urban = nahia === null ? false : true; 
+                  let is_urban = nahia == 'null' ? false : true; 
+
                   let remarks = data.message;
                   ApproveSample(data.sample, is_urban, remarks);
               });

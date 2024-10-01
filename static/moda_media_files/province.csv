@@ -1,5 +1,4 @@
 ﻿list_name,name,label,label::Dari,label::Pashto,ao
-province,AF01,Kabul,کابل,کابل,KAO
 province,AF02,Kapisa,کاپیسا,کاپیسا,KAO
 province,AF03,Parwan,پروان,پروان,KAO
 province,AF04,Maidan Wardak,میدان وردک,میدان وردک,KAO
@@ -33,3 +32,4 @@ province,AF31,Badghis,بادغیس,بادغیس,HAO
 province,AF32,Hirat,هرات,هرات,HAO
 province,AF33,Farah,فراه,فراه,HAO
 province,AF34,Nimroz,نیمروز,نیمروز,KANAO
+province,AF01,Kabul,کابل,کابل,KAO

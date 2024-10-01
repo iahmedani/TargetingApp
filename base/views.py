@@ -507,6 +507,7 @@ class GenerateSampleView(View):
             # Urban area: Simple random sampling
             sample = list(queryset.filter(SB_nahia=nahia).order_by('?')[:sample_size])
             message = "Urban area: Simple random sampling based on nahia."
+            instruction = "For exlusion Error, Please do one interview of the household after three (3) spot-check interviews, distribute 100 interviews to ensure maximum possible randomness. Total target for district is 100"
         else:
             # Rural area: Apply priority-based sampling
             cfacs = select_unique_cfacs(queryset, num_cfacs=TOTAL_CLUSTERS)
@@ -520,6 +521,8 @@ class GenerateSampleView(View):
                     sample.update(cfac_records)
                 
                 message = f"Rural area: CFAC-based sampling with exactly {TOTAL_CLUSTERS} CFACs."
+                instruction = "For exlusion Error, Please do 4 interviews per CFAC, you can use systematic sampling/random sampling to to ensure randomness. Total target for district is 100"
+                
             else:
                 # Check for villages
                 villages = select_unique_villages(queryset, num_villages=TOTAL_CLUSTERS)
@@ -533,11 +536,12 @@ class GenerateSampleView(View):
                         sample.update(village_records)
                     
                     message = f"Rural area: Village-based sampling with exactly {TOTAL_CLUSTERS} villages."
+                    instruction = "For exlusion Error, Please do 4 interviews per Village, you can use systematic sampling/random sampling to to ensure randomness. Total target for district is 100"
                 else:
                     # Priority 3: Random sampling
                     sample = set(queryset.order_by('?').values_list('id', flat=True)[:sample_size])
                     message = f"Rural area: Random sampling due to not having exactly {TOTAL_CLUSTERS} CFACs or villages with 11+ records."
-
+                    instruction = "For exlusion Error, Please do one interview of the household after three (3) spot-check interviews, distribute 100 interviews to ensure maximum possible randomness. Total target for district is 100"
             # Ensure we have the correct sample size
             if len(sample) < sample_size:
                 additional_records = set(queryset.exclude(id__in=sample).order_by('?').values_list('id', flat=True)[:sample_size - len(sample)])
@@ -565,7 +569,8 @@ class GenerateSampleView(View):
         response_data = {
             "message": message,
             "sample_size": len(sample_data),
-            "sample": sample_data
+            "sample": sample_data,
+            "instruction": instruction
         }
 
         return JsonResponse(response_data, safe=False)    
