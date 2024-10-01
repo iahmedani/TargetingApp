@@ -607,11 +607,15 @@ class ApproveSampleView(View):
             SB_district__in=csv_data_objects.values('SB_district')
         )
 
-        if is_urban:
+        if is_urban & is_urban ==1:
             # For urban samples, include nahia in the query
             existing_csv_data = existing_csv_data.filter(
                 SB_nahia__in=csv_data_objects.values('SB_nahia')
             )
+            is_urban = True  # Set is_urban to True for urban samples
+        else:
+            is_urban = False  # Set is_urban to False for rural samples
+            # For rural samples, exclude nahia from the query
         
         # Check if there are any existing samples
         existing_samples = Sample1.objects.filter(cp_id__in=existing_csv_data).exists()

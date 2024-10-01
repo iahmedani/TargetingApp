@@ -267,7 +267,7 @@
                   { "data": "SB_province", "title": "Province" },
                   { "data": "SB_district", "title": "District" },
                   { "data": function(data, type, row, meta){
-                    if (data.SB_urban === '1') {
+                    if (data.SB_area == '1') {
                         return 'Urban';
                     } else {
                         return 'Rural';
