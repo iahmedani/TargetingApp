@@ -23,7 +23,7 @@ def find_duplicate_mobile_number(df):
     """Section Three: Duplicate Mobile Number."""
     dup_mob_rows = df[df['mob'].duplicated(keep=False)]
     dup_mob_rows_sorted = dup_mob_rows.sort_values(by=['SB-district', 'SB-cfac_name', 'mob'])
-    dup_mob_rows_filtered = dup_mob_rows_sorted[dup_mob_rows_sorted['mob'] != 7999999999]
+    dup_mob_rows_filtered = dup_mob_rows_sorted[dup_mob_rows_sorted['mob'] != 799999999]
     return dup_mob_rows_filtered
 
 
