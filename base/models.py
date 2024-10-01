@@ -661,7 +661,7 @@ class TargetingForms(models.Model):
     form_id = models.IntegerField(unique=True)
     columns_list = models.TextField(null=True)
     area_office = models.CharField(max_length=5, choices=AREA_OFFICE)
-    moda_media_files = models.ManyToManyField(MediaFilesType, null=True)
+    moda_media_files = models.ManyToManyField(MediaFilesType)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete= models.CASCADE )

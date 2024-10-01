@@ -159,3 +159,4 @@ zipp
 zstandard==0.23.0
 rapidfuzz
 xlsxwriter
+recordlinkage

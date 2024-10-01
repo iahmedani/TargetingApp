@@ -2,6 +2,8 @@ import pandas as pd
 from joblib import Parallel, delayed
 from rapidfuzz import fuzz
 from itertools import combinations
+import recordlinkage
+from recordlinkage.preprocessing import clean
 
 
 def read_dataset(file):
@@ -46,41 +48,75 @@ def find_child_under_5_error(df):
     return child_5_error_sorted
 
 
+# def find_potential_hoh_duplicates(df):
+#     """Section Seven: Potential Head of Household Duplication."""
+
+#     def compare_rows(index_pair, df_block):
+#         idx1, idx2 = index_pair
+#         row1 = df_block.loc[idx1]
+#         row2 = df_block.loc[idx2]
+
+#         name_similarity = fuzz.partial_ratio(str(row1['name_ben']), str(row2['name_ben']))
+#         father_similarity = fuzz.partial_ratio(str(row1['ben_fath']), str(row2['ben_fath']))
+#         id_similarity = fuzz.partial_ratio(str(row1['id_number']), str(row2['id_number']))
+
+#         if name_similarity >= 85 and father_similarity >= 85 and id_similarity >= 85:
+#             return (idx1, idx2)
+#         return None
+
+#     df['block_key'] = df['name_ben'].astype(str).str[:2]
+#     all_comparisons = []
+
+#     for block_value, block_df in df.groupby('block_key'):
+#         index_pairs = list(combinations(block_df.index, 2))
+
+#         results = Parallel(n_jobs=-1)(
+#             delayed(compare_rows)(pair, block_df) for pair in index_pairs
+#         )
+
+#         results = [result for result in results if result]
+#         all_comparisons.extend(results)
+
+#     if all_comparisons:
+#         duplicate_indices = list(set([idx for pair in all_comparisons for idx in pair]))
+#         duplicate_rows = df.loc[duplicate_indices]
+#         return duplicate_rows
+#     else:
+#         return pd.DataFrame()  # Return empty DataFrame if no duplicates found
+
 def find_potential_hoh_duplicates(df):
     """Section Seven: Potential Head of Household Duplication."""
+    # Preprocess the data: clean and normalize strings
+    df['name_ben_clean'] = df['name_ben'].astype(str).str.lower().str.strip()
+    df['ben_fath_clean'] = df['ben_fath'].astype(str).str.lower().str.strip()
+    df['id_number_clean'] = df['id_number'].astype(str).str.lower().str.strip()
 
-    def compare_rows(index_pair, df_block):
-        idx1, idx2 = index_pair
-        row1 = df_block.loc[idx1]
-        row2 = df_block.loc[idx2]
+    # Indexing: use blocking to reduce the number of comparisons
+    indexer = recordlinkage.Index()
+    indexer.block('name_ben_clean')
+    candidate_pairs = indexer.index(df)
 
-        name_similarity = fuzz.partial_ratio(str(row1['name_ben']), str(row2['name_ben']))
-        father_similarity = fuzz.partial_ratio(str(row1['ben_fath']), str(row2['ben_fath']))
-        id_similarity = fuzz.partial_ratio(str(row1['id_number']), str(row2['id_number']))
+    # Comparison: define comparison criteria
+    compare = recordlinkage.Compare()
+    compare.string('name_ben_clean', 'name_ben_clean', method='jarowinkler', threshold=0.9, label='name_similarity')
+    compare.string('ben_fath_clean', 'ben_fath_clean', method='jarowinkler', threshold=0.9, label='father_similarity')
+    compare.string('id_number_clean', 'id_number_clean', method='jarowinkler', threshold=0.9, label='id_similarity')
 
-        if name_similarity >= 85 and father_similarity >= 85 and id_similarity >= 85:
-            return (idx1, idx2)
-        return None
+    # Compute similarities
+    features = compare.compute(candidate_pairs, df)
 
-    df['block_key'] = df['name_ben'].astype(str).str[:2]
-    all_comparisons = []
+    # Identify potential duplicates where all similarities are above thresholds
+    potential_duplicates = features[(features['name_similarity'] == 1) &
+                                    (features['father_similarity'] == 1) &
+                                    (features['id_similarity'] == 1)].index
 
-    for block_value, block_df in df.groupby('block_key'):
-        index_pairs = list(combinations(block_df.index, 2))
+    # Extract the duplicate rows
+    duplicate_indices = list(set(potential_duplicates.get_level_values(0)).union(
+                             set(potential_duplicates.get_level_values(1))))
+    duplicate_rows = df.loc[duplicate_indices]
 
-        results = Parallel(n_jobs=-1)(
-            delayed(compare_rows)(pair, block_df) for pair in index_pairs
-        )
+    return duplicate_rows
 
-        results = [result for result in results if result]
-        all_comparisons.extend(results)
-
-    if all_comparisons:
-        duplicate_indices = list(set([idx for pair in all_comparisons for idx in pair]))
-        duplicate_rows = df.loc[duplicate_indices]
-        return duplicate_rows
-    else:
-        return pd.DataFrame()  # Return empty DataFrame if no duplicates found
 
 
 def add_error_remarks(df, error_type, remarks):

@@ -231,6 +231,28 @@ def std_data_analysis(request):
 
         # Section Nine: Produce final excel workbook
         df_with_errors, df_without_errors = produce_final_excel(df, merged_errors)
+        
+        df_summary = pd.pivot_table(
+                                df, 
+                                values='KEY', 
+                                index='vul', 
+                                aggfunc='count', 
+                                margins=True,       # Adds the total row
+                                margins_name='Total'  # Renames the total row to 'Total'
+                            ).reset_index()
+        
+        # df_with_errors = df_with_errors[df_with_errors['vul']=='Yes']
+        # df_without_errors = df_without_errors[df_without_errors['vul']=='Yes']
+        df_with_errors_summary = pd.pivot_table(
+                                        df_with_errors, 
+                                        values='KEY', 
+                                        index='error_type', 
+                                        aggfunc='count', 
+                                        margins=True,       # Adds the total row
+                                        margins_name='Total'  # Renames the total row to 'Total'
+                                    ).reset_index()
+        
+
 
         # Create an in-memory output file for the new workbook
         output = BytesIO()
@@ -238,6 +260,8 @@ def std_data_analysis(request):
         # Use a context manager to handle the Excel writer
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             # Write each dataframe to a different worksheet
+            df_summary.to_excel(writer, sheet_name='Summary', index=False)
+            df_with_errors_summary.to_excel(writer, sheet_name='Error_Summary', index=False)
             df_with_errors.to_excel(writer, sheet_name='Errors', index=False)
             df_without_errors.to_excel(writer, sheet_name='No_Errors', index=False)
             # No need to call writer.close(); it's handled by the context manager

@@ -476,8 +476,9 @@ def uploadSample(user):
                 print(f'Error uploading media: {e}')
                 UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='BenTargeting.csv', status='Failed', created_by=user)
             
-def get_correct_username(email):
+def get_correct_username(email,moda_username):
     url = f'{BASE_MODA_URL}users'
+    user_name_url = f'{url}/{moda_username}'
     params = {
     'search': email
     }
@@ -487,7 +488,15 @@ def get_correct_username(email):
             data = response.json()
             if data:
                 return data[0]['username']
-            return None
+        else:
+            response = requests.get(user_name_url, headers=HEADER)
+            if response.status_code == 200:
+                data = response.json()
+                return data['username']
+            else:
+                print(f'Error getting username: {response.status_code} - {response.text}')
+                return None
+        
     except Exception as e:
         print(f'Error getting username: {e}')
         return None
@@ -548,7 +557,7 @@ def user_access():
         users = ModaUser.objects.filter(area_office=ao, is_active=True, access_given=False)
         if users:
             for user in users:
-                username = get_correct_username(user.moda_email)
+                username = get_correct_username(user.moda_email, user.moda_username)
                 if username:
                     y = grant_access(username, proj.project_id)
                     if y:

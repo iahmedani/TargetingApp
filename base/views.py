@@ -499,8 +499,9 @@ class GenerateSampleView(View):
         queryset = CPDataModel1.objects.filter(
             SB_ao=area_office,
             SB_province=province,
-            SB_district=district
-        ).exclude(assessmentType='Replacement Assessment')
+            SB_district=district,
+            vul="Yes"
+        ).exclude(assessmentType='Replacement')
 
         if nahia is not None:
             # Urban area: Simple random sampling
