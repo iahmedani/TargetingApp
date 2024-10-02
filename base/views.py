@@ -473,6 +473,122 @@ def select_unique_villages(queryset, num_villages):
     
     return villages[:num_villages]
 
+# class GenerateSampleView(View):
+#     def post(self, request, *args, **kwargs):
+#         try:
+#             data = json.loads(request.body)
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+#         area_office = data.get('area_office')
+#         province = data.get('province')
+#         district = data.get('district')
+#         nahia = data.get('nahia')
+#         if nahia == 'null' or nahia is None:
+#             nahia = None  # Assign None to nahia if 'null' is passed
+#         sample_size = data.get('sampleSize')
+
+#         if not all([area_office, province, district, sample_size]):
+#             return JsonResponse({'error': 'Missing required parameters'}, status=400)
+
+#         try:
+#             sample_size = int(sample_size)
+#         except ValueError:
+#             return JsonResponse({'error': 'sampleSize must be an integer'}, status=400)
+#         query = Q(SB_ao=area_office, SB_province=province, SB_district=district, vul="Yes") & ~Q(assessmentType='Replacement')
+        
+#         if nahia is not None:
+#             query &= Q(SB_nahia=nahia)
+#             sample_exists = Sample1.objects.filter(cp_id__in=CPDataModel1.objects.filter(query)).exists()
+            
+#             if sample_exists:
+#                 print('sample already exists')
+#                 return JsonResponse({'error': 'Sample already exists for the given parameters'}, status=400)
+#             else:
+#                 queryset = CPDataModel1.objects.filter(query)
+#             # Urban area: Simple random sampling
+#                 sample = list(queryset.filter(SB_nahia=nahia).order_by('?')[:sample_size])
+#                 message = "Urban area: Simple random sampling based on nahia."
+#                 instruction = "For exlusion Error, Please do one interview of the household after three (3) spot-check interviews, distribute 100 interviews to ensure maximum possible randomness. Total target for district is 100"
+#         else:
+            
+#             sample_exists = Sample1.objects.filter(cp_id__in=CPDataModel1.objects.filter(query)).exists()
+#             if sample_exists:
+#                 return JsonResponse({'error': 'Sample already exists for the given parameters'}, status=400)
+#             else:
+#                 queryset = CPDataModel1.objects.filter(query)
+#             # Rural area: Apply priority-based sampling
+#             cfacs = select_unique_cfacs(queryset, num_cfacs=TOTAL_CLUSTERS)
+            
+#             if len(cfacs) == TOTAL_CLUSTERS:
+#                 # Priority 1: CFAC-based sampling
+#                 sample = set()
+                
+#                 for cfac in cfacs:
+#                     cfac_records = set(queryset.filter(SB_cfac_name=cfac['SB_cfac_name']).order_by('?').values_list('id', flat=True)[:min(10, sample_size // TOTAL_CLUSTERS)])
+#                     sample.update(cfac_records)
+                
+#                 message = f"Rural area: CFAC-based sampling with exactly {TOTAL_CLUSTERS} CFACs."
+#                 instruction = "For exlusion Error, Please do 4 interviews per CFAC, you can use systematic sampling/random sampling to to ensure randomness. Total target for district is 100"
+                
+#             else:
+#                 # Check for villages
+#                 villages = select_unique_villages(queryset, num_villages=TOTAL_CLUSTERS)
+                
+#                 if len(villages) == TOTAL_CLUSTERS:
+#                     # Priority 2: Village-based sampling
+#                     sample = set()
+                    
+#                     for village in villages:
+#                         village_records = set(queryset.filter(SB_B_3=village['SB_B_3']).order_by('?').values_list('id', flat=True)[:min(10, sample_size // TOTAL_CLUSTERS)])
+#                         sample.update(village_records)
+                    
+#                     message = f"Rural area: Village-based sampling with exactly {TOTAL_CLUSTERS} villages."
+#                     instruction = "For exlusion Error, Please do 4 interviews per Village, you can use systematic sampling/random sampling to to ensure randomness. Total target for district is 100"
+#                 else:
+#                     # Priority 3: Random sampling
+#                     sample = set(queryset.order_by('?').values_list('id', flat=True)[:sample_size])
+#                     message = f"Rural area: Random sampling due to not having exactly {TOTAL_CLUSTERS} CFACs or villages with 11+ records."
+#                     instruction = "For exlusion Error, Please do one interview of the household after three (3) spot-check interviews, distribute 100 interviews to ensure maximum possible randomness. Total target for district is 100"
+#             # Ensure we have the correct sample size
+#             if len(sample) < sample_size:
+#                 additional_records = set(queryset.exclude(id__in=sample).order_by('?').values_list('id', flat=True)[:sample_size - len(sample)])
+#                 sample.update(additional_records)
+            
+#             # Convert set of IDs back to queryset
+#             sample = queryset.filter(id__in=sample)
+
+#         # Ensure the sample size does not exceed the requested size
+#         sample = sample[:sample_size]
+
+#         # Prepare the response data dynamically
+#         sample_data = []
+#         for record in sample:
+#             record_data = {}
+#             for field in record._meta.fields:
+#                 field_name = field.name
+#                 field_value = getattr(record, field_name)
+#                 # Convert non-JSON serializable types to string
+#                 if isinstance(field_value, (datetime.date, datetime.datetime)):
+#                     field_value = field_value.isoformat()
+#                 record_data[field_name] = field_value
+#             sample_data.append(record_data)
+
+#         response_data = {
+#             "message": message,
+#             "sample_size": len(sample_data),
+#             "sample": sample_data,
+#             "instruction": instruction
+#         }
+
+#         return JsonResponse(response_data, safe=False)    
+
+from django.views import View
+from django.http import JsonResponse
+from django.db.models import Q
+import json
+import datetime
+
 class GenerateSampleView(View):
     def post(self, request, *args, **kwargs):
         try:
@@ -484,76 +600,104 @@ class GenerateSampleView(View):
         province = data.get('province')
         district = data.get('district')
         nahia = data.get('nahia')
-        if nahia == 'null' or nahia is None:
-            nahia = None  # Assign None to nahia if 'null' is passed
         sample_size = data.get('sampleSize')
 
+        # Validate input parameters
+        if nahia == 'null' or nahia is None:
+            nahia = None
+        
         if not all([area_office, province, district, sample_size]):
             return JsonResponse({'error': 'Missing required parameters'}, status=400)
-
+        
         try:
             sample_size = int(sample_size)
         except ValueError:
             return JsonResponse({'error': 'sampleSize must be an integer'}, status=400)
 
-        queryset = CPDataModel1.objects.filter(
-            SB_ao=area_office,
-            SB_province=province,
-            SB_district=district,
-            vul="Yes"
-        ).exclude(assessmentType='Replacement')
+        # Base query
+        query = Q(SB_ao=area_office, SB_province=province, SB_district=district, vul="Yes") & ~Q(assessmentType='Replacement')
+        
 
+        # Add nahia to query if present
+        if nahia is not None:
+            query &= Q(SB_nahia=nahia)
+            
+        # Check if a sample already exists for this query
+        sample_exists = Sample1.objects.filter(cp_id__in=CPDataModel1.objects.filter(query)).exists()
+        
+        if sample_exists:
+            return JsonResponse({'error': 'Sample already exists for the given parameters'}, status=400)
+
+        # Fetch the queryset based on the filter
+        queryset = CPDataModel1.objects.filter(query)
+
+        # Sampling logic
         if nahia is not None:
             # Urban area: Simple random sampling
-            sample = list(queryset.filter(SB_nahia=nahia).order_by('?')[:sample_size])
+            sample = list(queryset.order_by('?')[:sample_size])
             message = "Urban area: Simple random sampling based on nahia."
-            instruction = "For exlusion Error, Please do one interview of the household after three (3) spot-check interviews, distribute 100 interviews to ensure maximum possible randomness. Total target for district is 100"
+            instruction = "For exclusion error, please do one interview of the household after three (3) spot-check interviews. Distribute 100 interviews to ensure maximum randomness. Total target for district is 100."
         else:
-            # Rural area: Apply priority-based sampling
-            cfacs = select_unique_cfacs(queryset, num_cfacs=TOTAL_CLUSTERS)
-            
-            if len(cfacs) == TOTAL_CLUSTERS:
-                # Priority 1: CFAC-based sampling
-                sample = set()
-                
-                for cfac in cfacs:
-                    cfac_records = set(queryset.filter(SB_cfac_name=cfac['SB_cfac_name']).order_by('?').values_list('id', flat=True)[:min(10, sample_size // TOTAL_CLUSTERS)])
-                    sample.update(cfac_records)
-                
-                message = f"Rural area: CFAC-based sampling with exactly {TOTAL_CLUSTERS} CFACs."
-                instruction = "For exlusion Error, Please do 4 interviews per CFAC, you can use systematic sampling/random sampling to to ensure randomness. Total target for district is 100"
-                
-            else:
-                # Check for villages
-                villages = select_unique_villages(queryset, num_villages=TOTAL_CLUSTERS)
-                
-                if len(villages) == TOTAL_CLUSTERS:
-                    # Priority 2: Village-based sampling
-                    sample = set()
-                    
-                    for village in villages:
-                        village_records = set(queryset.filter(SB_B_3=village['SB_B_3']).order_by('?').values_list('id', flat=True)[:min(10, sample_size // TOTAL_CLUSTERS)])
-                        sample.update(village_records)
-                    
-                    message = f"Rural area: Village-based sampling with exactly {TOTAL_CLUSTERS} villages."
-                    instruction = "For exlusion Error, Please do 4 interviews per Village, you can use systematic sampling/random sampling to to ensure randomness. Total target for district is 100"
-                else:
-                    # Priority 3: Random sampling
-                    sample = set(queryset.order_by('?').values_list('id', flat=True)[:sample_size])
-                    message = f"Rural area: Random sampling due to not having exactly {TOTAL_CLUSTERS} CFACs or villages with 11+ records."
-                    instruction = "For exlusion Error, Please do one interview of the household after three (3) spot-check interviews, distribute 100 interviews to ensure maximum possible randomness. Total target for district is 100"
-            # Ensure we have the correct sample size
-            if len(sample) < sample_size:
-                additional_records = set(queryset.exclude(id__in=sample).order_by('?').values_list('id', flat=True)[:sample_size - len(sample)])
-                sample.update(additional_records)
-            
-            # Convert set of IDs back to queryset
-            sample = queryset.filter(id__in=sample)
+            # Rural area: Priority-based sampling
+            sample, message, instruction = self.sample_rural_area(queryset, sample_size)
 
         # Ensure the sample size does not exceed the requested size
         sample = sample[:sample_size]
 
         # Prepare the response data dynamically
+        sample_data = self.prepare_sample_data(sample)
+
+        # Response data
+        response_data = {
+            "message": message,
+            "sample_size": len(sample_data),
+            "sample": sample_data,
+            "instruction": instruction
+        }
+
+        return JsonResponse(response_data, safe=False)
+
+    def sample_rural_area(self, queryset, sample_size):
+        TOTAL_CLUSTERS = 25  # Example value for total clusters
+        cfacs = select_unique_cfacs(queryset, num_cfacs=TOTAL_CLUSTERS)
+
+        if len(cfacs) == TOTAL_CLUSTERS:
+            # CFAC-based sampling
+            sample = set()
+            for cfac in cfacs:
+                cfac_records = set(queryset.filter(SB_cfac_name=cfac['SB_cfac_name']).order_by('?').values_list('id', flat=True)[:min(10, sample_size // TOTAL_CLUSTERS)])
+                sample.update(cfac_records)
+
+            message = f"Rural area: CFAC-based sampling with exactly {TOTAL_CLUSTERS} CFACs."
+            instruction = "For exclusion error, please do 4 interviews per CFAC. You can use systematic/random sampling to ensure randomness. Total target for district is 100."
+        else:
+            villages = select_unique_villages(queryset, num_villages=TOTAL_CLUSTERS)
+
+            if len(villages) == TOTAL_CLUSTERS:
+                # Village-based sampling
+                sample = set()
+                for village in villages:
+                    village_records = set(queryset.filter(SB_B_3=village['SB_B_3']).order_by('?').values_list('id', flat=True)[:min(10, sample_size // TOTAL_CLUSTERS)])
+                    sample.update(village_records)
+
+                message = f"Rural area: Village-based sampling with exactly {TOTAL_CLUSTERS} villages."
+                instruction = "For exclusion error, please do 4 interviews per village. You can use systematic/random sampling. Total target for district is 100."
+            else:
+                # Random sampling
+                sample = set(queryset.order_by('?').values_list('id', flat=True)[:sample_size])
+                message = f"Rural area: Random sampling due to lack of exactly {TOTAL_CLUSTERS} CFACs or villages with 11+ records."
+                instruction = "For exclusion error, please do one interview of the household after three (3) spot-check interviews. Distribute 100 interviews to ensure maximum randomness. Total target for district is 100."
+
+        # Ensure we have the correct sample size
+        if len(sample) < sample_size:
+            additional_records = set(queryset.exclude(id__in=sample).order_by('?').values_list('id', flat=True)[:sample_size - len(sample)])
+            sample.update(additional_records)
+
+        # Convert set of IDs back to queryset
+        sample = queryset.filter(id__in=sample)
+        return sample, message, instruction
+
+    def prepare_sample_data(self, sample):
         sample_data = []
         for record in sample:
             record_data = {}
@@ -565,15 +709,7 @@ class GenerateSampleView(View):
                     field_value = field_value.isoformat()
                 record_data[field_name] = field_value
             sample_data.append(record_data)
-
-        response_data = {
-            "message": message,
-            "sample_size": len(sample_data),
-            "sample": sample_data,
-            "instruction": instruction
-        }
-
-        return JsonResponse(response_data, safe=False)    
+        return sample_data
 
 class ApproveSampleView(View):
     @transaction.atomic
