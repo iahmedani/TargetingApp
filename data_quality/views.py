@@ -160,7 +160,33 @@ def std_data_analysis1(request):
             return HttpResponse(f"Error processing the file: {str(e)}", status=500)
     else:
         return HttpResponse("No file URL provided", status=400)
-    
+
+
+def calculate_time_difference(df, start_col='start', end_col='end'):
+    """
+    Calculate the difference in minutes between start_time and end_time and return a new DataFrame with the result.
+
+    :param df: pandas DataFrame containing the start and end time columns
+    :param start_col: Name of the start time column (default is 'start_time')
+    :param end_col: Name of the end time column (default is 'end_time')
+    :return: A new DataFrame with the original data and an additional column 'time_difference_minutes'
+    """
+
+    # Create a copy of the DataFrame to avoid modifying the original
+    df_copy = df.copy()
+
+    # Ensure that start_time and end_time are in datetime format
+    df_copy[start_col] = pd.to_datetime(df_copy[start_col], errors='coerce')
+    df_copy[end_col] = pd.to_datetime(df_copy[end_col], errors='coerce')
+
+    # Calculate the time difference in minutes
+    df_copy['time_difference_minutes'] = (df_copy[end_col] - df_copy[start_col]).dt.total_seconds() / 60
+
+    # Handling potential missing or invalid values by replacing them with NaN or a default value (e.g., 0)
+    df_copy['time_difference_minutes'] = df_copy['time_difference_minutes'].fillna(0)
+
+    return df_copy
+
 
 def std_data_analysis(request):
     file_url = request.GET.get('file_url')
@@ -232,10 +258,25 @@ def std_data_analysis(request):
         # Section Nine: Produce final excel workbook
         df_with_errors, df_without_errors = produce_final_excel(df, merged_errors)
         
+        avg_time = calculate_time_difference(df)
+        
+        avg_time = avg_time.pivot_table(values='time_difference_minutes', index=['cp','username'], columns='vul', aggfunc='mean', margins=True, margins_name='Total')
+        
         df_summary = pd.pivot_table(
                                 df, 
                                 values='KEY', 
-                                index='vul', 
+                                index=['cp','assessmentType'],
+                                columns='vul', 
+                                aggfunc='count', 
+                                margins=True,       # Adds the total row
+                                margins_name='Total'  # Renames the total row to 'Total'
+                            ).reset_index()
+        
+        df_summary1 = pd.pivot_table(
+                                df, 
+                                values='KEY', 
+                                index=['cp','assessmentType','SB-cfac_name','username','vul'],
+                                columns='today', 
                                 aggfunc='count', 
                                 margins=True,       # Adds the total row
                                 margins_name='Total'  # Renames the total row to 'Total'
@@ -251,6 +292,8 @@ def std_data_analysis(request):
                                         margins=True,       # Adds the total row
                                         margins_name='Total'  # Renames the total row to 'Total'
                                     ).reset_index()
+        df_with_errors_summary = df_with_errors_summary.rename(columns={'error_type': 'Error Type', 'KEY':'Count'})
+
         
 
 
@@ -261,6 +304,8 @@ def std_data_analysis(request):
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             # Write each dataframe to a different worksheet
             df_summary.to_excel(writer, sheet_name='Summary', index=False)
+            df_summary1.to_excel(writer, sheet_name='DetailSummary', index=False)
+            avg_time.to_excel(writer, sheet_name='Avg_Time', index=True)
             df_with_errors_summary.to_excel(writer, sheet_name='Error_Summary', index=False)
             df_with_errors.to_excel(writer, sheet_name='Errors', index=False)
             df_without_errors.to_excel(writer, sheet_name='No_Errors', index=False)

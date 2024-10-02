@@ -1,4 +1,207 @@
-﻿list_name,name,label,label::Dari,label::Pashto,ao,province
+﻿list_name,name,label,label_dari,label_pashto,ao,province
+district,AF0104,Bagrami,بگرامی, ,KAO,AF01
+district,AF0103,Chahar Asyab,چهارآسیاب,چهارآسیاب,KAO,AF01
+district,AF0105,Deh Sabz,ده سبز,ده سبز,KAO,AF01
+district,AF0113,Estalef,استالیف,استالیف,KAO,AF01
+district,AF0112,Farza,فرزه,فرزه,KAO,AF01
+district,AF0111,Guldara,گلدره,گلدره,KAO,AF01
+district,AF0101,Kabul,کابل,کابل,KAO,AF01
+district,AF0110,Kalakan,کلکان,کلکان,KAO,AF01
+district,AF0109,Khak-e-Jabbar,خاک جبار,خاک جبار,KAO,AF01
+district,AF0108,Mir Bacha Kot,میربچه کوت,میربچه کوت,KAO,AF01
+district,AF0107,Musahi,موسهی,موسهی,KAO,AF01
+district,AF0102,Paghman,پغمان,پغمان,KAO,AF01
+district,AF0114,Qara Bagh,قره باغ,قره باغ,KAO,AF01
+district,AF0106,Shakar Dara,شکردره,شکردره,KAO,AF01
+district,AF0115,Surobi,سروبی,سروبی,KAO,AF01
+district,AF0207,Alasay,آله سائی,آله سائی,KAO,AF02
+district,AF0204,Hisa-e-Awal-e-Kohistan,حصه اول کوهستان,حصه اول کوهستان,KAO,AF02
+district,AF0202,Hisa-e-Duwum-e-Kohistan,حصه دوم کوهستان,حصه دوم کوهستان,KAO,AF02
+district,AF0203,Koh Band,کوه بند,کوه بند,KAO,AF02
+district,AF0201,Mahmood-e-Raqi,محمود راقی,محمود راقی,KAO,AF02
+district,AF0205,Nijrab,نجراب,نجراب,KAO,AF02
+district,AF0206,Tagab,تگاب,تگاب,KAO,AF02
+district,AF0302,Bagram,بگرام,بگرام,KAO,AF03
+district,AF0301,Charikar,چاریکار,چاریکار,KAO,AF03
+district,AF0307,Ghorband,غوربند,غوربند,KAO,AF03
+district,AF0305,Jabal Saraj,جبل السراج,جبل السراج,KAO,AF03
+district,AF0308,Koh-e-Safi,کوه صافی,کوه صافی,KAO,AF03
+district,AF0306,Salang,سالنگ,سالنگ,KAO,AF03
+district,AF0304,Sayed Khel,سیدخیل,سیدخیل,KAO,AF03
+district,AF0310,Shekh Ali,شیخ علی,شیخ علی,KAO,AF03
+district,AF0303,Shinwari,شینواری,شینواری,KAO,AF03
+district,AF0309,Surkh-e-Parsa,سرخ پارسا,سرخ پارسا,KAO,AF03
+district,AF0404,Chak-e-Wardak,چک,چک,KAO,AF04
+district,AF0406,Daymirdad,دایمیرداد,دایمیرداد,KAO,AF04
+district,AF0407,Hesa-e-Awal-e-Behsud,حصه اول بهسود,حصه اول بهسود,KAO,AF04
+district,AF0408,Jaghatu,جغتو,جغتو,KAO,AF04
+district,AF0403,Jalrez,جلریز,جلریز,KAO,AF04
+district,AF0409,Markaz-e-Behsud,مرکز بهسود,مرکز بهسود,KAO,AF04
+district,AF0401,Maydan Shahr,میدان شهر,میدان شهر,KAO,AF04
+district,AF0402,Nerkh,نرخ,نرخ,KAO,AF04
+district,AF0405,Saydabad,سیدآباد,سیدآباد,KAO,AF04
+district,AF0507,Azra,آزره,آزره,KAO,AF05
+district,AF0502,Baraki Barak,برکی برک,برکی برک,KAO,AF05
+district,AF0503,Charkh,چرخ,چرخ,KAO,AF05
+district,AF0506,Kharwar,خروار,خروار,KAO,AF05
+district,AF0504,Khoshi,خوشی,خوشی,KAO,AF05
+district,AF0505,Mohammad Agha,محمد آغه,محمد آغه,KAO,AF05
+district,AF0501,Pul-e-Alam,پل علم,پل علم,KAO,AF05
+district,AF0615,Achin,آچین,آچین,JAO,AF06
+district,AF0615_1,Spinghar,سپین غر,سپین غر,JAO,AF06
+district,AF0609,Bati Kot,بتی کوت,بتی کوت,JAO,AF06
+district,AF0602,Behsud,بهسود,بهسود,JAO,AF06
+district,AF0604,Chaparhar,چپرهار,چپرهار,JAO,AF06
+district,AF0612,Dara-e-Nur,دره نور,دره نور,JAO,AF06
+district,AF0610,Deh Bala,ده بالا,ده بالا,JAO,AF06
+district,AF0622,Dur Baba,دوربابا,دوربابا,JAO,AF06
+district,AF0614,Goshta,گوشته,گوشته,JAO,AF06
+district,AF0621,Hesarak,حصارک,حصارک,JAO,AF06
+district,AF0601,Jalalabad,جلال آباد,جلال آباد,JAO,AF06
+district,AF0605,Kama,کامه,کامه,JAO,AF06
+district,AF0608,Khogyani,خوگیانی,خوگیانی,JAO,AF06
+district,AF0613,Kot,کوت,کوت,JAO,AF06
+district,AF0606,Kuz Kunar,کوزکنر,کوزکنر,JAO,AF06
+district,AF0618,Lalpur,لعل پور,لعل پور,JAO,AF06
+district,AF0617,Muhmand Dara,مهمند دره,مهمند دره,JAO,AF06
+district,AF0620,Nazyan,نازیان,نازیان,JAO,AF06
+district,AF0611,Pachir Wa Agam,پچیر آگام,پچیر آگام,JAO,AF06
+district,AF0607,Rodat,رودات,رودات,JAO,AF06
+district,AF0619,Sherzad,شیرزاد,شیرزاد,JAO,AF06
+district,AF0616,Shinwar,شینوار,شینوار,JAO,AF06
+district,AF0603,Surkh Rod,سرخ رود,سرخ رود,JAO,AF06
+district,AF0704,Alingar,علینگار,علینگار,JAO,AF07
+district,AF0703,Alishang,علیشنگ,علیشنگ,JAO,AF07
+district,AF0705,Dawlatshah,دولت شاه,دولت شاه,JAO,AF07
+district,AF0701,Mehtarlam,مهترلام,مهترلام,JAO,AF07
+district,AF0702,Qarghayi,قرغه ای,قرغه ای,JAO,AF07
+district,AF0706,Badpash,باد پخ,باد پخ,JAO,AF07
+district,AF0805,Anawa,آنابه,آنابه,KAO,AF08
+district,AF0801,Bazarak,بازارک,بازارک,KAO,AF08
+district,AF0803,Dara,دره,دره,KAO,AF08
+district,AF0804,Khenj,خنج (حصه اول),خنج (حصه اول),KAO,AF08
+district,AF0807,Paryan,پریان,پریان,KAO,AF08
+district,AF0802,Rukha,روخه,روخه,KAO,AF08
+district,AF0806,Shutul,شتل,شتل,KAO,AF08
+district,AF08NA1,Abshar,ابشار,ابشار,KAO,AF08
+district,AF0907,Andarab,اندراب,اندراب,FAO,AF09
+district,AF0905,Baghlan-e-Jadid,بغلان جدید,بغلان جدید,FAO,AF09
+district,AF0910,Burka,برکه,برکه,FAO,AF09
+district,AF0902,Dahana-e-Ghori,دهانه غوری,دهانه غوری,FAO,AF09
+district,AF0908,Deh Salah,ده صلاح,ده صلاح,FAO,AF09
+district,AF0903,Doshi,دوشی,دوشی,FAO,AF09
+district,AF0915,Fereng Wa Gharu,فرنگ و غارو,فرنگ و غارو,FAO,AF09
+district,AF0914,Guzargah-e-Nur,گذرگاه نور,گذرگاه نور,FAO,AF09
+district,AF0906,Khinjan,خنجان,خنجان,FAO,AF09
+district,AF0913,Khost Wa Fereng,خوست و فرنگ,خوست و فرنگ,FAO,AF09
+district,AF0909,Khwaja Hejran,خواجه هجران,خواجه هجران,FAO,AF09
+district,AF0904,Nahrin,نهرین,نهرین,FAO,AF09
+district,AF0912,Pul-e-Hisar,پل حصار,پل حصار,FAO,AF09
+district,AF0901,Pul-e-Khumri,پل خمری,پل خمری,FAO,AF09
+district,AF0911,Tala Wa Barfak,تاله و برفک,تاله و برفک,FAO,AF09
+district,AF1001,Bamyan,بامیان,بامیان,KAO,AF10
+district,AF1004,Kahmard,کهمرد,کهمرد,KAO,AF10
+district,AF1006,Panjab,پنجاب,پنجاب,KAO,AF10
+district,AF1003,Sayghan,سیغان,سیغان,KAO,AF10
+district,AF1002,Shibar,شیبر,شیبر,KAO,AF10
+district,AF1007,Waras,ورس,ورس,KAO,AF10
+district,AF1005,Yakawlang,یکاولنگ,یکاولنگ,KAO,AF10
+district,AF10NA1,Ghandak,غندک,غندک,KAO,AF10
+district,AF10NA2,Yakawlang-i-No2,یکاولنگ نمبر۲,یکاولنگ نمبر۲,KAO,AF10
+district,AF1113,Ab Band,آب بند,آب بند,KAO,AF11
+district,AF1118,Ajristan,آجرستان,آجرستان,KAO,AF11
+district,AF1107,Andar,اندر,اندر,KAO,AF11
+district,AF1105,Deh Yak,ده یک,ده یک,KAO,AF11
+district,AF1117,Gelan,گیلان,گیلان,KAO,AF11
+district,AF1101,Ghazni,غزنی,غزنی,KAO,AF11
+district,AF1112,Giro,گیرو,گیرو,KAO,AF11
+district,AF1106,Jaghatu,جغتو,جغتو,KAO,AF11
+district,AF1114,Jaghuri,جاغوری,جاغوری,KAO,AF11
+district,AF1103,Khwaja Umari,خواجه عمری,خواجه عمری,KAO,AF11
+district,AF1116,Malistan,مالستان,مالستان,KAO,AF11
+district,AF1115,Muqur,مقر,مقر,KAO,AF11
+district,AF1119,Nawa,ناوه,ناوه,KAO,AF11
+district,AF1110,Nawur,ناور,ناور,KAO,AF11
+district,AF1111,Qara Bagh,قره باغ,قره باغ,KAO,AF11
+district,AF1109,Rashidan,رشیدان,رشیدان,KAO,AF11
+district,AF1104,Waghaz,واغز,واغز,KAO,AF11
+district,AF1102,Wal-e-Muhammad-e-Shahid,ولی محمد شهید,ولی محمد شهید,KAO,AF11
+district,AF1108,Zanakhan,زنه خان,زنه خان,KAO,AF11
+district,AF1214,Barmal,برمل,برمل,KAO,AF12
+district,AF1216,Dila,دیله,دیله,KAO,AF12
+district,AF1215,Giyan,گیان,گیان,KAO,AF12
+district,AF1208,Gomal,گومل,گومل,KAO,AF12
+district,AF1209,Jani Khel,جانی خیل,جانی خیل,KAO,AF12
+district,AF1202,Mata Khan,متاخان,متاخان,KAO,AF12
+district,AF1213,Nika,نکه,نکه,KAO,AF12
+district,AF1206,Omna,اومنه,اومنه,KAO,AF12
+district,AF1205,Sar Rawzah,سرروضه,سرروضه,KAO,AF12
+district,AF1201,Sharan,سروبی,سروبی,KAO,AF12
+district,AF1210,Surobi,شرنه,شرنه,KAO,AF12
+district,AF1219,Turwo,تروو,تروو,KAO,AF12
+district,AF1211,Urgun,ارگون,ارگون,KAO,AF12
+district,AF1217,Wazakhah,وازه خواه,وازه خواه,KAO,AF12
+district,AF1218,Wormamay,ورممی,ورممی,KAO,AF12
+district,AF1204,Yahya Khel,یحیی خیل,یحیی خیل,KAO,AF12
+district,AF1203,Yosuf Khel,یوسف خیل,یوسف خیل,KAO,AF12
+district,AF1207,Zarghun Shahr,زرغون شهر,زرغون شهر,KAO,AF12
+district,AF1212,Ziruk,زیروک,زیروک,KAO,AF12
+district,AF12NA1,Charbaran,چهارباران,چهارباران,KAO,AF12
+district,AF12NA2,Khushamand,خوشامند,خوشامند,KAO,AF12
+district,AF12NA3,Niamatabad,نعمت اباد,نعمت اباد,KAO,AF12
+district,AF12NA4,Shkin,شکن,شکن,KAO,AF12
+district,AF1302,Ahmadaba,احمد آباد,احمد آباد,KAO,AF13
+district,AF1310,Chamkani,چمکنی,چمکنی,KAO,AF13
+district,AF1311,Dand Wa Patan,دند و پتان,دند و پتان,KAO,AF13
+district,AF1301,Gardez,گردیز,گردیز,KAO,AF13
+district,AF1307,Jaji,جاجی آریوب,جاجی آریوب,KAO,AF13
+district,AF1309,Jani Khel,جانی خیل,جانی خیل,KAO,AF13
+district,AF1308,Lija Ahmad Khel,لجه احمد خیل,لجه احمد خیل,KAO,AF13
+district,AF1306,Sayed Karam,سید کرم,سید کرم,KAO,AF13
+district,AF1304,Shawak,شواک,شواک,KAO,AF13
+district,AF1305,Zadran,زدران,زدران,KAO,AF13
+district,AF1303,Zurmat,زرمت,زرمت,KAO,AF13
+district,AF1312,Lazha Mangal,لجه منګل,لجه منګل,KAO,AF13
+district,AF1313,Mirzaka,میرزکه,میرزکه,KAO,AF13
+district,AF1314,Gerda Serai,ګرده څیړی,ګرده څیړی,KAO,AF13
+district,AF1315,Rohani Baba,روحانی بابا,روحانی بابا,KAO,AF13
+district,AF1409,Bak,باک,باک,KAO,AF14
+district,AF1403,Gurbuz,ګربز,ګربز,KAO,AF14
+district,AF1413,Jaji Maydan,ځاځی میدان,ځاځی میدان,KAO,AF14
+district,AF1402,Mandozayi,مندوزی,مندوزی,KAO,AF14
+district,AF1401,Matun,خوست (متون),خوست (متون),KAO,AF14
+district,AF1405,Musa Khel,موسی خیل,موسی خیل,KAO,AF14
+district,AF1406,Nadir Shah Kot,نادر شاه کوټ,نادر شاه کوټ,KAO,AF14
+district,AF1410,Qalandar,قلندر,قلندر,KAO,AF14
+district,AF1407,Sabari,صبری,صبری,KAO,AF14
+district,AF1412,Shamal,شمل,شمل,KAO,AF14
+district,AF1411,Spera,سپیره,سپیره,KAO,AF14
+district,AF1404,Tani,تڼی,تڼی,KAO,AF14
+district,AF1408,Terezayi,تیریزائی,تیریزائی,KAO,AF14
+district,AF1501,Asad Abad,اسد آباد,اسد آباد,JAO,AF15
+district,AF1508,Bar Kunar,بر کنړ,بر کنړ,JAO,AF15
+district,AF1513,Chapa Dara,چپه دره,چپه دره,JAO,AF15
+district,AF1509,Chawkay,چوکۍ,چوکۍ,JAO,AF15
+district,AF1512,Dangam,دانګام,دانګام,JAO,AF15
+district,AF1507,Dara-e-Pech,دره پیچ,دره پیچ,JAO,AF15
+district,AF1511,Ghazi Abad,غازی آباد,غازی آباد,JAO,AF15
+district,AF1510,Khas Kunar,خاص کنړ,خاص کنړ,JAO,AF15
+district,AF1502,Marawara,مروره,مروره,JAO,AF15
+district,AF1504,Narang,نرنګ,نرنګ,JAO,AF15
+district,AF1515,Nari,ناری,ناری,JAO,AF15
+district,AF1514,Nurgal,نورګل,نورګل,JAO,AF15
+district,AF1505,Sar Kani,سرکانی,سرکانی,JAO,AF15
+district,AF1506,Shigal,شیګل,شیګل,JAO,AF15
+district,AF1506_1,Sheltan,شلتن ,شلتن,JAO,AF15
+district,AF1503,Watapur,وته پور,وته پور,JAO,AF15
+district,AF1608,Barg-e-Matal,برگ متال,برگ متال,JAO,AF16
+district,AF1605,Duab,دو آب,دو آب,JAO,AF16
+district,AF1606,Kamdesh,کامدیش,کامدیش,JAO,AF16
+district,AF1607,Mandol,مندول,مندول,JAO,AF16
+district,AF1604,Nurgaram,نورگرام,نورگرام,JAO,AF16
+district,AF1601,Parun,پارون,پارون,JAO,AF16
+district,AF1603,Wama,واما,واما,JAO,AF16
+district,AF1602,Waygal,وایگل,وایگل,JAO,AF16
 district,AF1703,Arghanj Khwah,ارغنج خواه,ارغنج خواه,FAO,AF17
 district,AF1702,Argo,آرگو,آرگو,FAO,AF17
 district,AF1706,Baharak,بهارک,بهارک,FAO,AF17
@@ -27,28 +230,40 @@ district,AF1704,Yaftal-e-Sufla,یفتل سفلی,یفتل سفلی,FAO,AF17
 district,AF1718,Yamgan,یمگان,یمگان,FAO,AF17
 district,AF1709,Yawan,یاوان,یاوان,FAO,AF17
 district,AF1725,Zebak,زیباک,زیباک,FAO,AF17
-district,AF3102,Ab Kamari,آب کمری,آب کمری,HAO,AF31
-district,AF3105,Bala Murghab,بالا مرغاب,بالا مرغاب,HAO,AF31
-district,AF3107,Ghormach,غورماچ,غورماچ,HAO,AF31
-district,AF3106,Jawand,جوند,جوند,HAO,AF31
-district,AF3103,Muqur,مقر,مقر,HAO,AF31
-district,AF3104,Qadis,قادس,قادس,HAO,AF31
-district,AF3101,Qala-e-Naw,قلعه نو,قلعه نو,HAO,AF31
-district,AF0907,Andarab,اندراب,اندراب,FAO,AF09
-district,AF0905,Baghlan-e-Jadid,بغلان جدید,بغلان جدید,FAO,AF09
-district,AF0910,Burka,برکه,برکه,FAO,AF09
-district,AF0902,Dahana-e-Ghori,دهانه غوری,دهانه غوری,FAO,AF09
-district,AF0908,Deh Salah,ده صلاح,ده صلاح,FAO,AF09
-district,AF0903,Doshi,دوشی,دوشی,FAO,AF09
-district,AF0915,Fereng Wa Gharu,فرنگ و غارو,فرنگ و غارو,FAO,AF09
-district,AF0914,Guzargah-e-Nur,گذرگاه نور,گذرگاه نور,FAO,AF09
-district,AF0906,Khinjan,خنجان,خنجان,FAO,AF09
-district,AF0913,Khost Wa Fereng,خوست و فرنگ,خوست و فرنگ,FAO,AF09
-district,AF0909,Khwaja Hejran,خواجه هجران,خواجه هجران,FAO,AF09
-district,AF0904,Nahrin,نهرین,نهرین,FAO,AF09
-district,AF0912,Pul-e-Hisar,پل حصار,پل حصار,FAO,AF09
-district,AF0901,Pul-e-Khumri,پل خمری,پل خمری,FAO,AF09
-district,AF0911,Tala Wa Barfak,تاله و برفک,تاله و برفک,FAO,AF09
+district,AF1803,Baharak,بهارک,بهارک,FAO,AF18
+district,AF1804,Bangi,بنگی,بنگی,FAO,AF18
+district,AF1816,Chahab,چاه آب,چاه آب,FAO,AF18
+district,AF1805,Chal,چال,چال,FAO,AF18
+district,AF1815,Darqad,درقد,درقد,FAO,AF18
+district,AF1812,Dasht-e-Qala,دشت قلعه,دشت قلعه,FAO,AF18
+district,AF1811,Eshkmesh,اشکمش,اشکمش,FAO,AF18
+district,AF1808,Farkhar,فرخار,فرخار,FAO,AF18
+district,AF1802,Hazar Sumuch,هزارسموچ,هزارسموچ,FAO,AF18
+district,AF1807,Kalafgan,کل افغان,کل افغان,FAO,AF18
+district,AF1814,Khwaja Bahawuddin,خواجه بهاوالدین,خواجه بهاوالدین,FAO,AF18
+district,AF1809,Khwaja Ghar,خواجه غار,خواجه غار,FAO,AF18
+district,AF1806,Namak Ab,نمک آب,نمک آب,FAO,AF18
+district,AF1810,Rostaq,روستاق,روستاق,FAO,AF18
+district,AF1801,Taloqan,تالقان,تالقان,FAO,AF18
+district,AF1813,Warsaj,ورسج,ورسج,FAO,AF18
+district,AF1817,Yangi Qala,ینگی قلعه,ینگی قلعه,FAO,AF18
+district,AF1903,Ali Abad,علی آباد,علی آباد,FAO,AF19
+district,AF1902,Chahar Darah,چهار دره,چهار دره,FAO,AF19
+district,AF1906,Dasht-e-Archi,دشت ارچی,دشت ارچی,FAO,AF19
+district,AF1905,Imam Sahib,امام صاحب,امام صاحب,FAO,AF19
+district,AF1904,Khan Abad,خان آباد,خان آباد,FAO,AF19
+district,AF1901,Kunduz,قندوز,قندوز,FAO,AF19
+district,AF1907,Qala-e-Zal,قلعه ذال,قلعه ذال,FAO,AF19
+district,AF1908,Calbad,کلباد,کلباد,FAO,AF19
+district,AF1909,Gultipa,گل تپه,گل تپه,FAO,AF19
+district,AF1910,Aqtash ,اقتاش,اقتاش,FAO,AF19
+district,AF2001,Aybak,ایبک,ایبک,MAO,AF20
+district,AF2007,Dara-e-Suf-e-Bala,دره صوف بالا,دره صوف بالا,MAO,AF20
+district,AF2006,Dara-e-Suf-e-Payin,دره صوف پایین,دره صوف پایین,MAO,AF20
+district,AF2004,Feroz Nakhchir,فیروز نخچیر,فیروز نخچیر,MAO,AF20
+district,AF2002,Hazrat-e-Sultan,حضرت سلطان,حضرت سلطان,MAO,AF20
+district,AF2003,Khuram Wa Sarbagh,خرم و سارباغ,خرم و سارباغ,MAO,AF20
+district,AF2005,Ruy-e-Duab,روی دو آب,روی دو آب,MAO,AF20
 district,AF2106,Balkh,بلخ,بلخ,MAO,AF21
 district,AF2111,Char Bolak,چهار بولک,چهار بولک,MAO,AF21
 district,AF2104,Charkent,چهار کنت,چهار کنت,MAO,AF21
@@ -65,15 +280,25 @@ district,AF2116,Sharak-e-Hayratan,شهرک حیرتان,شهرک حیرتان,MA
 district,AF2107,Sholgareh,شولگره,شولگره,MAO,AF21
 district,AF2112,Shortepa,شورتپه,شورتپه,MAO,AF21
 district,AF2115,Zari,زاری,زاری,MAO,AF21
-district,AF1001,Bamyan,بامیان,بامیان,KAO,AF10
-district,AF1004,Kahmard,کهمرد,کهمرد,KAO,AF10
-district,AF1006,Panjab,پنجاب,پنجاب,KAO,AF10
-district,AF1003,Sayghan,سیغان,سیغان,KAO,AF10
-district,AF1002,Shibar,شیبر,شیبر,KAO,AF10
-district,AF1007,Waras,ورس,ورس,KAO,AF10
-district,AF1005,Yakawlang,یکاولنگ,یکاولنگ,KAO,AF10
-district,AF10NA1,Ghandak,Ghandak,Ghandak,KAO,AF10
-district,AF10NA2,Yakawlang-i-No2,Yakawlang-i-No2,Yakawlang-i-No2,KAO,AF10
+district,AF2207,Balkhab,بلخاب,بلخاب,MAO,AF22
+district,AF2206,Gosfandi,گوسفندی,گوسفندی,MAO,AF22
+district,AF2203,Kohestanat,کوهستانات,کوهستانات,MAO,AF22
+district,AF2205,Sancharak,سانچارک,سانچارک,MAO,AF22
+district,AF2201,Sar-e-Pul,سرپل,سرپل,MAO,AF22
+district,AF2202,Sayad,صیاد,صیاد,MAO,AF22
+district,AF2204,Sozmaqala,سوزمه قلعه,سوزمه قلعه,MAO,AF22
+district,AF2304,Charsadra,چارسده,چارسده,HAO,AF23
+district,AF2303,Dawlatyar,دولت یار,دولت یار,HAO,AF23
+district,AF2302,DoLayna,دولینه,دولینه,HAO,AF23
+district,AF2301,Feroz Koh,فیروزکوه,فیروزکوه,HAO,AF23
+district,AF2307NA1,Lal Wa Sarjangal,لعل و سرجنگل,لعل و سرجنگل,HAO,AF23
+district,AF2305,Pasaband,پسابند,پسابند,HAO,AF23
+district,AF2310,Saghar,ساغر,ساغر,HAO,AF23
+district,AF2306,Shahrak,شهرک,شهرک,HAO,AF23
+district,AF2308,Taywarah,تیوره,تیوره,HAO,AF23
+district,AF2309,Tolak,تولک,تولک,HAO,AF23
+district,AF2311,Murghab,مرغاب,مرغاب,HAO,AF23
+district,AF2307,Lal Wa Sarjangal,لعل و سرجنگل,لعل و سرجنگل,KAO,AF23
 district,AF2403,Ashtarlay,اشترلی,اشترلی,KAO,AF24
 district,AF2409,Gizab,گیزاب,گیزاب,KAO,AF24
 district,AF2408,Kajran,کجران,کجران,KAO,AF24
@@ -83,17 +308,54 @@ district,AF2406,Miramor,میرامور,میرامور,KAO,AF24
 district,AF2401,Nili,نیلی,نیلی,KAO,AF24
 district,AF2407,Sang-e-Takht,سنگ تخت,سنگ تخت,KAO,AF24
 district,AF2402,Shahrestan,شهرستان,شهرستان,KAO,AF24
-district,AF3307,Anar Dara,انار دره,انار دره,HAO,AF33
-district,AF3308,Bakwa,بکواه,بکواه,HAO,AF33
-district,AF3306,Bala Buluk,بالا بلوک,بالا بلوک,HAO,AF33
-district,AF3301,Farah,فراه,فراه,HAO,AF33
-district,AF3310,Gulistan,گلستان,گلستان,HAO,AF33
-district,AF3303,Khak-e-Safed,خاک سفید,خاک سفید,HAO,AF33
-district,AF3309,Lash-e-Juwayn,لاش و جوین,لاش و جوین,HAO,AF33
-district,AF3311,Pur Chaman,پرچمن,پرچمن,HAO,AF33
-district,AF3302,Pushtrod,پشت رود,پشت رود,HAO,AF33
-district,AF3304,Qala-e-Kah,قلعه کاه,قلعه کاه,HAO,AF33
-district,AF3305,Shibkoh,شیب کوه,شیب کوه,HAO,AF33
+district,AF2409NA1,Gizab,گیزاب,گیزاب,KANAO,AF24
+district,AF24NA1,Patoo,پاتو,پاتو,KAO,AF24
+district,AF2503,Chora,چوره,چوره,KANAO,AF25
+district,AF2502,Dehrawud,دهراوود,دهراوود,KANAO,AF25
+district,AF2505,Khas Uruzgan,خاص ارزگان,خاص ارزگان,KANAO,AF25
+district,AF2504,Shahid-e-Hassas,شهید حساس,شهید حساس,KANAO,AF25
+district,AF2501,Tirinkot,ترینکوت,ترینکوت,KANAO,AF25
+district,AF2506,Chinarto,چینارتو,چینارتو,KANAO,AF25
+district,AF2507,Gizab,گیزاب,گیزاب,KANAO,AF25
+district,AF2605,Arghandab,ارغنداب,ارغنداب,KANAO,AF26
+district,AF2608,Atghar,اتغر,اتغر,KANAO,AF26
+district,AF2607,Daychopan,دایچوپان,دایچوپان,KANAO,AF26
+district,AF2611,Kakar,کاکر,کاکر,KANAO,AF26
+district,AF2604,Mizan,میزان,میزان,KANAO,AF26
+district,AF2609,Nawbahar,نوبهار,نوبهار,KANAO,AF26
+district,AF2601,Qalat,قلات,قلات,KANAO,AF26
+district,AF2606,Shah Joi,شاه جوی,شاه جوی,KANAO,AF26
+district,AF2610,Shamul Zayi,شملزائی,شملزائی,KANAO,AF26
+district,AF2603,Shinkay,شینکی,شینکی,KANAO,AF26
+district,AF2602,Tarnak Wa Jaldak,ترنک و جلدک,ترنک و جلدک,KANAO,AF26
+district,AF2702,Arghandab,ارغنداب,ارغنداب,KANAO,AF27
+district,AF2708,Arghestan,ارغستان,ارغستان,KANAO,AF27
+district,AF2703,Daman,دامان,دامان,KANAO,AF27
+district,AF2709,Ghorak,غورک,غورک,KANAO,AF27
+district,AF2701,Kandahar,قندهار,قندهار,KANAO,AF27
+district,AF2707,Khakrez,خاکریز,خاکریز,KANAO,AF27
+district,AF2715,Maruf,معروف,معروف,KANAO,AF27
+district,AF2710,Maywand,میوند,میوند,KANAO,AF27
+district,AF2713,Miyanshin,میانشین,میانشین,KANAO,AF27
+district,AF2712,Nesh,نیش,نیش,KANAO,AF27
+district,AF2704,Panjwayi,پنجوائی,پنجوائی,KANAO,AF27
+district,AF2716,Reg,ریگستان,ریگستان,KANAO,AF27
+district,AF2706,Shah Wali Kot,شاه ولی کوت,شاه ولی کوت,KANAO,AF27
+district,AF2714,Shorabak,شورابک,شورابک,KANAO,AF27
+district,AF2711,Spin Boldak,سپین بولدک,سپین بولدک,KANAO,AF27
+district,AF2705,Zheray,ژری,ژری,KANAO,AF27
+district,AF27NA2,Takhtapul,تخته پل,تخته پل,KANAO,AF27
+district,AF2807,Aqcha,آقچه,آقچه,MAO,AF28
+district,AF2811,Darzab,درزآب,درزآب,MAO,AF28
+district,AF2808,Fayzabad,فیض آباد,فیض آباد,MAO,AF28
+district,AF2806,Khamyab,خمآب,خمآب,MAO,AF28
+district,AF2803,Khanaqa,خانقاه,خانقاه,MAO,AF28
+district,AF2802,Khwaja Dukoh,خواجه دو کوه,خواجه دو کوه,MAO,AF28
+district,AF2809,Mardyan,مردیان,مردیان,MAO,AF28
+district,AF2804,Mingajik,منگجک,منگجک,MAO,AF28
+district,AF2810,Qarqin,قرقین,قرقین,MAO,AF28
+district,AF2805,Qush Tepa,قوش تپه,قوش تپه,MAO,AF28
+district,AF2801,Shiberghan,شبرغان,شبرغان,MAO,AF28
 district,AF2904,Almar,المار,المار,MAO,AF29
 district,AF2913,Andkhoy,اندخوی,اندخوی,MAO,AF29
 district,AF2905,Bilcheragh,بلچراغ,بلچراغ,MAO,AF29
@@ -108,36 +370,6 @@ district,AF2911,Qaram Qul,قرم قل,قرم قل,MAO,AF29
 district,AF2907,Qaysar,قیصار,قیصار,MAO,AF29
 district,AF2912,Qurghan,قرغان,قرغان,MAO,AF29
 district,AF2906,Shirin Tagab,شیرین تگاب,شیرین تگاب,MAO,AF29
-district,AF1113,Ab Band,آب بند,آب بند,KAO,AF11
-district,AF1118,Ajristan,آجرستان,آجرستان,KAO,AF11
-district,AF1107,Andar,اندر,اندر,KAO,AF11
-district,AF1105,Deh Yak,ده یک,ده یک,KAO,AF11
-district,AF1117,Gelan,گیلان,گیلان,KAO,AF11
-district,AF1101,Ghazni,غزنی,غزنی,KAO,AF11
-district,AF1112,Giro,گیرو,گیرو,KAO,AF11
-district,AF1106,Jaghatu,جغتو,جغتو,KAO,AF11
-district,AF1114,Jaghuri,جاغوری,جاغوری,KAO,AF11
-district,AF1103,Khwaja Umari,خواجه عمری,خواجه عمری,KAO,AF11
-district,AF1116,Malistan,مالستان,مالستان,KAO,AF11
-district,AF1115,Muqur,مقر,مقر,KAO,AF11
-district,AF1119,Nawa,ناوه,ناوه,KAO,AF11
-district,AF1110,Nawur,ناور,ناور,KAO,AF11
-district,AF1111,Qara Bagh,قره باغ,قره باغ,KAO,AF11
-district,AF1109,Rashidan,رشیدان,رشیدان,KAO,AF11
-district,AF1104,Waghaz,واغز,واغز,KAO,AF11
-district,AF1102,Wal-e-Muhammad-e-Shahid,ولی محمد شهید,ولی محمد شهید,KAO,AF11
-district,AF1108,Zanakhan,زنه خان,زنه خان,KAO,AF11
-district,AF2304,Charsadra,چارسده,چارسده,HAO,AF23
-district,AF2303,Dawlatyar,دولت یار,دولت یار,HAO,AF23
-district,AF2302,DoLayna,دولینه,دولینه,HAO,AF23
-district,AF2301,Feroz Koh,فیروزکوه,فیروزکوه,HAO,AF23
-district,AF2307,Lal Wa Sarjangal,لعل و سرجنگل,لعل و سرجنگل,HAO,AF23
-district,AF2305,Pasaband,پسابند,پسابند,HAO,AF23
-district,AF2310,Saghar,ساغر,ساغر,HAO,AF23
-district,AF2306,Shahrak,شهرک,شهرک,HAO,AF23
-district,AF2308,Taywarah,تیوره,تیوره,HAO,AF23
-district,AF2309,Tolak,تولک,تولک,HAO,AF23
-district,AF2311,Murghab,Murghab,Murghab,HAO,AF23
 district,AF3012,Baghran,بغران,بغران,KANAO,AF30
 district,AF3013,Deh-e-Shu,دیشو,دیشو,KANAO,AF30
 district,AF3006,Garmser,گرمسیر,گرمسیر,KANAO,AF30
@@ -151,7 +383,15 @@ district,AF3007,Nawzad,نوزاد,نوزاد,KANAO,AF30
 district,AF3011,Reg-i-Khan Nishin,ریگ (خان نشین),ریگ (خان نشین),KANAO,AF30
 district,AF3008,Sangin,سنگین,سنگین,KANAO,AF30
 district,AF3005,Washer,واشیر,واشیر,KANAO,AF30
-district,AF30NA2,Nawa-i-Mesh,Nawa-i-Mesh,Nawa-i-Mesh,KANAO,AF30
+district,AF30NA2,Nawa-i-Mesh,ناومیش,ناومیش,KANAO,AF30
+district,AF3102,Ab Kamari,آب کمری,آب کمری,HAO,AF31
+district,AF3105,Bala Murghab,بالا مرغاب,بالا مرغاب,HAO,AF31
+district,AF3107,Ghormach,غورماچ,غورماچ,HAO,AF31
+district,AF3106,Jawand,جوند,جوند,HAO,AF31
+district,AF3103,Muqur,مقر,مقر,HAO,AF31
+district,AF3104,Qadis,قادس,قادس,HAO,AF31
+district,AF3101,Qala-e-Naw,قلعه نو,قلعه نو,HAO,AF31
+district,AF3107NA1,Ghormach,غورماچ,غورماچ,MAO,AF31
 district,AF3209,Adraskan,ادرسکن,ادرسکن,HAO,AF32
 district,AF3216,Chisht-e-Sharif,چشت شریف,چشت شریف,HAO,AF32
 district,AF3215,Farsi,فرسی,فرسی,HAO,AF32
@@ -172,257 +412,24 @@ district,AF3219,Koh-i-Zor,کوه زور  ,کوه زور  ,HAO,AF32
 district,AF3218,Pusht-i-Koh,پشت کوه,پشت کوه,HAO,AF32
 district,AF3220,Zawol,زاول ,زاول ,HAO,AF32
 district,AF3217,Zer-i-Koh,زيرکوه  ,زيرکوه  ,HAO,AF32
-district,AF2807,Aqcha,آقچه,آقچه,MAO,AF28
-district,AF2811,Darzab,درزآب,درزآب,MAO,AF28
-district,AF2808,Fayzabad,فیض آباد,فیض آباد,MAO,AF28
-district,AF2806,Khamyab,خمآب,خمآب,MAO,AF28
-district,AF2803,Khanaqa,خانقاه,خانقاه,MAO,AF28
-district,AF2802,Khwaja Dukoh,خواجه دو کوه,خواجه دو کوه,MAO,AF28
-district,AF2809,Mardyan,مردیان,مردیان,MAO,AF28
-district,AF2804,Mingajik,منگجک,منگجک,MAO,AF28
-district,AF2810,Qarqin,قرقین,قرقین,MAO,AF28
-district,AF2805,Qush Tepa,قوش تپه,قوش تپه,MAO,AF28
-district,AF2801,Shiberghan,شبرغان,شبرغان,MAO,AF28
-district,AF0104,Bagrami,بگرامی,بگرامی,KAO,AF01
-district,AF0103,Chahar Asyab,چهارآسیاب,چهارآسیاب,KAO,AF01
-district,AF0105,Deh Sabz,ده سبز,ده سبز,KAO,AF01
-district,AF0113,Estalef,استالیف,استالیف,KAO,AF01
-district,AF0112,Farza,فرزه,فرزه,KAO,AF01
-district,AF0111,Guldara,گلدره,گلدره,KAO,AF01
-district,AF0101,Kabul,کابل,کابل,KAO,AF01
-district,AF0110,Kalakan,کلکان,کلکان,KAO,AF01
-district,AF0109,Khak-e-Jabbar,خاک جبار,خاک جبار,KAO,AF01
-district,AF0108,Mir Bacha Kot,میربچه کوت,میربچه کوت,KAO,AF01
-district,AF0107,Musahi,موسهی,موسهی,KAO,AF01
-district,AF0102,Paghman,پغمان,پغمان,KAO,AF01
-district,AF0114,Qara Bagh,قره باغ,قره باغ,KAO,AF01
-district,AF0106,Shakar Dara,شکردره,شکردره,KAO,AF01
-district,AF0115,Surobi,سروبی,سروبی,KAO,AF01
-district,AF2702,Arghandab,ارغنداب,ارغنداب,KANAO,AF27
-district,AF2708,Arghestan,ارغستان,ارغستان,KANAO,AF27
-district,AF2703,Daman,دامان,دامان,KANAO,AF27
-district,AF2709,Ghorak,غورک,غورک,KANAO,AF27
-district,AF2701,Kandahar,قندهار,قندهار,KANAO,AF27
-district,AF2707,Khakrez,خاکریز,خاکریز,KANAO,AF27
-district,AF2715,Maruf,معروف,معروف,KANAO,AF27
-district,AF2710,Maywand,میوند,میوند,KANAO,AF27
-district,AF2713,Miyanshin,میانشین,میانشین,KANAO,AF27
-district,AF2712,Nesh,نیش,نیش,KANAO,AF27
-district,AF2704,Panjwayi,پنجوائی,پنجوائی,KANAO,AF27
-district,AF2716,Reg,ریگستان,ریگستان,KANAO,AF27
-district,AF2706,Shah Wali Kot,شاه ولی کوت,شاه ولی کوت,KANAO,AF27
-district,AF2714,Shorabak,شورابک,شورابک,KANAO,AF27
-district,AF2711,Spin Boldak,سپین بولدک,سپین بولدک,KANAO,AF27
-district,AF2705,Zheray,ژری,ژری,KANAO,AF27
-district,AF27NA2,Takhtapul,Takhtapul,Takhtapul,KANAO,AF27
-district,AF0207,Alasay,آله سائی,آله سائی,KAO,AF02
-district,AF0204,Hisa-e-Awal-e-Kohistan,حصه اول کوهستان,حصه اول کوهستان,KAO,AF02
-district,AF0202,Hisa-e-Duwum-e-Kohistan,حصه دوم کوهستان,حصه دوم کوهستان,KAO,AF02
-district,AF0203,Koh Band,کوه بند,کوه بند,KAO,AF02
-district,AF0201,Mahmood-e-Raqi,محمود راقی,محمود راقی,KAO,AF02
-district,AF0205,Nijrab,نجراب,نجراب,KAO,AF02
-district,AF0206,Tagab,تگاب,تگاب,KAO,AF02
-district,AF1409,Bak,باک,باک,KAO,AF14
-district,AF1403,Gurbuz,ګربز,ګربز,KAO,AF14
-district,AF1413,Jaji Maydan,ځاځی میدان,ځاځی میدان,KAO,AF14
-district,AF1402,Mandozayi,مندوزی,مندوزی,KAO,AF14
-district,AF1401,Matun,خوست (متون),خوست (متون),KAO,AF14
-district,AF1405,Musa Khel,موسی خیل,موسی خیل,KAO,AF14
-district,AF1406,Nadir Shah Kot,نادر شاه کوټ,نادر شاه کوټ,KAO,AF14
-district,AF1410,Qalandar,قلندر,قلندر,KAO,AF14
-district,AF1407,Sabari,صبری,صبری,KAO,AF14
-district,AF1412,Shamal,شمل,شمل,KAO,AF14
-district,AF1411,Spera,سپیره,سپیره,KAO,AF14
-district,AF1404,Tani,تڼی,تڼی,KAO,AF14
-district,AF1408,Terezayi,تیریزائی,تیریزائی,KAO,AF14
-district,AF14NA1,Babrak Tana,Babrak Tana,Babrak Tana,KAO,AF14
-district,AF1501,Asad Abad,اسد آباد,اسد آباد,JAO,AF15
-district,AF1508,Bar Kunar,بر کنړ,بر کنړ,JAO,AF15
-district,AF1513,Chapa Dara,چپه دره,چپه دره,JAO,AF15
-district,AF1509,Chawkay,چوکۍ,چوکۍ,JAO,AF15
-district,AF1512,Dangam,دانګام,دانګام,JAO,AF15
-district,AF1507,Dara-e-Pech,دره پیچ,دره پیچ,JAO,AF15
-district,AF1511,Ghazi Abad,غازی آباد,غازی آباد,JAO,AF15
-district,AF1510,Khas Kunar,خاص کنړ,خاص کنړ,JAO,AF15
-district,AF1502,Marawara,مروره,مروره,JAO,AF15
-district,AF1504,Narang,نرنګ,نرنګ,JAO,AF15
-district,AF1515,Nari,ناری,ناری,JAO,AF15
-district,AF1514,Nurgal,نورګل,نورګل,JAO,AF15
-district,AF1505,Sar Kani,سرکانی,سرکانی,JAO,AF15
-district,AF1506,Shigal,شیګل,شیګل,JAO,AF15
-district,AF1506_1,Sheltan,شلتن ,شلتن,JAO,AF15
-district,AF1503,Watapur,وته پور,وته پور,JAO,AF15
-district,AF1903,Ali Abad,علی آباد,علی آباد,FAO,AF19
-district,AF1902,Chahar Darah,چهار دره,چهار دره,FAO,AF19
-district,AF1906,Dasht-e-Archi,دشت ارچی,دشت ارچی,FAO,AF19
-district,AF1905,Imam Sahib,امام صاحب,امام صاحب,FAO,AF19
-district,AF1904,Khan Abad,خان آباد,خان آباد,FAO,AF19
-district,AF1901,Kunduz,قندوز,قندوز,FAO,AF19
-district,AF1907,Qala-e-Zal,قلعه ذال,قلعه ذال,FAO,AF19
-district,AF1908,Calbad,Calbad,Calbad,FAO,AF19
-district,AF1909,Gultipa,Gultipa,Gultipa,FAO,AF19
-district,AF1910,Aqtash ,Aqtash ,Aqtash ,FAO,AF19
-district,AF0704,Alingar,علینگار,علینگار,JAO,AF07
-district,AF0703,Alishang,علیشنگ,علیشنگ,JAO,AF07
-district,AF0705,Dawlatshah,دولت شاه,دولت شاه,JAO,AF07
-district,AF0701,Mehtarlam,مهترلام,مهترلام,JAO,AF07
-district,AF0702,Qarghayi,قرغه ای,قرغه ای,JAO,AF07
-district,AF0706,Badpash,باد پخ,باد پخ,JAO,AF07
-district,AF0507,Azra,آزره,آزره,KAO,AF05
-district,AF0502,Baraki Barak,برکی برک,برکی برک,KAO,AF05
-district,AF0503,Charkh,چرخ,چرخ,KAO,AF05
-district,AF0506,Kharwar,خروار,خروار,KAO,AF05
-district,AF0504,Khoshi,خوشی,خوشی,KAO,AF05
-district,AF0505,Mohammad Agha,محمد آغه,محمد آغه,KAO,AF05
-district,AF0501,Pul-e-Alam,پل علم,پل علم,KAO,AF05
-district,AF0404,Chak-e-Wardak,چک,چک,KAO,AF04
-district,AF0406,Daymirdad,دایمیرداد,دایمیرداد,KAO,AF04
-district,AF0407,Hesa-e-Awal-e-Behsud,حصه اول بهسود,حصه اول بهسود,KAO,AF04
-district,AF0408,Jaghatu,جغتو,جغتو,KAO,AF04
-district,AF0403,Jalrez,جلریز,جلریز,KAO,AF04
-district,AF0409,Markaz-e-Behsud,مرکز بهسود,مرکز بهسود,KAO,AF04
-district,AF0401,Maydan Shahr,میدان شهر,میدان شهر,KAO,AF04
-district,AF0402,Nerkh,نرخ,نرخ,KAO,AF04
-district,AF0405,Saydabad,سیدآباد,سیدآباد,KAO,AF04
-district,AF0615,Achin,آچین,آچین,JAO,AF06
-district,AF0615_1,Spinghar,سپین غر,سپین غر,JAO,AF06
-district,AF0609,Bati Kot,بتی کوت,بتی کوت,JAO,AF06
-district,AF0602,Behsud,بهسود,بهسود,JAO,AF06
-district,AF0604,Chaparhar,چپرهار,چپرهار,JAO,AF06
-district,AF0612,Dara-e-Nur,دره نور,دره نور,JAO,AF06
-district,AF0610,Deh Bala,ده بالا,ده بالا,JAO,AF06
-district,AF0622,Dur Baba,دوربابا,دوربابا,JAO,AF06
-district,AF0614,Goshta,گوشته,گوشته,JAO,AF06
-district,AF0621,Hesarak,حصارک,حصارک,JAO,AF06
-district,AF0601,Jalalabad,جلال آباد,جلال آباد,JAO,AF06
-district,AF0605,Kama,کامه,کامه,JAO,AF06
-district,AF0608,Khogyani,خوگیانی,خوگیانی,JAO,AF06
-district,AF0613,Kot,کوت,کوت,JAO,AF06
-district,AF0606,Kuz Kunar,کوزکنر,کوزکنر,JAO,AF06
-district,AF0618,Lalpur,لعل پور,لعل پور,JAO,AF06
-district,AF0617,Muhmand Dara,مهمند دره,مهمند دره,JAO,AF06
-district,AF0620,Nazyan,نازیان,نازیان,JAO,AF06
-district,AF0611,Pachir Wa Agam,پچیر آگام,پچیر آگام,JAO,AF06
-district,AF0607,Rodat,رودات,رودات,JAO,AF06
-district,AF0619,Sherzad,شیرزاد,شیرزاد,JAO,AF06
-district,AF0616,Shinwar,شینوار,شینوار,JAO,AF06
-district,AF0603,Surkh Rod,سرخ رود,سرخ رود,JAO,AF06
+district,AF3216_3,Koh Zor,کوه زور,کوه زور,HAO,AF32
+district,AF3216_4,Zawol,زوال,زوال,HAO,AF32
+district,AF3216_1,Zer Kohe,زیر کوهی,زیر کوهی,HAO,AF32
+district,AF3216_2,poshtko,پوشت کوه,پوشت کوه,HAO,AF32
+district,AF3307,Anar Dara,انار دره,انار دره,HAO,AF33
+district,AF3308,Bakwa,بکواه,بکواه,HAO,AF33
+district,AF3306,Bala Buluk,بالا بلوک,بالا بلوک,HAO,AF33
+district,AF3301,Farah,فراه,فراه,HAO,AF33
+district,AF3310,Gulistan,گلستان,گلستان,HAO,AF33
+district,AF3303,Khak-e-Safed,خاک سفید,خاک سفید,HAO,AF33
+district,AF3309,Lash-e-Juwayn,لاش و جوین,لاش و جوین,HAO,AF33
+district,AF3311,Pur Chaman,پرچمن,پرچمن,HAO,AF33
+district,AF3302,Pushtrod,پشت رود,پشت رود,HAO,AF33
+district,AF3304,Qala-e-Kah,قلعه کاه,قلعه کاه,HAO,AF33
+district,AF3305,Shibkoh,شیب کوه,شیب کوه,HAO,AF33
 district,AF3403,Chakhansur,چخانسور,چخانسور,KANAO,AF34
 district,AF3404,Char Burjak,چهار برجک,چهار برجک,KANAO,AF34
 district,AF3402,Kang,کنگ,کنگ,KANAO,AF34
 district,AF3405,Khashrod,خاش رود,خاش رود,KANAO,AF34
 district,AF3401,Zaranj,زرنج,زرنج,KANAO,AF34
-district,AF34NA1,Dilaram,Dilaram,Dilaram,KANAO,AF34
-district,AF1608,Barg-e-Matal,برگ متال,برگ متال,JAO,AF16
-district,AF1605,Duab,دو آب,دو آب,JAO,AF16
-district,AF1606,Kamdesh,کامدیش,کامدیش,JAO,AF16
-district,AF1607,Mandol,مندول,مندول,JAO,AF16
-district,AF1604,Nurgaram,نورگرام,نورگرام,JAO,AF16
-district,AF1601,Parun,پارون,پارون,JAO,AF16
-district,AF1603,Wama,واما,واما,JAO,AF16
-district,AF1602,Waygal,وایگل,وایگل,JAO,AF16
-district,AF1214,Barmal,برمل,برمل,KAO,AF12
-district,AF1216,Dila,دیله,دیله,KAO,AF12
-district,AF1215,Giyan,گیان,گیان,KAO,AF12
-district,AF1208,Gomal,گومل,گومل,KAO,AF12
-district,AF1209,Jani Khel,جانی خیل,جانی خیل,KAO,AF12
-district,AF1202,Mata Khan,متاخان,متاخان,KAO,AF12
-district,AF1213,Nika,نکه,نکه,KAO,AF12
-district,AF1206,Omna,اومنه,اومنه,KAO,AF12
-district,AF1205,Sar Rawzah,سرروضه,سرروضه,KAO,AF12
-district,AF1201,Sharan,سروبی,سروبی,KAO,AF12
-district,AF1210,Surobi,شرنه,شرنه,KAO,AF12
-district,AF1219,Turwo,تروو,تروو,KAO,AF12
-district,AF1211,Urgun,ارگون,ارگون,KAO,AF12
-district,AF1217,Wazakhah,وازه خواه,وازه خواه,KAO,AF12
-district,AF1218,Wormamay,ورممی,ورممی,KAO,AF12
-district,AF1204,Yahya Khel,یحیی خیل,یحیی خیل,KAO,AF12
-district,AF1203,Yosuf Khel,یوسف خیل,یوسف خیل,KAO,AF12
-district,AF1207,Zarghun Shahr,زرغون شهر,زرغون شهر,KAO,AF12
-district,AF1212,Ziruk,زیروک,زیروک,KAO,AF12
-district,AF12NA1,Charbaran,Charbaran,Charbaran,KAO,AF12
-district,AF12NA2,Khushamand,Khushamand,Khushamand,KAO,AF12
-district,AF12NA3,Niamatabad,Niamatabad,Niamatabad,KAO,AF12
-district,AF12NA4,Shkin,Shkin,Shkin,KAO,AF12
-district,AF1302,Ahmadaba,احمد آباد,احمد آباد,KAO,AF13
-district,AF1310,Chamkani,چمکنی,چمکنی,KAO,AF13
-district,AF1311,Dand Wa Patan,دند و پتان,دند و پتان,KAO,AF13
-district,AF1301,Gardez,گردیز,گردیز,KAO,AF13
-district,AF1307,Jaji,جاجی آریوب,جاجی آریوب,KAO,AF13
-district,AF1309,Jani Khel,جانی خیل,جانی خیل,KAO,AF13
-district,AF1308,Lija Ahmad Khel,لجه احمد خیل,لجه احمد خیل,KAO,AF13
-district,AF1306,Sayed Karam,سید کرم,سید کرم,KAO,AF13
-district,AF1304,Shawak,شواک,شواک,KAO,AF13
-district,AF1305,Zadran,زدران,زدران,KAO,AF13
-district,AF1303,Zurmat,زرمت,زرمت,KAO,AF13
-district,AF1312,Lazha Mangal,لجه منګل,لجه منګل,KAO,AF13
-district,AF1313,Mirzaka,میرزکه,میرزکه,KAO,AF13
-district,AF1314,Gerda Serai,ګرده څیړی,ګرده څیړی,KAO,AF13
-district,AF1315,Rohani Baba,روحانی بابا,روحانی بابا,KAO,AF13
-district,AF0805,Anawa,آنابه,آنابه,KAO,AF08
-district,AF0801,Bazarak,بازارک,بازارک,KAO,AF08
-district,AF0803,Dara,دره,دره,KAO,AF08
-district,AF0804,Khenj,خنج (حصه اول),خنج (حصه اول),KAO,AF08
-district,AF0807,Paryan,پریان,پریان,KAO,AF08
-district,AF0802,Rukha,روخه,روخه,KAO,AF08
-district,AF0806,Shutul,شتل,شتل,KAO,AF08
-district,AF08NA1,Abshar,Abshar,Abshar,KAO,AF08
-district,AF0302,Bagram,بگرام,بگرام,KAO,AF03
-district,AF0301,Charikar,چاریکار,چاریکار,KAO,AF03
-district,AF0307,Ghorband,غوربند,غوربند,KAO,AF03
-district,AF0305,Jabal Saraj,جبل السراج,جبل السراج,KAO,AF03
-district,AF0308,Koh-e-Safi,کوه صافی,کوه صافی,KAO,AF03
-district,AF0306,Salang,سالنگ,سالنگ,KAO,AF03
-district,AF0304,Sayed Khel,سیدخیل,سیدخیل,KAO,AF03
-district,AF0310,Shekh Ali,شیخ علی,شیخ علی,KAO,AF03
-district,AF0303,Shinwari,شینواری,شینواری,KAO,AF03
-district,AF0309,Surkh-e-Parsa,سرخ پارسا,سرخ پارسا,KAO,AF03
-district,AF2001,Aybak,ایبک,ایبک,MAO,AF20
-district,AF2007,Dara-e-Suf-e-Bala,دره صوف بالا,دره صوف بالا,MAO,AF20
-district,AF2006,Dara-e-Suf-e-Payin,دره صوف پایین,دره صوف پایین,MAO,AF20
-district,AF2004,Feroz Nakhchir,فیروز نخچیر,فیروز نخچیر,MAO,AF20
-district,AF2002,Hazrat-e-Sultan,حضرت سلطان,حضرت سلطان,MAO,AF20
-district,AF2003,Khuram Wa Sarbagh,خرم و سارباغ,خرم و سارباغ,MAO,AF20
-district,AF2005,Ruy-e-Duab,روی دو آب,روی دو آب,MAO,AF20
-district,AF2207,Balkhab,بلخاب,بلخاب,MAO,AF22
-district,AF2206,Gosfandi,گوسفندی,گوسفندی,MAO,AF22
-district,AF2203,Kohestanat,کوهستانات,کوهستانات,MAO,AF22
-district,AF2205,Sancharak,سانچارک,سانچارک,MAO,AF22
-district,AF2201,Sar-e-Pul,سرپل,سرپل,MAO,AF22
-district,AF2202,Sayad,صیاد,صیاد,MAO,AF22
-district,AF2204,Sozmaqala,سوزمه قلعه,سوزمه قلعه,MAO,AF22
-district,AF1803,Baharak,بهارک,بهارک,FAO,AF18
-district,AF1804,Bangi,بنگی,بنگی,FAO,AF18
-district,AF1816,Chahab,چاه آب,چاه آب,FAO,AF18
-district,AF1805,Chal,چال,چال,FAO,AF18
-district,AF1815,Darqad,درقد,درقد,FAO,AF18
-district,AF1812,Dasht-e-Qala,دشت قلعه,دشت قلعه,FAO,AF18
-district,AF1811,Eshkmesh,اشکمش,اشکمش,FAO,AF18
-district,AF1808,Farkhar,فرخار,فرخار,FAO,AF18
-district,AF1802,Hazar Sumuch,هزارسموچ,هزارسموچ,FAO,AF18
-district,AF1807,Kalafgan,کل افغان,کل افغان,FAO,AF18
-district,AF1814,Khwaja Bahawuddin,خواجه بهاوالدین,خواجه بهاوالدین,FAO,AF18
-district,AF1809,Khwaja Ghar,خواجه غار,خواجه غار,FAO,AF18
-district,AF1806,Namak Ab,نمک آب,نمک آب,FAO,AF18
-district,AF1810,Rostaq,روستاق,روستاق,FAO,AF18
-district,AF1801,Taloqan,تالقان,تالقان,FAO,AF18
-district,AF1813,Warsaj,ورسج,ورسج,FAO,AF18
-district,AF1817,Yangi Qala,ینگی قلعه,ینگی قلعه,FAO,AF18
-district,AF2503,Chora,چوره,چوره,KANAO,AF25
-district,AF2502,Dehrawud,دهراوود,دهراوود,KANAO,AF25
-district,AF2505,Khas Uruzgan,خاص ارزگان,خاص ارزگان,KANAO,AF25
-district,AF2504,Shahid-e-Hassas,شهید حساس,شهید حساس,KANAO,AF25
-district,AF2501,Tirinkot,ترینکوت,ترینکوت,KANAO,AF25
-district,AF2506,Chinarto,چینارتو,چینارتو,KANAO,AF25
-district,AF2605,Arghandab,ارغنداب,ارغنداب,KANAO,AF26
-district,AF2608,Atghar,اتغر,اتغر,KANAO,AF26
-district,AF2607,Daychopan,دایچوپان,دایچوپان,KANAO,AF26
-district,AF2611,Kakar,کاکر,کاکر,KANAO,AF26
-district,AF2604,Mizan,میزان,میزان,KANAO,AF26
-district,AF2609,Nawbahar,نوبهار,نوبهار,KANAO,AF26
-district,AF2601,Qalat,قلات,قلات,KANAO,AF26
-district,AF2606,Shah Joi,شاه جوی,شاه جوی,KANAO,AF26
-district,AF2610,Shamul Zayi,شملزائی,شملزائی,KANAO,AF26
-district,AF2603,Shinkay,شینکی,شینکی,KANAO,AF26
-district,AF2602,Tarnak Wa Jaldak,ترنک و جلدک,ترنک و جلدک,KANAO,AF26
-district,AF3107,Ghormach,غورماچ,غورماچ,MAO,AF31
+district,AF34NA1,Dilaram,دلارام,دلارام,KANAO,AF34
