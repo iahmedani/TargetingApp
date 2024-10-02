@@ -3,3 +3,4 @@ db.sqlite3
 .sqlite3
 excel_files
 moda_media_files
+__pycache__
