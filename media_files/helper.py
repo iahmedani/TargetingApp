@@ -207,7 +207,7 @@ def tpmSerializer(data):
     return {
         'list_name': data.list_name,
         'name': data.name,
-        'label::English': data.label_english,
+        'label': data.label_english,
         'label::Dari': data.label_dari,
         'label::Pashto': data.label_pashto,
         'ao': data.ao,
