@@ -260,7 +260,7 @@ def std_data_analysis(request):
         
         avg_time = calculate_time_difference(df)
         
-        avg_time = avg_time.pivot_table(values='time_difference_minutes', index=['cp','username'], columns='vul', aggfunc='mean', margins=True, margins_name='Total')
+        avg_time = avg_time.pivot_table(values='time_difference_minutes', index=['cp','username'], columns='vul', aggfunc=['mean','count'], margins=True, margins_name='Total')
         
         df_summary = pd.pivot_table(
                                 df, 
