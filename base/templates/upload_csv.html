@@ -6,18 +6,24 @@
     <div class="block block-rounded">
       <ul class="nav nav-tabs nav-tabs-alt" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="btabs-alt-static-planVsActualReason-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-planVsActualReason" role="tab" aria-controls="btabs-alt-static-planVsActualReason" aria-selected="true" tabindex="-1">Import CP Data </button>
+          <button class="nav-link active" id="btabs-alt-static-planVsActualReason-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-planVsActualReason" role="tab" aria-controls="btabs-alt-static-planVsActualReason" aria-selected="true" tabindex="-1">CP Data </button>
         </li>
         
         <li class="nav-item" role="presentation">
-          <button class="nav-link " id="btabs-alt-static-InactivateFDPs-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-InactivateFDPs" role="tab" aria-controls="btabs-alt-static-InactivateFDPs" aria-selected="false">Import TPM Data</button>
+          <button class="nav-link " id="btabs-alt-static-InactivateFDPs-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-InactivateFDPs" role="tab" aria-controls="btabs-alt-static-InactivateFDPs" aria-selected="false">TPM SC Data</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link " id="btabs-alt-static-planVsActualReason1-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-planVsActualReason1" role="tab" aria-controls="btabs-alt-static-planVsActualReason1" aria-selected="false" tabindex="-1">Import to Update CP Data </button>
+          <button class="nav-link " id="btabs-alt-static-TPMEE-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-TPMEE" role="tab" aria-controls="btabs-alt-static-TPMEE" aria-selected="false">TPM EE Error Data</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link " id="btabs-alt-static-planVsActualReason1-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-planVsActualReason1" role="tab" aria-controls="btabs-alt-static-planVsActualReason1" aria-selected="false" tabindex="-1">Update CP Data </button>
         </li>
         
         <li class="nav-item" role="presentation">
-          <button class="nav-link " id="btabs-alt-static-InactivateFDPs1-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-InactivateFDPs1" role="tab" aria-controls="btabs-alt-static-InactivateFDPs1" aria-selected="false">Import to Update TPM Data</button>
+          <button class="nav-link " id="btabs-alt-static-InactivateFDPs1-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-InactivateFDPs1" role="tab" aria-controls="btabs-alt-static-InactivateFDPs1" aria-selected="false">Update TPM SC Data</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link " id="btabs-alt-static-TPMEE_update-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-TPMEE_update" role="tab" aria-controls="btabs-alt-static-TPMEE_update" aria-selected="false">Update TPM EE Data</button>
         </li>
       </ul>
       <div class="block-content tab-content">
@@ -37,7 +43,7 @@
               </div>
               <div class="mb-6">
 
-              <button class="btn btn-success btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Import</button>
+              <button class="btn btn-success btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Import CP Data</button>
               </div>
           </form>
           </div>
@@ -62,7 +68,31 @@
               </div>
               <div class="mb-6">
 
-              <button class="btn btn-success btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Import</button>
+              <button class="btn btn-success btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Import TPM SC Data</button>
+              </div>
+          </form>
+          </div>
+         
+        </div>
+        <div class="tab-pane  " id="btabs-alt-static-TPMEE" role="tabpanel" aria-labelledby="btabs-alt-static-TPMEE-tab" tabindex="0">
+          <div class="block-content">
+            
+           
+
+            <form class="row row-cols-auto g-3 align-items-center" method="post" enctype="multipart/form-data" action="{% url 'import_tpm_ee_csv' %}">
+              {% csrf_token %}
+              <input type="hidden" name="data_type" value="tpm_data">
+
+
+
+              <div class="mb-6">
+
+                <input type="file" name="csv_file" class="form-control" required accept=".csv" id="id_file">
+
+              </div>
+              <div class="mb-6">
+
+              <button class="btn btn-success btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Import TPM EE Data</button>
               </div>
           </form>
           </div>
@@ -85,7 +115,7 @@
               </div>
               <div class="mb-6">
 
-              <button class="btn btn-secondary btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Update</button>
+              <button class="btn btn-secondary btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Update CP Data</button>
               </div>
           </form>
           </div>
@@ -111,7 +141,33 @@
               </div>
               <div class="mb-6">
 
-              <button class="btn btn-secondary btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Update</button>
+              <button class="btn btn-secondary btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Update TPM SC Data</button>
+              </div>
+          </form>
+          </div>
+         
+        </div>
+
+        <div class="tab-pane  " id="btabs-alt-static-TPMEE_update" role="tabpanel" aria-labelledby="btabs-alt-static-TPMEE_update-tab" tabindex="0">
+          <div class="block-content">
+            
+           
+
+            <form class="row row-cols-auto g-3 align-items-center" method="POST" enctype="multipart/form-data" action="{% url 'import_tpm_ee_csv' %}">
+              {% csrf_token %}
+              <input type="hidden" name="data_type" value="tpm_data">
+              <input type="hidden" name="_method" value="PUT">
+
+
+
+              <div class="mb-6">
+
+                <input type="file" name="csv_file" class="form-control" required accept=".csv" id="id_file">
+
+              </div>
+              <div class="mb-6">
+
+              <button class="btn btn-secondary btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Update EE Data</button>
               </div>
           </form>
           </div>

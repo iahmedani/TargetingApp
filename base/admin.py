@@ -2,7 +2,7 @@ import csv
 from django.http import HttpResponse
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
-from .models import CPDataModel1, TPMDataModel, TargetingForms, CSVData, TPMCSVData, Sample1, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District, MediaFilesType
+from .models import CPDataModel1, TPMDataModel, TargetingForms, CSVData, TPMCSVData, Sample1, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District, MediaFilesType, TPM_SC_Data, TPM_EE_Data
 from django.utils.translation import ngettext
 from import_export import resources
 
@@ -313,4 +313,4 @@ class DistrictAdmin(ImportExportModelAdmin,admin.ModelAdmin):
 # admin.site.register(TargetingForms, TargetingFormsAdmin)
 # admin.site.register(CSVData, CSVDataAdmin)
 
-admin.site.register(MediaFilesType)
+admin.site.register([MediaFilesType,TPM_SC_Data,TPM_EE_Data])

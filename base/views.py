@@ -10,7 +10,7 @@ import time
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, JsonResponse
-from .models import CPDataModel, TPMDataModel, TPMCSVData, CSVData, Sample, CPDataModel1, Sample1  # Adjust the models as needed
+from .models import CPDataModel, TPMDataModel, TPMCSVData, CSVData, Sample, CPDataModel1, Sample1, TPM_SC_Data, TPM_EE_Data # Adjust the models as needed
 
 import pandas as pd
 import numpy as np
@@ -204,7 +204,7 @@ class CSVImportView(View):
         df['observation'] = df['observation'].map({1:True, 2:False})
         df['ag_work'] = df['ag_work'].map({1:True, 2:False})
         # Convert date columns
-        date_columns = ['data_assess', 'SubmissionDate','start','end','today']
+        date_columns = ['data_assess', 'SubmissionDate','start','end','today','date_return']
         for col in date_columns:
             if col in df.columns:
                 df[col] = pd.to_datetime(df[col], errors='coerce', utc=True)
@@ -286,7 +286,7 @@ class TPMCSVImportView(View):
             df = pd.read_csv(csv_file)
             
             # Replace '/' with '_' in column names
-            df.columns = df.columns.str.replace('/', '_')
+            df.columns = df.columns.str.replace('-', '_')
             
             if 'ben_id' not in df.columns:
                 messages.error(request, 'Seems like wrong file is sent for process.')
@@ -320,38 +320,26 @@ class TPMCSVImportView(View):
         # Add import_status column
         df['import_status'] = ''
 
-        # Convert 'Yes'/'No' to boolean
-        bool_columns = [
-            'HH_head_1', 'HH_head_2', 'HH_head_3', 'HH_head_5', 'HH_head_6',
-            'HHFound', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10',
-            'A11', 'A12', 'A13', 'exclusion_1', 'vul'
-        ]
-        
-        for col in bool_columns:
-            if col in df.columns:
-                df[col] = df[col].map({'Yes': True, 'No': False})
-
         # Convert date columns
-        date_columns = ['data_assess', 'date_return', '_submission_time', '_date_modified']
+        date_columns = ['data_assess',  'SubmissionDate','start',	'end',	'today']
         for col in date_columns:
             if col in df.columns:
                 df[col] = pd.to_datetime(df[col], errors='coerce', utc=True)
+                
+        df.rename(columns={'KEY': 'key'}, inplace=True)
+        df.rename(columns={'SB_province': 'SB_province1', 'SB_district': 'SB_district1','SB_B_1':'SB_province', 'SB_B_2':'SB_district'}, inplace=True)
+        df.rename(columns={'SB_province1': 'SB_B_1', 'SB_district':'SB_B_2'}, inplace=True)
 
         # Convert integer columns
-        int_columns = ['ben_age', 'alter_age', 'TPM_Calculation']
+        int_columns = ['TPM_Calculation']
         for col in int_columns:
             if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors='coerce').astype('Int64')
-
-        # Convert _duration to timedelta
-        if '_duration' in df.columns:
-            df['_duration'] = pd.to_numeric(df['_duration'], errors='coerce').fillna(0).astype(int)
-            df['_duration'] = df['_duration'].apply(lambda x: timedelta(seconds=x))
+                df[col] = pd.to_numeric(df[col], errors='coerce').astype('Int16')
 
         error_rows = []
 
         # Get valid field names from the model
-        valid_fields = set(f.name for f in TPMCSVData._meta.get_fields())
+        valid_fields = set(f.name for f in TPM_SC_Data._meta.get_fields())
 
         # Get the current timezone
         current_tz = timezone.get_current_timezone()
@@ -367,26 +355,140 @@ class TPMCSVImportView(View):
                             if k in date_columns and isinstance(v, pd.Timestamp):
                                 # Convert to UTC, then to the current timezone
                                 v = v.tz_convert(current_tz)
-                            elif k in bool_columns:
-                                v = bool(v)  # Ensure boolean values are properly converted
-                            elif k == '_duration':
-                                v = timedelta(seconds=int(v.total_seconds()))  # Convert back to timedelta
                             valid_data[k] = v
 
                     if is_update:
                         try:
-                            obj = TPMCSVData.objects.get(_id=valid_data['_id'])
+                            obj = TPM_SC_Data.objects.get(key=valid_data['key'])
                             for key, value in valid_data.items():
                                 setattr(obj, key, value)
                             obj.save()
                             df.at[index, 'import_status'] = 'Updated'
-                        except TPMCSVData.DoesNotExist:
+                        except TPM_SC_Data.DoesNotExist:
                             df.at[index, 'import_status'] = 'Not found - Update skipped'
                     else:
-                        _Sample = Sample.objects.get(ben_id=valid_data['ben_id'])
-                        obj, created = TPMCSVData.objects.get_or_create(
-                            _id=valid_data['_id'],
-                            sample=_Sample,
+                        # _Sample = Sample1.objects.get(ben_id=valid_data['ben_id'])
+                        obj, created = TPM_SC_Data.objects.get_or_create(
+                            key=valid_data['key'],
+                            # sample=_Sample,
+                            defaults=valid_data
+                        )
+                        df.at[index, 'import_status'] = 'Created' if created else 'Already exists'
+            except Exception as e:
+                logger.error(f"Error processing row {index}: {str(e)}")
+                df.at[index, 'import_status'] = f'Error: {str(e)}'
+                error_rows.append(index)
+
+        return df, error_rows
+
+
+class TPMEEVImportView(View):
+    template_name = 'upload_csv.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        # Check if this is supposed to be a PUT request
+        if request.POST.get('_method') == 'PUT':
+            return self._handle_file_upload(request, is_update=True)
+        else:
+            return self._handle_file_upload(request, is_update=False)
+
+    def _handle_file_upload(self, request, is_update):
+        csv_file = request.FILES.get('csv_file')
+        if not csv_file:
+            messages.error(request, 'Please upload a CSV file.')
+            return render(request, self.template_name)
+
+        try:
+            # Read CSV file
+            df = pd.read_csv(csv_file)
+            
+            # Replace '/' with '_' in column names
+            df.columns = df.columns.str.replace('-', '_')
+            
+            if 'cfac_Q4' in df.columns:
+                messages.error(request, 'Seems like wrong file is sent for process.')
+                return render(request, self.template_name)
+                
+            # Process the DataFrame
+            df, error_rows = self.process_dataframe(df, is_update)
+
+            # Generate response CSV
+            output = BytesIO()
+            df.to_csv(output, index=False)
+            output.seek(0)
+
+            # Create HTTP response
+            response = HttpResponse(output, content_type='text/csv', charset='utf-8-sig')
+            response['Content-Disposition'] = 'attachment; filename="import_results.csv"'
+            
+            if error_rows:
+                messages.warning(request, f'{len(error_rows)} rows had errors. Check the output CSV for details.')
+            else:
+                messages.success(request, 'All rows were processed successfully.')
+
+            return response
+
+        except Exception as e:
+            logger.error(f"Error processing CSV: {str(e)}")
+            messages.error(request, f'An error occurred while processing the CSV: {str(e)}')
+            return render(request, self.template_name)
+
+    def process_dataframe(self, df, is_update):
+        # Add import_status column
+        df['import_status'] = ''
+
+        # Convert date columns
+        date_columns = ['data_assess',  'SubmissionDate','start',	'end',	'today']
+        for col in date_columns:
+            if col in df.columns:
+                df[col] = pd.to_datetime(df[col], errors='coerce', utc=True)
+                
+        df.rename(columns={'KEY': 'key'}, inplace=True)
+
+        # Convert integer columns
+        int_columns = ['TPM_Calculation']
+        for col in int_columns:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce').astype('Int16')
+
+        error_rows = []
+
+        # Get valid field names from the model
+        valid_fields = set(f.name for f in TPM_EE_Data._meta.get_fields())
+
+        # Get the current timezone
+        current_tz = timezone.get_current_timezone()
+
+        # Process rows
+        for index, row in df.iterrows():
+            try:
+                with transaction.atomic():
+                    # Filter out any columns that don't exist in the model and handle NaN values
+                    valid_data = {}
+                    for k, v in row.to_dict().items():
+                        if k in valid_fields and pd.notna(v):
+                            if k in date_columns and isinstance(v, pd.Timestamp):
+                                # Convert to UTC, then to the current timezone
+                                v = v.tz_convert(current_tz)
+                            valid_data[k] = v
+
+                    if is_update:
+                        try:
+                            obj = TPM_EE_Data.objects.get(key=valid_data['key'])
+                            for key, value in valid_data.items():
+                                setattr(obj, key, value)
+                            obj.save()
+                            df.at[index, 'import_status'] = 'Updated'
+                        except TPM_EE_Data.DoesNotExist:
+                            df.at[index, 'import_status'] = 'Not found - Update skipped'
+                    else:
+                        # _Sample = Sample1.objects.get(ben_id=valid_data['ben_id'])
+                        obj, created = TPM_EE_Data.objects.get_or_create(
+                            key=valid_data['key'],
+                            # sample=_Sample,
                             defaults=valid_data
                         )
                         df.at[index, 'import_status'] = 'Created' if created else 'Already exists'
