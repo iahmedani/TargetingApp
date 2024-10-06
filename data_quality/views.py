@@ -257,6 +257,8 @@ def std_data_analysis(request):
 
         # Section Nine: Produce final excel workbook
         df_with_errors, df_without_errors = produce_final_excel(df, merged_errors)
+        df_without_errors.drop(columns=['name_ben_clean',	'ben_fath_clean',	'id_number_clean'], inplace=True)
+        df_with_errors.drop(columns=['name_ben_clean',	'ben_fath_clean',	'id_number_clean'], inplace=True)
         
         avg_time = calculate_time_difference(df)
         

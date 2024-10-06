@@ -48,41 +48,6 @@ def find_child_under_5_error(df):
     return child_5_error_sorted
 
 
-# def find_potential_hoh_duplicates(df):
-#     """Section Seven: Potential Head of Household Duplication."""
-
-#     def compare_rows(index_pair, df_block):
-#         idx1, idx2 = index_pair
-#         row1 = df_block.loc[idx1]
-#         row2 = df_block.loc[idx2]
-
-#         name_similarity = fuzz.partial_ratio(str(row1['name_ben']), str(row2['name_ben']))
-#         father_similarity = fuzz.partial_ratio(str(row1['ben_fath']), str(row2['ben_fath']))
-#         id_similarity = fuzz.partial_ratio(str(row1['id_number']), str(row2['id_number']))
-
-#         if name_similarity >= 85 and father_similarity >= 85 and id_similarity >= 85:
-#             return (idx1, idx2)
-#         return None
-
-#     df['block_key'] = df['name_ben'].astype(str).str[:2]
-#     all_comparisons = []
-
-#     for block_value, block_df in df.groupby('block_key'):
-#         index_pairs = list(combinations(block_df.index, 2))
-
-#         results = Parallel(n_jobs=-1)(
-#             delayed(compare_rows)(pair, block_df) for pair in index_pairs
-#         )
-
-#         results = [result for result in results if result]
-#         all_comparisons.extend(results)
-
-#     if all_comparisons:
-#         duplicate_indices = list(set([idx for pair in all_comparisons for idx in pair]))
-#         duplicate_rows = df.loc[duplicate_indices]
-#         return duplicate_rows
-#     else:
-#         return pd.DataFrame()  # Return empty DataFrame if no duplicates found
 
 def find_potential_hoh_duplicates(df):
     """Section Seven: Potential Head of Household Duplication."""
@@ -117,7 +82,18 @@ def find_potential_hoh_duplicates(df):
 
     return duplicate_rows
 
+# write fuction to find uncommon cp (string)
 
+def find_uncommon_cp(df):
+    """Section Eight: Uncommon CP."""
+    cp_list = df['cp'].tolist()
+    common_cp = set(cp_list)
+    uncommon_cp = set()
+    for cp in common_cp:
+        if len(cp_list.count(cp)) < 2:
+            uncommon_cp.add(cp)
+    uncommon_cp_df = df[df['cp'].isin(uncommon_cp)]
+    return uncommon_cp_df
 
 def add_error_remarks(df, error_type, remarks):
     """Section Eight: Adding Remarks."""

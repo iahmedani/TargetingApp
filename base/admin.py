@@ -85,8 +85,8 @@ class TargetingFormsAdmin(admin.ModelAdmin):
 @admin.register(CPDataModel1)
 class CSVDataAdmin(admin.ModelAdmin):
     list_display = ('name_ben', 'ben_fath', 'ben_gender', 'ben_age', 'key')
-    search_fields = ('name_ben', 'ben_fath', 'key')
-    list_filter = ('ben_gender', 'assessmentType', 'SB_ao', 'SB_province')
+    search_fields = ('name_ben', 'ben_fath','SB_province', 'SB_district', 'SB_area', 'SB_cfac_name')
+    list_filter = ('vul','ben_gender', 'assessmentType', 'SB_ao', 'SB_province', 'SB_district','SB_area', 'cp','SB_cfac_name')
 
     fieldsets = (
         ('Basic Information', {

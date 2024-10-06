@@ -452,6 +452,7 @@ def uploadSample(user):
     for form in forms:
         ao = form.area_office
         x = area_office[ao]
+        print(ao)
         mediaList = form.moda_media_files.values_list('file_name', flat=True)
         if 'samples' in mediaList:
     # Filter plans from the last six months
