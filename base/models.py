@@ -732,6 +732,8 @@ class ModaUser(models.Model):
     organization_short_name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     access_given = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     
     def __str__(self):

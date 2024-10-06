@@ -245,7 +245,7 @@ class ModaUserResource(resources.ModelResource):
         
 @admin.register(ModaUser)
 class ModaUserAdmin(ImportExportModelAdmin,admin.ModelAdmin):
-    list_display = ('moda_username', 'moda_email', 'first_name', 'last_name', 'user_type', 'area_office', 'organization_short_name', 'is_active', 'access_given')
+    list_display = ('moda_username', 'moda_email', 'first_name', 'last_name', 'user_type', 'area_office', 'organization_short_name', 'is_active', 'access_given','created_at','updated_at')
     search_fields = ('moda_username', 'moda_email', 'first_name', 'last_name')
     list_filter = ('user_type', 'area_office', 'is_active', 'access_given') 
     
