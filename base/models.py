@@ -920,7 +920,7 @@ class media_files(models.Model):
 #### TPM Models
 
 class TPM_SC_Data(models.Model):
-    # sample = models.ForeignKey(Sample1, on_delete=models.RESTRICT, null=True, related_name='tpm_records')
+    sample = models.ForeignKey(Sample1, on_delete=models.RESTRICT, null=True, related_name='tpm_records')
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
     today = models.DateField(null=True)

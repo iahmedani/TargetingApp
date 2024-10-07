@@ -5,3 +5,5 @@ excel_files
 moda_media_files
 __pycache__
 .DS_Store
+province.csv
+district.csv

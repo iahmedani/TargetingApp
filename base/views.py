@@ -367,10 +367,11 @@ class TPMCSVImportView(View):
                         except TPM_SC_Data.DoesNotExist:
                             df.at[index, 'import_status'] = 'Not found - Update skipped'
                     else:
-                        # _Sample = Sample1.objects.get(ben_id=valid_data['ben_id'])
+                        ben_id = valid_data['ben_id'].split('_')[1]
+                        _Sample = Sample1.objects.get(ben_id=ben_id)
                         obj, created = TPM_SC_Data.objects.get_or_create(
                             key=valid_data['key'],
-                            # sample=_Sample,
+                            sample=_Sample,
                             defaults=valid_data
                         )
                         df.at[index, 'import_status'] = 'Created' if created else 'Already exists'
@@ -895,14 +896,14 @@ class ApproveSampleView(View):
 class SampledLocations(View):
     def get(self, request):
         # Perform the aggregation using related model fields
-        counts = Sample.objects.filter(
+        counts = Sample1.objects.filter(
             sample_type='Regular'
         ).values(
             'cp_id__SB_ao', 'cp_id__SB_province', 'cp_id__SB_district', 'cp_id__SB_area', 'cp_id__SB_nahia'
         ).annotate(
             sample_count=Count('id'),  # Count of all Sample records
-            cp_exculsion_error=Count('id', filter=Q(cp_id__vul=False, tpm_records__vul=True)),
-            cp_inclusion_error=Count('id', filter=Q(cp_id__vul=True, tpm_records__vul=False)),
+            cp_exculsion_error=Count('id', filter=Q(cp_id__vul='No', tpm_records__vul='Yes')),
+            cp_inclusion_error=Count('id', filter=Q(cp_id__vul='Yes', tpm_records__vul='No')),
             cp_vul_tpm_vul_null=Count('id', filter=Q(cp_id__vul=None, tpm_records__vul=None)),
             cp_excluded=Count('id', filter=Q(cp_id__exclusion_1=True)),
             tpm_excluded=Count('id', filter=Q(tpm_records__exclusion_1=True)),
@@ -1065,6 +1066,7 @@ class FinalListDataAnalysis(View):
         district = json_data.get('district')
         nahia = json_data.get('nahia')
         error_type = json_data.get('error_type')
+        print([area_office, province, district, nahia])
 
         if not all([area_office, province, district, nahia]):
             logger.error("Missing required parameters")
@@ -1072,8 +1074,8 @@ class FinalListDataAnalysis(View):
 
         try:
             cp_data = self.get_cp_data(area_office, province, district, nahia)
-            sample_data = Sample.objects.filter(cp_id__in=cp_data).select_related('cp_id')
-            tpm_data = TPMCSVData.objects.filter(sample__in=sample_data).select_related('sample__cp_id')
+            sample_data = Sample1.objects.filter(cp_id__in=cp_data).select_related('cp_id')
+            tpm_data = TPM_SC_Data.objects.filter(sample__in=sample_data).select_related('sample__cp_id')
 
             common_data = self.process_common_data(cp_data, tpm_data)
             non_common_data = self.process_non_common_data(cp_data, tpm_data)
@@ -1091,12 +1093,18 @@ class FinalListDataAnalysis(View):
             return JsonResponse({'error': 'Internal Server Error'}, status=500)
 
     def get_cp_data(self, area_office, province, district, nahia):
-        return CSVData.objects.filter(
-            SB_ao=area_office,
-            SB_province=province,
-            SB_district=district,
-            SB_nahia=nahia
-        )
+        filters = {
+            'SB_ao': area_office,
+            'SB_province': province,
+            'SB_district': district,
+        }
+        
+        # Only add SB_nahia to the filter if nahia is not 'null' or None
+        if nahia is not None and nahia != 'null':
+            filters['SB_nahia'] = nahia
+        
+        return CPDataModel1.objects.filter(**filters)
+
 
     def process_common_data(self, cp_data, tpm_data):
         common_data = []
@@ -1135,28 +1143,28 @@ class FinalListDataAnalysis(View):
     def determine_status(self, cp, tpm):
         if tpm.HHFound == False:
             return 'Rejected: Due to hh not found during spotcheck'
-        if cp.vul and tpm.vul:
+        if cp.vul == 'Yes' and tpm.vul == 'Yes':
             return 'Selected: Due to vulnerable by CP and TPM during spotcheck'
-        if cp.vul and not tpm.vul:
+        if cp.vul == 'Yes' and not tpm.vul == 'No':
             return 'Rejected: during spotcheck, initailly selected during cp verification'
-        if not cp.vul and tpm.vul:
+        if not cp.vul =='Yes' and tpm.vul == 'Yes':
             return 'Selected: during spotcheck, initailly rejected during cp verification'
         return 'Rejected: during spotcheck and cp verification'
 
     def determine_non_common_status(self, cp):
         if cp.assessmentType != 'Replacement Assessment':
-            return 'Selected: During CP Verification' if cp.vul else 'Rejected: During CP Verification'
-        return 'Selected: During replacement Assessment' if cp.vul else 'Rejected: During replacement Assessment'
+            return 'Selected: During CP Verification' if cp.vul == 'Yes' else 'Rejected: During CP Verification'
+        return 'Selected: During replacement Assessment' if cp.vul =='Yes' else 'Rejected: During replacement Assessment'
 
     def get_all_cp_data(self, cp):
-        result = {field.name: getattr(cp, field.name) for field in CSVData._meta.fields}
+        result = {field.name: getattr(cp, field.name) for field in CPDataModel1._meta.fields}
         result['cp_vul'] = result.pop('vul')
         return result
 
     def calculate_counts(self, cp_data, tpm_data, common_data, non_common_data):
         total_cp_data = cp_data.count()
-        vulnerable_by_cp = cp_data.filter(vul=True).count()
-        vulnerable_by_tpm = tpm_data.filter(vul=True).count()
+        vulnerable_by_cp = cp_data.filter(vul='Yes').count()
+        vulnerable_by_tpm = tpm_data.filter(vul='Yes').count()
 
         total_selected = sum(
             1 for entry in common_data + non_common_data if 'Selected' in entry['status']
@@ -1166,7 +1174,7 @@ class FinalListDataAnalysis(View):
         )
 
         total_replacement = cp_data.filter(
-            assessmentType='Replacement Assessment', vul=True
+            assessmentType='Replacement Assessment', vul='Yes'
         ).count()
 
         percentage_selected = (total_selected / total_cp_data) * 100 if total_cp_data > 0 else 0
@@ -1181,11 +1189,11 @@ class FinalListDataAnalysis(View):
         ).count()
 
         vulnerable_and_selected = sum(
-            1 for entry in common_data + non_common_data if 'Selected' in entry['status'] and entry.get('cp_vul') == True
+            1 for entry in common_data + non_common_data if 'Selected' in entry['status'] and entry.get('cp_vul') == 'Yes'
         )
 
         vulnerable_and_rejected = sum(
-            1 for entry in common_data + non_common_data if 'Rejected' in entry['status'] and entry.get('cp_vul') == True
+            1 for entry in common_data + non_common_data if 'Rejected' in entry['status'] and entry.get('cp_vul') == 'Yes'
         )
 
         rejection_reasons_distribution = {}

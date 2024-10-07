@@ -2,7 +2,7 @@ import csv
 from django.http import HttpResponse
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
-from .models import CPDataModel1, TPMDataModel, TargetingForms, CSVData, TPMCSVData, Sample1, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District, MediaFilesType, TPM_SC_Data, TPM_EE_Data
+from .models import CPDataModel1, TargetingForms, TPMCSVData, Sample1, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District, MediaFilesType, TPM_SC_Data, TPM_EE_Data
 from django.utils.translation import ngettext
 from import_export import resources
 
@@ -84,7 +84,7 @@ class TargetingFormsAdmin(admin.ModelAdmin):
     
 @admin.register(CPDataModel1)
 class CSVDataAdmin(admin.ModelAdmin):
-    list_display = ('name_ben', 'ben_fath', 'ben_gender', 'ben_age', 'key')
+    list_display = ('name_ben', 'ben_fath', 'ben_gender', 'ben_age', 'vul','SB_province', 'SB_district', 'SB_area', 'SB_cfac_name','cp')
     search_fields = ('name_ben', 'ben_fath','SB_province', 'SB_district', 'SB_area', 'SB_cfac_name')
     list_filter = ('vul','ben_gender', 'assessmentType', 'SB_ao', 'SB_province', 'SB_district','SB_area', 'cp','SB_cfac_name')
 

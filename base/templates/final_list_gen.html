@@ -310,15 +310,36 @@
         let selectedProvince = document.getElementById('ddProvinces').value;
         let selectedDistrict = document.getElementById('ddDistrict').value;
         let selectedNahia = document.getElementById('ddNahia').value;
-    
+        if (selectedNahia === 'null' || selectedNahia === undefined || selectedNahia === ""){
+          console.log("Selected Nahia is null or undefined or empty string");
+        }
+        
+
+
         let filteredData = data.counts.filter(item => 
-            item.cp_id__SB_ao === selectedAO && 
-            item.cp_id__SB_province === selectedProvince && 
-            item.cp_id__SB_district === selectedDistrict && 
-            item.cp_id__SB_nahia === selectedNahia
-        );
-    
+    (selectedNahia === 'null' || selectedNahia === undefined || selectedNahia === "")
+    ? (
+        item.cp_id__SB_ao === selectedAO && 
+        item.cp_id__SB_province === selectedProvince && 
+        item.cp_id__SB_district === selectedDistrict
+    )
+    : (
+        item.cp_id__SB_ao === selectedAO && 
+        item.cp_id__SB_province === selectedProvince && 
+        item.cp_id__SB_district === selectedDistrict && 
+        item.cp_id__SB_nahia == selectedNahia
+    )
+);
+
+
+      
+      console.log("Filtered Data:", filteredData);
+      
+      
+      
+
         let x = filteredData[0];
+        console.log(x)
     
         // Calculate values
         const inclusionError = (x.cp_inclusion_error / x.total_tpm) * 100;
@@ -454,7 +475,7 @@
                   // Clear the lower-level dropdowns and input fields
                   document.getElementById('ddDistrict').innerHTML = '<option value="">Select</option>';
                   document.getElementById('ddNahia').innerHTML = '<option value="">Select</option>';
-                  document.getElementById('totalRecords').value = '';
+                  //document.getElementById('totalRecords').value = '';
                   document.getElementById('sampleSize').value = '';
               });
 
@@ -479,7 +500,7 @@
 
                   // Clear the Nahia dropdown and input fields
                   document.getElementById('ddNahia').innerHTML = '<option value="">Select</option>';
-                  document.getElementById('totalRecords').value = '';
+                  //document.getElementById('totalRecords').value = '';
                   document.getElementById('sampleSize').value = '';
               });
 
@@ -505,7 +526,10 @@
               });
               analysisel = document.getElementById('Analyze');
               analysisel.addEventListener('click', function () {
-              Analysis(data);
+              
+                console.log(data)
+                Analysis(data);
+
 
               });
           })

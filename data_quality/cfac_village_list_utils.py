@@ -110,13 +110,14 @@ def create_village_list(df):
         'name': df['village_code'],
         'label': df['Village'],
         'cfac_code': df['cfac_code'],
-        'Province': df['Province'],
-        'District': df['District'],
-        'Province_code': df['Province_code'],
-        'District_code': df['District_code'],
-        'CFAC_Name': df['CFAC Name'],
+        'province': df['Province'],
+        'district': df['District'],
+        'province_code': df['Province_code'],
+        'district_code': df['District_code'],
+        'cfac_name': df['CFAC Name'],
         'ao': df['AO'],
     }).drop_duplicates()
+    
     return village_list
 
 def save_to_excel(df_dict, output_file):

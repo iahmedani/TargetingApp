@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import final_list_views
 
 urlpatterns = [
     path('register/', views.register, name='register'),
@@ -26,4 +27,8 @@ urlpatterns = [
     path('filal_list_locations/', views.SampledLocations.as_view(), name='filal_list_locations'),
     path('final_list_data_analysis/', views.FinalListDataAnalysis.as_view(), name='final_list_data_analysis'),
     path('export/<str:model_name>/', views.export_model_to_excel, name='export_model_to_excel'),
+    
+    
+    # test final views.
+    path('final_list_test/', final_list_views.DataCountsGroupedView.as_view(), name='final_list_test'),
 ]

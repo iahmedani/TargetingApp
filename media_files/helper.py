@@ -476,31 +476,41 @@ def uploadSample(user):
             except Exception as e:
                 print(f'Error uploading media: {e}')
                 UploadLogs.objects.create(form_id=form.form_id, form_name=str(form.form_id), file_name='BenTargeting.csv', status='Failed', created_by=user)
-            
-def get_correct_username(email,moda_username):
+
+def get_correct_username(email, moda_username):
     url = f'{BASE_MODA_URL}users'
     user_name_url = f'{url}/{moda_username}'
     params = {
-    'search': email
+        'search': email
     }
+    
     try:
+        # Attempt to find user by email
         response = requests.get(url, headers=HEADER, params=params)
         if response.status_code == 200:
             data = response.json()
-            if data:
-                return data[0]['username']
-        else:
-            response = requests.get(user_name_url, headers=HEADER)
-            if response.status_code == 200:
-                data = response.json()
-                return data['username']
+            if data and 'username' in data[0]:  # Check if valid data exists
+                return data[0].get('username')
             else:
-                print(f'Error getting username: {response.status_code} - {response.text}')
-                return None
+                print(f'No user found for email: {email}')
+        
+        # If the email search fails, attempt with moda_username
+        responsex = requests.get(user_name_url, headers=HEADER)
+        if responsex.status_code == 200:
+            data = responsex.json()
+            if 'username' in data:  # Check if username exists in the response
+                return data.get('username')
+            else:
+                print(f'No username found for moda_username: {moda_username}')
+        else:
+            print(f'Error getting username by moda_username: {responsex.status_code} - {responsex.text}')
         
     except Exception as e:
-        print(f'Error getting username: {e}')
-        return None
+        print(f'Exception occurred while getting username: {e}')
+    
+    # Return None if no valid username is found in either check
+    return None
+
 
 def revoke_access(username, project_id):
     url = f'{BASE_MODA_URL}projects/{project_id}/share'
