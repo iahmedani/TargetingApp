@@ -208,6 +208,9 @@ class CSVImportView(View):
         for col in date_columns:
             if col in df.columns:
                 df[col] = pd.to_datetime(df[col], errors='coerce', utc=True)
+        # Sum columns A1 to A13 and store in a new column
+        df['CP_Calculation'] = df[['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 
+                                'A8', 'A9', 'A10', 'A11', 'A12', 'A13']].sum(axis=1)
 
         # Convert integer columns
         int_columns = ['ben_age', 'p_age', 'alter_age', 'child_5Num', 'c1age', 'c2age', 'c3age', 'c4age', 'c5age',
