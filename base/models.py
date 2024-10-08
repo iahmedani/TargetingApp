@@ -1068,3 +1068,21 @@ class TPM_EE_Data(models.Model):
     class Meta:
         verbose_name = "TPM EE Data"
         verbose_name_plural = "TPM EE Data"
+
+class FinalApproval(models.Model):
+    bs = models.ForeignKey(CPDataModel1, on_delete=models.RESTRICT, related_name='final_approval')
+    bs_key = models.CharField(max_length=50, unique=True)
+    tpm_vul = models.CharField(max_length=10, null=True)
+    tpm_hh_found = models.BooleanField(null=True)
+    status = models.CharField(max_length=255, null=False)
+    final_comment = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return self.bs.name_ben
+    
+    class Meta:
+        verbose_name = 'Aproved List'
+        verbose_name_plural = 'Aproved List'

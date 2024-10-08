@@ -10,7 +10,7 @@ import time
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, JsonResponse
-from .models import CPDataModel, TPMDataModel, TPMCSVData, CSVData, Sample, CPDataModel1, Sample1, TPM_SC_Data, TPM_EE_Data # Adjust the models as needed
+from .models import CPDataModel, TPMDataModel, TPMCSVData, CSVData, Sample, CPDataModel1, Sample1, TPM_SC_Data, TPM_EE_Data,FinalApproval # Adjust the models as needed
 
 import pandas as pd
 import numpy as np
@@ -112,7 +112,7 @@ def error_check(request):
     return render(request, 'temp.html', {'title': 'Error Checking'})
 
 def final_list(request):
-    return render(request, 'final_list_gen.html', {'title': 'Final List Generation'})
+    return render(request, 'final_list_gen1.html', {'title': 'Final List Generation'})
 
 def reports(request):
     return render(request, 'temp.html', {'title': 'Reports'})
@@ -442,7 +442,7 @@ class TPMEEVImportView(View):
         df['import_status'] = ''
 
         # Convert date columns
-        date_columns = ['data_assess',  'SubmissionDate','start',	'end',	'today']
+        date_columns = ['data_assess',  'SubmissionDate','start',	'end',	'today', 'date_return']
         for col in date_columns:
             if col in df.columns:
                 df[col] = pd.to_datetime(df[col], errors='coerce', utc=True)
@@ -917,7 +917,7 @@ class SampledLocations(View):
         ).order_by(
             'cp_id__SB_ao', 'cp_id__SB_province', 'cp_id__SB_district', 'cp_id__SB_area', 'cp_id__SB_nahia'
         )
-
+        
         # Prepare the result
         result = {
             'counts': list(counts)
@@ -926,6 +926,87 @@ class SampledLocations(View):
         # Return JSON response with safe=True since the top-level object is a dictionary
         return JsonResponse(result, safe=True)
     
+
+class SampledLocations(View):
+    def get(self, request):
+        try:
+            # Base queryset for Sample1 with aggregations
+            counts = Sample1.objects.filter(
+                sample_type='Regular'
+            ).values(
+                'cp_id__SB_ao',
+                'cp_id__SB_province',
+                'cp_id__SB_district',
+                'cp_id__SB_area',
+                'cp_id__SB_nahia'
+            ).annotate(
+                sample_count=Count('id'),
+                cp_exclusion_error=Count('id', filter=Q(cp_id__vul='No', tpm_records__vul='Yes')),
+                cp_inclusion_error=Count('id', filter=Q(cp_id__vul='Yes', tpm_records__vul='No')),
+                cp_vul_tpm_vul_null=Count('id', filter=Q(cp_id__vul=None, tpm_records__vul=None)),
+                cp_excluded=Count('id', filter=Q(cp_id__exclusion_1=True)),
+                tpm_excluded=Count('id', filter=Q(tpm_records__exclusion_1=True)),
+                total_tpm=Count('tpm_records__id'),
+                tpm_hh_not_found=Count('tpm_records__id', filter=Q(tpm_records__HHFound=False))
+            )
+
+            # Perform aggregation on TPM_EE_Data grouped by common fields and 'vul'
+            tpmee_counts = TPM_EE_Data.objects.values(
+                'SB_ao',
+                'SB_province',
+                'SB_district',
+                'SB_area',
+                'SB_nahia',
+                'vul'
+            ).annotate(
+                count=Count('id')
+            )
+
+            # Build a mapping from common fields to 'vul' counts
+            tpmee_counts_dict = {}
+            for item in tpmee_counts:
+                key = (
+                    item['SB_ao'],
+                    item['SB_province'],
+                    item['SB_district'],
+                    item['SB_area'],
+                    item['SB_nahia']
+                )
+                if key not in tpmee_counts_dict:
+                    tpmee_counts_dict[key] = {}
+                tpmee_counts_dict[key][item['vul']] = item['count']
+
+            # Convert counts queryset to list
+            counts_list = list(counts)
+
+            # Add 'ee' key with TPM_EE_Data counts nested under it
+            for item in counts_list:
+                key = (
+                    item['cp_id__SB_ao'],
+                    item['cp_id__SB_province'],
+                    item['cp_id__SB_district'],
+                    item['cp_id__SB_area'],
+                    item['cp_id__SB_nahia']
+                )
+                ee_counts = tpmee_counts_dict.get(key, {})
+                item['ee'] = ee_counts
+
+            # Prepare the result
+            result = {
+                'counts': counts_list
+            }
+
+            # Return JSON response
+            return JsonResponse(result, safe=True)
+
+        except Exception as e:
+            logger.exception("An error occurred while fetching sampled locations.")
+            return JsonResponse(
+                {'error': 'An error occurred while processing your request.'},
+                status=500
+            )
+
+
 # from django.views import View
 # from django.http import JsonResponse
 # from django.db.models import Q, OuterRef, Exists, Subquery
@@ -1145,15 +1226,22 @@ class FinalListDataAnalysis(View):
             return 'Rejected: Due to hh not found during spotcheck'
         if cp.vul == 'Yes' and tpm.vul == 'Yes':
             return 'Selected: Due to vulnerable by CP and TPM during spotcheck'
-        if cp.vul == 'Yes' and not tpm.vul == 'No':
+        if cp.vul == 'Yes' and tpm.vul == 'No':
             return 'Rejected: during spotcheck, initailly selected during cp verification'
-        if not cp.vul =='Yes' and tpm.vul == 'Yes':
+        if cp.vul =='No' and tpm.vul == 'Yes':
             return 'Selected: during spotcheck, initailly rejected during cp verification'
-        return 'Rejected: during spotcheck and cp verification'
+        if cp.vul == 'Yes' and tpm.vul == 'Excluded':
+            return 'Rejected: Excluded by TPM during spotcheck'
+            
 
     def determine_non_common_status(self, cp):
         if cp.assessmentType != 'Replacement Assessment':
+            if cp.vul == 'Excluded':
+                return 'Rejected: Exclusion by CP'
             return 'Selected: During CP Verification' if cp.vul == 'Yes' else 'Rejected: During CP Verification'
+        if cp.assessmentType == 'Replacement Assessment':
+            if cp.vul == 'Excluded':
+                return 'Rejected: Exclusion by CP'
         return 'Selected: During replacement Assessment' if cp.vul =='Yes' else 'Rejected: During replacement Assessment'
 
     def get_all_cp_data(self, cp):
@@ -1165,6 +1253,9 @@ class FinalListDataAnalysis(View):
         total_cp_data = cp_data.count()
         vulnerable_by_cp = cp_data.filter(vul='Yes').count()
         vulnerable_by_tpm = tpm_data.filter(vul='Yes').count()
+        cp_border_line = cp_data.filter(CP_Calculation__in=[6,7]).count()
+        cp_excluded = cp_data.filter(vul='Excluded').count()
+        tpm_excluded = tpm_data.filter(vul='Excluded').count()
 
         total_selected = sum(
             1 for entry in common_data + non_common_data if 'Selected' in entry['status']
@@ -1180,21 +1271,12 @@ class FinalListDataAnalysis(View):
         percentage_selected = (total_selected / total_cp_data) * 100 if total_cp_data > 0 else 0
         percentage_rejected = (total_rejected / total_cp_data) * 100 if total_cp_data > 0 else 0
 
-        selected_rejected_ratio = (total_selected / total_rejected) if total_rejected > 0 else 'Infinity'
-        
         total_unique_tpm_entries = tpm_data.distinct().count()
 
         total_non_replacement = cp_data.exclude(
             assessmentType='Replacement Assessment'
         ).count()
 
-        vulnerable_and_selected = sum(
-            1 for entry in common_data + non_common_data if 'Selected' in entry['status'] and entry.get('cp_vul') == 'Yes'
-        )
-
-        vulnerable_and_rejected = sum(
-            1 for entry in common_data + non_common_data if 'Rejected' in entry['status'] and entry.get('cp_vul') == 'Yes'
-        )
 
         rejection_reasons_distribution = {}
         for entry in common_data + non_common_data:
@@ -1208,15 +1290,250 @@ class FinalListDataAnalysis(View):
             'Total Replacement Assessments': total_cp_data - total_non_replacement,
             'Vulnerable By CP': vulnerable_by_cp,
             'Vulnerable By TPM': vulnerable_by_tpm,
-            'Total Selected': total_selected,
-            'Total Rejected': total_rejected,
+            'Total Selected': str(total_selected) + f" ({percentage_selected:.1f}%)",
+            'Total Rejected': str(total_rejected) + f" ({percentage_rejected:.1f}%)",
+            'Total Excluded by CP*': str(cp_excluded) + f" ({(cp_excluded/total_cp_data)*100:.1f}%)",
+            'Total Excluded by TPM*': str(tpm_excluded) + f" ({(tpm_excluded/total_unique_tpm_entries)*100:.1f}%)",
             'Selected During Replacement Assessment': total_replacement,
-            'Percentage Selected': f"{percentage_selected:.2f}%",
-            'Percentage Rejected': f"{percentage_rejected:.2f}%",
-            'Selected vs Rejected Ratio': int(selected_rejected_ratio),
             'Total Spotcheck': total_unique_tpm_entries,
+            'Total Borderline (6, 7)': str(cp_border_line) + f" ({(cp_border_line/total_cp_data)*100:.1f}%)",
+            '* Based on Exlusion Question':''
             
         }
+
+from django.views import View
+from django.http import JsonResponse, HttpResponseBadRequest
+from django.forms.models import model_to_dict
+import json
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class FinalListDataAnalysis(View):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON data: {e}")
+            return HttpResponseBadRequest("Invalid JSON data")
+
+        area_office = json_data.get('area_office')
+        province = json_data.get('province')
+        district = json_data.get('district')
+        nahia = json_data.get('nahia')
+
+        logger.debug(f"Received parameters: {area_office}, {province}, {district}, {nahia}")
+
+        if not all([area_office, province, district, nahia]):
+            logger.error("Missing required parameters")
+            return HttpResponseBadRequest("Missing required parameters")
+
+        try:
+            cp_data = self.get_cp_data(area_office, province, district, nahia)
+            sample_data = Sample1.objects.filter(cp_id__in=cp_data).select_related('cp_id')
+            tpm_data = TPM_SC_Data.objects.filter(sample__in=sample_data).select_related('sample__cp_id')
+
+            common_data = self.process_common_data(cp_data, tpm_data)
+            non_common_data = self.process_non_common_data(cp_data, tpm_data)
+
+            counts = self.calculate_counts(cp_data, tpm_data, common_data, non_common_data)
+
+            return JsonResponse({
+                'common_data': common_data,
+                'non_common_data': non_common_data,
+                'counts': counts
+            })
+
+        except Exception as e:
+            logger.exception("Error processing data")
+            return JsonResponse({'error': 'Internal Server Error'}, status=500)
+
+    def get_cp_data(self, area_office, province, district, nahia):
+        filters = {
+            'SB_ao': area_office,
+            'SB_province': province,
+            'SB_district': district,
+        }
+
+        # Handle 'null' or None values for nahia
+        if nahia and nahia.lower() != 'null':
+            filters['SB_nahia'] = nahia
+
+        return CPDataModel1.objects.filter(**filters)
+
+    def process_common_data(self, cp_data, tpm_data):
+        common_data = []
+        # Create a mapping of cp_id to tpm_data for quick lookup
+        tpm_data_map = {
+            tpm.sample.cp_id.id: tpm for tpm in tpm_data
+            if tpm.sample and tpm.sample.cp_id
+        }
+
+        cp_with_tpm = cp_data.filter(id__in=tpm_data_map.keys())
+
+        for cp in cp_with_tpm:
+            tpm = tpm_data_map.get(cp.id)
+            if tpm:
+                result = self.get_all_cp_data(cp)
+                result.update({
+                    'tpm_vul': tpm.vul,
+                    'HHFound': tpm.HHFound,
+                    'TPM_Calculation': tpm.TPM_Calculation,
+                    'status': self.determine_status(cp, tpm)
+                })
+                common_data.append(result)
+        return common_data
+
+    def process_non_common_data(self, cp_data, tpm_data):
+        non_common_data = []
+        tpm_cp_ids = {
+            tpm.sample.cp_id.id for tpm in tpm_data
+            if tpm.sample and tpm.sample.cp_id
+        }
+
+        cp_without_tpm = cp_data.exclude(id__in=tpm_cp_ids)
+
+        for cp in cp_without_tpm:
+            result = self.get_all_cp_data(cp)
+            result.update({
+                'tpm_vul': '',
+                'HHFound': '',
+                'TPM_Calculation': '',
+                'status': self.determine_non_common_status(cp)
+            })
+            non_common_data.append(result)
+        return non_common_data
+
+    def determine_status(self, cp, tpm):
+        if not tpm.HHFound:
+            return 'Rejected: Due to HH not found during spotcheck'
+
+        if cp.vul == 'Yes':
+            if tpm.vul == 'Yes':
+                return 'Selected: Vulnerable by both CP and TPM during spotcheck'
+            elif tpm.vul == 'No':
+                return 'Rejected: During spotcheck, initially selected during CP verification'
+            elif tpm.vul == 'Excluded':
+                return 'Rejected: Excluded by TPM during spotcheck based on exclusion question'
+
+        if cp.vul == 'No' and tpm.vul == 'Yes':
+            return 'Selected: During spotcheck, initially rejected during CP verification'
+
+        return 'Status Unknown'
+
+    def determine_non_common_status(self, cp):
+        if cp.vul == 'Excluded':
+            return 'Rejected: Exclusion by CP based on exlusion question'
+
+        if cp.assessmentType == 'Replacement Assessment':
+            return ('Selected: During Replacement Assessment' if cp.vul == 'Yes'
+                    else 'Rejected: During Replacement Assessment')
+
+        return ('Selected: During CP Verification' if cp.vul == 'Yes'
+                else 'Rejected: During CP Verification')
+
+    def get_all_cp_data(self, cp):
+        cp_dict = model_to_dict(cp)
+        cp_dict['cp_vul'] = cp_dict.pop('vul', '')
+        return cp_dict
+
+    def calculate_counts(self, cp_data, tpm_data, common_data, non_common_data):
+        total_cp_data = cp_data.count()
+        vulnerable_by_cp = cp_data.filter(vul='Yes').count()
+        vulnerable_by_tpm = tpm_data.filter(vul='Yes').count()
+        cp_borderline = cp_data.filter(CP_Calculation__in=[6, 7]).count()
+
+        total_selected = sum(
+            1 for entry in common_data + non_common_data if 'Selected' in entry.get('status', '')
+        )
+        total_rejected = sum(
+            1 for entry in common_data + non_common_data if 'Rejected' in entry.get('status', '')
+        )
+
+        total_replacement = cp_data.filter(
+            assessmentType='Replacement Assessment', vul='Yes'
+        ).count()
+
+        percentage_selected = (total_selected / total_cp_data) * 100 if total_cp_data > 0 else 0
+        percentage_rejected = (total_rejected / total_cp_data) * 100 if total_cp_data > 0 else 0
+
+        total_unique_tpm_entries = tpm_data.values('sample__cp_id').distinct().count()
+
+        total_non_replacement = cp_data.exclude(
+            assessmentType='Replacement Assessment'
+        ).count()
+
+        # Calculate rejection reasons distribution
+        rejection_reasons_distribution = {}
+        for entry in common_data + non_common_data:
+            status = entry.get('status', '')
+            if 'Rejected' in status:
+                reason = status.split(':', 1)[-1].strip()
+                rejection_reasons_distribution[reason] = rejection_reasons_distribution.get(reason, 0) + 1
+
+        counts = {
+            'Total CP Data': total_cp_data,
+            'Total Non-Replacement Assessments': total_non_replacement,
+            'Total Replacement Assessments': total_cp_data - total_non_replacement,
+            'Vulnerable By CP': vulnerable_by_cp,
+            'Vulnerable By TPM': vulnerable_by_tpm,
+            'Total Selected': f"{total_selected} ({percentage_selected:.1f}%)",
+            'Total Rejected': f"{total_rejected} ({percentage_rejected:.1f}%)",
+            'Selected During Replacement Assessment': total_replacement,
+            'Total Spotcheck': total_unique_tpm_entries,
+            'Total Borderline (6, 7)': f"{cp_borderline} ({(cp_borderline / total_cp_data) * 100 if total_cp_data else 0:.1f}%)",
+            'Rejection Reasons Given Bellow':'',
+            'Reasons': rejection_reasons_distribution
+        }
+
+        return counts
+
+
+class FinalListApproval(View):
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+        except json.JSONDecodeError:
+            return HttpResponseBadRequest("Invalid JSON data")
+
+        data = json_data.get('data')
+        final_comment = json_data.get('final_comment')
+
+        if not data or not final_comment:
+            return HttpResponseBadRequest("Missing required data")
+
+        try:
+            with transaction.atomic():
+                for item in data:
+                    # print(item)
+                    try:
+                        # Fetching the CPDataModel1 instance based on id
+                        bs = CPDataModel1.objects.get(id=item['id'])
+                        # print(bs)
+                        # Creating a FinalApproval entry
+                        FinalApproval.objects.create(
+                            bs=bs,
+                            bs_key=bs.key,  # Using dot notation to access model field 'key'
+                            final_comment=final_comment,
+                            tpm_vul=item.get('tpm_vul', ''),  # Using get to avoid KeyError if field doesn't exist
+                            tpm_hh_found=item.get('HHFound', False),  # Assuming HHFound is a boolean field
+                            status=item.get('status', ''),  # Defaulting to empty string if status is not provided
+                            created_by=request.user
+                        )
+                    except CPDataModel1.DoesNotExist:
+                        print(f"CPDataModel with id {item['id']} not found.")
+                        return HttpResponseBadRequest(f"CPDataModel with id {item['id']} not found.")
+        except Exception as e:
+            print(f"An unexpected error occurred: {str(e)}")
+            return HttpResponseBadRequest(f"An unexpected error occurred: {str(e)}")
+
+        return JsonResponse({'status': 'success'}, status=200)
+
+        
+
 
 
 
@@ -1271,3 +1588,7 @@ def export_model_to_excel(request, model_name):
 
     except LookupError:
         return HttpResponseBadRequest("Model not found. Please provide a valid model name.")
+
+
+
+

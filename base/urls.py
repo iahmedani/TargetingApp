@@ -31,4 +31,8 @@ urlpatterns = [
     
     # test final views.
     path('final_list_test/', final_list_views.DataCountsGroupedView.as_view(), name='final_list_test'),
+    # path('test_view_final_approval/', views.test_view_final_approval, name='final_list_test2'),
+    path('test_view_final_approval/', views.FinalListApproval.as_view(), name='final_list_test3'),
+    
+    
 ]
