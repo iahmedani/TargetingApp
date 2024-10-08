@@ -7,4 +7,5 @@ __pycache__
 .DS_Store
 province.csv
 district.csv
-db_backup.sqlite3db_backup.sqlite3
+db_backup.sqlite3
+
