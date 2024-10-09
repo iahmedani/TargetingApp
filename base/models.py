@@ -252,7 +252,7 @@ class CPDataModel1(models.Model):
     tpm_org = models.CharField(max_length=255, null=True)
     tpm_name_surv = models.CharField(max_length=255, null=True)
     tpm_mob_sur = models.CharField(max_length=20, null=True)
-    CFAC_Calculation = models.IntegerField()
+    CFAC_Calculation = models.IntegerField(null=True)
     CP_Calculation = models.IntegerField()
     difference = models.IntegerField()
     FO_shortcut = models.CharField(max_length=255)
