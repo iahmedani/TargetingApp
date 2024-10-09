@@ -254,7 +254,7 @@ class CPDataModel1(models.Model):
     tpm_mob_sur = models.CharField(max_length=20, null=True)
     CFAC_Calculation = models.IntegerField(null=True)
     CP_Calculation = models.IntegerField()
-    difference = models.IntegerField()
+    difference = models.IntegerField(null=True)
     FO_shortcut = models.CharField(max_length=255)
     vul = models.CharField(max_length=10)
     vul_note = models.CharField(max_length=10, null=True)
