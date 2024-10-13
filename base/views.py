@@ -1199,6 +1199,7 @@ class FinalListDataAnalysis(View):
             result = self.get_all_cp_data(cp)
 
             result.update({
+                'moda_id': cp.moda_id,
                 'tpm_vul': tpm.vul,
                 'HHFound': tpm.HHFound,
                 'TPM_Calculation': tpm.TPM_Calculation,
@@ -1216,6 +1217,7 @@ class FinalListDataAnalysis(View):
             result = self.get_all_cp_data(cp)
             # result['status'] = self.determine_non_common_status(cp)
             result.update({
+                'moda_id': cp.moda_id,
                 'tpm_vul': '',
                 'HHFound': '',
                 'TPM_Calculation':'',
@@ -1381,6 +1383,7 @@ class FinalListDataAnalysis(View):
             if tpm:
                 result = self.get_all_cp_data(cp)
                 result.update({
+                    'moda_id':cp.moda_id,
                     'tpm_vul': tpm.vul,
                     'HHFound': tpm.HHFound,
                     'TPM_Calculation': tpm.TPM_Calculation,
@@ -1401,6 +1404,7 @@ class FinalListDataAnalysis(View):
         for cp in cp_without_tpm:
             result = self.get_all_cp_data(cp)
             result.update({
+                'moda_id':cp.moda_id,
                 'tpm_vul': '',
                 'HHFound': '',
                 'TPM_Calculation': '',

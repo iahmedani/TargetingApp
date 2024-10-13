@@ -281,6 +281,12 @@ class CPDataModel1(models.Model):
     def __str__(self):
         return str(self.id)
     
+    ## create new column calculated, concat the BS_ao and id not saved but as data column
+    
+    @property
+    def moda_id(self):
+        return self.SB_ao + '_'+ str(self.id)
+    
     class Meta:
         verbose_name = "CP Data"
         verbose_name_plural = "CP Data"

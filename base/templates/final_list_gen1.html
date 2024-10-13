@@ -300,6 +300,8 @@
         if (data.length === 0) {
           $(`#${tableEl}`).DataTable().destroy();
         }
+
+        
     
         $(`#${tableEl}`).DataTable({
             data: data,
@@ -470,6 +472,7 @@
             remaining = data.non_common_data
             
             const combinedData = [...sample, ...remaining];
+            console.log(combinedData)
 
             createTable('CombinedData', combinedData, columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id']);
 
