@@ -85,7 +85,7 @@ class TargetingFormsAdmin(admin.ModelAdmin):
 @admin.register(CPDataModel1)
 class CSVDataAdmin(admin.ModelAdmin):
     list_display = ('name_ben', 'ben_fath', 'ben_gender', 'ben_age', 'vul','SB_province', 'SB_district', 'SB_area', 'SB_cfac_name','cp')
-    search_fields = ('name_ben', 'ben_fath','SB_province', 'SB_district', 'SB_area', 'SB_cfac_name')
+    search_fields = ('name_ben', 'ben_fath','SB_province', 'SB_district', 'SB_area', 'SB_cfac_name', 'key')
     list_filter = ('vul','ben_gender', 'assessmentType', 'SB_ao', 'SB_province', 'SB_district','SB_area', 'cp','SB_cfac_name')
     ## number of rows to display per page
     list_per_page = 500
@@ -201,7 +201,7 @@ class TPMCSVDataAdmin(admin.ModelAdmin):
 @admin.register(Sample1)
 class SampleAdmin(admin.ModelAdmin):
     list_display = ('ben_id', 'get_SB_ao', 'get_SB_province', 'get_district', 'get_nahia', 'get_cfac_name', 'is_urban', 'remarks', 'created_by', 'created_at')
-    search_fields = ('get_SB_ao', 'get_SB_province', 'get_district')
+    search_fields = ('get_SB_ao', 'get_SB_province', 'get_district', 'key')
     list_filter = (SBaoFilter, SBprovinceFilter,SBdisrictFilter, 'is_urban')
     
     actions = [export_as_csv]

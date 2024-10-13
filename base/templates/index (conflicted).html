@@ -69,34 +69,92 @@
     <div class="row">
       <!-- Row #2 -->
       <div class="col-md-12">
-        <div class="card push">
-          <div class="card-header border-bottom-0">
+        <div class="block block-rounded">
+          <div class="block-header">
             <h3 class="block-title">
-              Bootstrap <small>Card</small>
+              Summary <small>Total Data in system</small>
             </h3>
+            <div class="block-options">
+              <button type="button" class="btn-block-option" data-toggle="block-option" data-action="state_toggle" data-action-mode="demo">
+                <i class="si si-refresh"></i>
+              </button>
+              <button type="button" class="btn-block-option">
+                <i class="si si-wrench"></i>
+              </button>
+            </div>
           </div>
-          <div class="card-body">
-            <table id="summaryTable" class="display table table-bordered table-striped table-vcenter js-dataTable-full dataTable" style="width:100%">
+          <div class="block-content p-1 bg-body-light">
+            <!-- Chart.js Chart is initialized in js/pages/be_pages_dashboard.min.js which was auto compiled from _js/pages/be_pages_dashboard.js -->
+            <!-- For more info and examples you can check out http://www.chartjs.org/docs/ -->
+            <table id="summaryTable" class="display" style="width:100%">
               <thead>
                   <tr>
-                      <th>AO</th>
-                      <th>Province</th>
-                      <th>District</th>
-                      <th>Area</th>
-                      <th>Nahia</th>
-                      <th>Total CP</th>
-                      <th>Samples</th>
-                      <th>Total SC</th>
-                      <th>Total EE</th>
+                      <th>SB_ao</th>
+                      <th>SB_B_1</th>
+                      <th>SB_province</th>
+                      <th>SB_B_2</th>
+                      <th>SB_district</th>
+                      <th>SB_area</th>
+                      <th>SB_nahia</th>
+                      <th>CP Count</th>
+                      <th>Sample Count</th>
+                      <th>TPM EE Count</th>
                   </tr>
               </thead>
               <tbody>
               </tbody>
           </table>
           </div>
+          
         </div>
       </div>
-      
+      <div class="col-md-12">
+        <div class="block block-rounded">
+          <div class="block-header">
+            <h3 class="block-title">
+              Earnings <small>This week</small>
+            </h3>
+            <div class="block-options">
+              <button type="button" class="btn-block-option" data-toggle="block-option" data-action="state_toggle" data-action-mode="demo">
+                <i class="si si-refresh"></i>
+              </button>
+              <button type="button" class="btn-block-option">
+                <i class="si si-wrench"></i>
+              </button>
+            </div>
+          </div>
+          <div class="block-content p-1 bg-body-light">
+            <!-- Chart.js Chart is initialized in js/pages/be_pages_dashboard.min.js which was auto compiled from _js/pages/be_pages_dashboard.js -->
+            <!-- For more info and examples you can check out http://www.chartjs.org/docs/ -->
+            <canvas id="js-chartjs-dashboard-lines2" style="height: 290px"></canvas>
+          </div>
+          <div class="block-content">
+            <div class="row items-push">
+              <div class="col-6 col-sm-4 text-center text-sm-start">
+                <div class="fs-sm fw-semibold text-uppercase text-muted">This Month</div>
+                <div class="fs-4 fw-semibold">$ 6,540</div>
+                <div class="fw-semibold text-success">
+                  <i class="fa fa-caret-up"></i> +4%
+                </div>
+              </div>
+              <div class="col-6 col-sm-4 text-center text-sm-start">
+                <div class="fs-sm fw-semibold text-uppercase text-muted">This Week</div>
+                <div class="fs-4 fw-semibold">$ 1,525</div>
+                <div class="fw-semibold text-danger">
+                  <i class="fa fa-caret-down"></i> -7%
+                </div>
+              </div>
+              <div class="col-12 col-sm-4 text-center text-sm-start">
+                <div class="fs-sm fw-semibold text-uppercase text-muted">Balance</div>
+                <div class="fs-4 fw-semibold">$ 9,352</div>
+                <div class="fw-semibold text-success">
+                  <i class="fa fa-caret-up"></i> +35%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- END Row #2 -->
     </div>
     <div class="row">
@@ -301,13 +359,14 @@
                     data: data.counts, // Assign the JSON data to the DataTable
                     columns: [
                         { data: 'SB_ao' },
+                        { data: 'SB_B_1' },
                         { data: 'SB_province' },
+                        { data: 'SB_B_2' },
                         { data: 'SB_district' },
                         { data: 'SB_area' },
                         { data: 'SB_nahia', defaultContent: 'N/A' }, // Handle nulls in SB_nahia
                         { data: 'cp_count' },
                         { data: 'sample_count' },
-                        { data: 'tpm_sc_count' },
                         { data: 'tpm_ee_count' }
                     ],
                     dom: 'Bfrtip', // Enables export buttons

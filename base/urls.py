@@ -26,6 +26,9 @@ urlpatterns = [
     
     path('filal_list_locations/', views.SampledLocations.as_view(), name='filal_list_locations'),
     path('final_list_data_analysis/', views.FinalListDataAnalysis.as_view(), name='final_list_data_analysis'),
+    path('check_keys_in_excel/', views.check_keys_in_excel, name='check_keys_in_excel'),
+    path('summary_view/', views.summary_view, name='summary_view'),
+    
     path('export/<str:model_name>/', views.export_model_to_excel, name='export_model_to_excel'),
     
     
@@ -33,6 +36,7 @@ urlpatterns = [
     path('final_list_test/', final_list_views.DataCountsGroupedView.as_view(), name='final_list_test'),
     # path('test_view_final_approval/', views.test_view_final_approval, name='final_list_test2'),
     path('test_view_final_approval/', views.FinalListApproval.as_view(), name='final_list_test3'),
+    
     
     
 ]

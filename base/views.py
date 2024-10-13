@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from .forms import UserRegisterForm, UserLoginForm
 from django.contrib.auth.decorators import login_not_required
-
+import io
 import os
 import time
 from django.conf import settings
@@ -1592,6 +1592,219 @@ def export_model_to_excel(request, model_name):
     except LookupError:
         return HttpResponseBadRequest("Model not found. Please provide a valid model name.")
 
+def check_keys_in_excel(request):
+    if request.method == 'POST':
+        excel_file = request.FILES.get('excel_file')
+
+        if not excel_file:
+            return HttpResponse("No file uploaded.", status=400)
+
+        try:
+            # Read the Excel file into a pandas DataFrame
+            df = pd.read_excel(excel_file)
+
+            # Ensure 'KEY' column exists in the DataFrame
+            if 'KEY' not in df.columns:
+                return HttpResponse("Excel file must contain a 'KEY' column.", status=400)
+
+            # Fetch all keys from the model
+            model_keys = set(CPDataModel1.objects.values_list('key', flat=True))
+
+            # Add a 'Match' column based on whether 'KEY' exists in model_keys
+            df['Match'] = df['KEY'].apply(lambda x: x in model_keys)
+
+            # Save the modified DataFrame to an Excel file in memory
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, index=False)
+            output.seek(0)
+
+            # Prepare the response with the modified Excel file
+            response = HttpResponse(
+                output.read(),
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = 'attachment; filename=checked_keys.xlsx'
+
+            return response
+
+        except Exception as e:
+            return HttpResponse(f"An error occurred: {str(e)}", status=500)
+
+    else:
+        # Render the upload form template for GET requests
+        return render(request, 'check_upload_excel.html')
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+def get_grouped_data(queryset, group_fields, count_field, prefix=''):
+    """
+    Utility function to annotate queryset with counts and return values as dictionaries.
+    
+    Args:
+        queryset: Django queryset to group and annotate.
+        group_fields: List of fields to group by.
+        count_field: Field to count on the queryset.
+        prefix: (Optional) prefix for field names when using related fields.
+    
+    Returns:
+        list of grouped dictionaries.
+    """
+    try:
+        data = (
+            queryset
+            .values(*group_fields)
+            .annotate(**{count_field: Count('id')})
+        )
+        return list(data)
+    except Exception as e:
+        logger.error(f"Error fetching grouped data: {e}")
+        return []
+
+def combine_grouped_data(cp_data, sample_data, tpm_ee_data, tpm_sc_data):
+    """
+    Combines data from different models into one structure based on shared keys.
+    
+    Args:
+        cp_data: Data from CPDataModel1 grouped by common fields.
+        sample_data: Data from Sample1 grouped by common fields.
+        tpm_ee_data: Data from TPM_EE_Data grouped by common fields.
+        tpm_sc_data: Data from TPM_SC_Data grouped by common fields.
+    
+    Returns:
+        A list of dictionaries with combined counts.
+    """
+    combined_data = {}
+
+    # Combine CP data
+    for cp in cp_data:
+        key = (
+            cp['SB_ao'], cp['SB_B_1'], cp['SB_province'], 
+            cp['SB_B_2'], cp['SB_district'], cp['SB_area'], cp['SB_nahia']
+        )
+        combined_data[key] = {
+            'SB_ao': cp['SB_ao'],
+            'SB_B_1': cp['SB_B_1'],
+            'SB_province': cp['SB_province'],
+            'SB_B_2': cp['SB_B_2'],
+            'SB_district': cp['SB_district'],
+            'SB_area': cp['SB_area'],
+            'SB_nahia': cp['SB_nahia'],
+            'cp_count': cp['cp_count'],
+            'sample_count': 0,
+            'tpm_ee_count': 0,
+            'tpm_sc_count': 0
+        }
+
+    # Combine Sample data
+    for sample in sample_data:
+        key = (
+            sample['cp_id__SB_ao'], sample['cp_id__SB_B_1'], 
+            sample['cp_id__SB_province'], sample['cp_id__SB_B_2'], 
+            sample['cp_id__SB_district'], sample['cp_id__SB_area'], sample['cp_id__SB_nahia']
+        )
+        if key in combined_data:
+            combined_data[key]['sample_count'] = sample['sample_count']
+        else:
+            combined_data[key] = {
+                'SB_ao': sample['cp_id__SB_ao'],
+                'SB_B_1': sample['cp_id__SB_B_1'],
+                'SB_province': sample['cp_id__SB_province'],
+                'SB_B_2': sample['cp_id__SB_B_2'],
+                'SB_district': sample['cp_id__SB_district'],
+                'SB_area': sample['cp_id__SB_area'],
+                'SB_nahia': sample['cp_id__SB_nahia'],
+                'cp_count': 0,
+                'sample_count': sample['sample_count'],
+                'tpm_ee_count': 0,
+                'tpm_sc_count': 0
+            }
+
+    # Combine TPM EE data
+    for tpm_ee in tpm_ee_data:
+        key = (
+            tpm_ee['SB_ao'], tpm_ee['SB_B_1'], tpm_ee['SB_province'], 
+            tpm_ee['SB_B_2'], tpm_ee['SB_district'], tpm_ee['SB_area'], tpm_ee['SB_nahia']
+        )
+        if key in combined_data:
+            combined_data[key]['tpm_ee_count'] = tpm_ee['tpm_ee_count']
+        else:
+            combined_data[key] = {
+                'SB_ao': tpm_ee['SB_ao'],
+                'SB_B_1': tpm_ee['SB_B_1'],
+                'SB_province': tpm_ee['SB_province'],
+                'SB_B_2': tpm_ee['SB_B_2'],
+                'SB_district': tpm_ee['SB_district'],
+                'SB_area': tpm_ee['SB_area'],
+                'SB_nahia': tpm_ee['SB_nahia'],
+                'cp_count': 0,
+                'sample_count': 0,
+                'tpm_ee_count': tpm_ee['tpm_ee_count'],
+                'tpm_sc_count': 0
+            }
+
+    # Combine TPM SC data
+    for tpm_sc in tpm_sc_data:
+        key = (
+            tpm_sc['sample__cp_id__SB_ao'], tpm_sc['sample__cp_id__SB_B_1'], 
+            tpm_sc['sample__cp_id__SB_province'], tpm_sc['sample__cp_id__SB_B_2'], 
+            tpm_sc['sample__cp_id__SB_district'], tpm_sc['sample__cp_id__SB_area'], tpm_sc['sample__cp_id__SB_nahia']
+        )
+        if key in combined_data:
+            combined_data[key]['tpm_sc_count'] = tpm_sc['tpm_sc_count']
+        else:
+            combined_data[key] = {
+                'SB_ao': tpm_sc['sample__cp_id__SB_ao'],
+                'SB_B_1': tpm_sc['sample__cp_id__SB_B_1'],
+                'SB_province': tpm_sc['sample__cp_id__SB_province'],
+                'SB_B_2': tpm_sc['sample__cp_id__SB_B_2'],
+                'SB_district': tpm_sc['sample__cp_id__SB_district'],
+                'SB_area': tpm_sc['sample__cp_id__SB_area'],
+                'SB_nahia': tpm_sc['sample__cp_id__SB_nahia'],
+                'cp_count': 0,
+                'sample_count': 0,
+                'tpm_ee_count': 0,
+                'tpm_sc_count': tpm_sc['tpm_sc_count']
+            }
+
+    # Return as list
+    return list(combined_data.values())
+
+def summary_view(request):
+    try:
+        # Fetch data from models and group by common fields
+        group_fields = ['SB_ao', 'SB_B_1', 'SB_province', 'SB_B_2', 'SB_district', 'SB_area', 'SB_nahia']
+        
+        # Group CPDataModel1
+        cp_data = get_grouped_data(CPDataModel1.objects, group_fields, 'cp_count')
+        
+        # Group Sample1
+        sample_data = get_grouped_data(
+            Sample1.objects.select_related('cp_id'), 
+            [f'cp_id__{field}' for field in group_fields], 
+            'sample_count'
+        )
+        
+        # Group TPM_SC_Data
+        tpm_sc_data = get_grouped_data(
+            TPM_SC_Data.objects.select_related('sample__cp_id'), 
+            [f'sample__cp_id__{field}' for field in group_fields], 
+            'tpm_sc_count'
+        )
+        
+        # Group TPM_EE_Data
+        tpm_ee_data = get_grouped_data(TPM_EE_Data.objects, group_fields, 'tpm_ee_count')
+
+        # Combine the data
+        combined_data = combine_grouped_data(cp_data, sample_data, tpm_ee_data, tpm_sc_data)
+
+        # Return JSON response
+        return JsonResponse({'counts': combined_data}, status=200)
+    
+    except Exception as e:
+        logger.error(f"Error generating summary: {e}")
+        return JsonResponse({'error': 'An error occurred while generating the summary'}, status=500)
 
 
 
