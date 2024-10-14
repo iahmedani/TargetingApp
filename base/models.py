@@ -285,7 +285,21 @@ class CPDataModel1(models.Model):
     
     @property
     def moda_id(self):
-        return self.SB_ao + '_'+ str(self.id)
+        # Mapping for the first digit based on SB_ao values
+        ao_mapping = {
+            'FAO': '1',
+            'HAO': '2',
+            'JAO': '3',
+            'KANAO': '4',
+            'KAO': '5',
+            'MAO': '6',
+        }
+        
+        # Get the first digit based on SB_ao
+        first_digit = ao_mapping.get(self.SB_ao, '0')  # Default to '0' if SB_ao is not found
+        
+        # Create the 10-digit moda_id by combining the first digit and padding the ID
+        return f"{first_digit}{str(self.id).zfill(9)}"  #
     
     class Meta:
         verbose_name = "CP Data"
