@@ -10,6 +10,7 @@ from .models import UploadLogs
 
 
 
+
 # Load variables from .env file
 BASE_MODA_URL = os.getenv('MODA_API_BASE_URL')
 MODA_API_KEY = os.getenv('MODA_API_KEY')
@@ -402,8 +403,8 @@ def SampleSerializer(data):
         'SB-B_2': data.cp_id.SB_district,
         'SB-province':data.cp_id.SB_B_1,
         'SB-district': data.cp_id.SB_B_2,
-        'SB-area': area_type_dict[str(data.cp_id.SB_area)],
-        'SB-nahia': data.cp_id.SB_nahia,
+        'SB-area': str(data.cp_id.SB_area),
+        'SB-nahia': int(data.cp_id.SB_nahia) if data.cp_id.SB_nahia is not None else 0 ,
         'SB-cfac_name': data.cp_id.SB_cfac_name,
         'SB-Name_of_the_village_Gozar_Elder': data.cp_id.SB_Name_of_the_village_Gozar_Elder,
         'SB-Name_of_the_village_Gozar_Elder': data.cp_id.SB_Name_of_the_village_Gozar_Elder,
