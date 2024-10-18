@@ -1012,7 +1012,7 @@ class SampledLocations_bordeline(View):
                     output_field=FloatField()
                 )
             ).filter(
-                inclusion_error_percent__gt=5
+                inclusion_error_percent__gt=10
             )
 
            
@@ -1984,6 +1984,124 @@ def summary_view(request):
     except Exception as e:
         logger.error(f"Error generating summary: {e}")
         return JsonResponse({'error': 'An error occurred while generating the summary'}, status=500)
+    
+class summary_view(View):
+    def get(self, request):
+        try:
+            # Base queryset for Sample1 with necessary aggregations
+            counts = Sample1.objects.values(
+                'cp_id__SB_ao',
+                'cp_id__SB_province',
+                'cp_id__SB_district',
+                'cp_id__SB_area',
+                'cp_id__SB_nahia'
+            ).annotate(
+                sample_count=Count('id'),  # Count of samples
+                cp_inclusion_error=Count('id', filter=Q(cp_id__vul='Yes', tpm_records__vul='No')),  # Inclusion error count
+                total_tpm=Count('tpm_records__id'),  # Total TPM records
+                tpm_hh_not_found=Count('tpm_records__id', filter=Q(tpm_records__HHFound=False)),  # Count of HH not found
+                inclusion_error_percent=ExpressionWrapper(
+                    F('cp_inclusion_error') * 100.0 / F('total_tpm'),
+                    output_field=FloatField()
+                ),  # Inclusion error as percentage
+            )
+
+            # Aggregation on TPM_EE_Data for exclusion error
+            tpmee_counts = TPM_EE_Data.objects.values(
+                'SB_ao',
+                'SB_province',
+                'SB_district',
+                'SB_area',
+                'SB_nahia'
+            ).annotate(
+                ee_vul_yes_count=Count('id', filter=Q(vul='Yes')),  # Count where ee_vul is 'Yes'
+                total_ee_count=Count('id')  # Total EE count
+            )
+
+            # Create a dictionary to map EE counts for calculating exclusion error
+            tpmee_counts_dict = {}
+            for item in tpmee_counts:
+                key = (
+                    item['SB_ao'],
+                    item['SB_province'],
+                    item['SB_district'],
+                    item['SB_area'],
+                    item['SB_nahia']
+                )
+                tpmee_counts_dict[key] = {
+                    'ee_vul_yes_count': item['ee_vul_yes_count'],
+                    'total_ee_count': item['total_ee_count']
+                }
+
+            # Aggregation on CPDataModel1 to get cp_count
+            cp_counts = CPDataModel1.objects.values(
+                'SB_ao',
+                'SB_province',
+                'SB_district',
+                'SB_area',
+                'SB_nahia'
+            ).annotate(
+                cp_count=Count('id'),
+                cp_selected = Count('id', filter=Q(vul='Yes'))   # Count of selected CPs
+            )
+
+            # Create a dictionary to map CP counts
+            cp_counts_dict = {}
+            for cp_item in cp_counts:
+                cp_key = (
+                    cp_item['SB_ao'],
+                    cp_item['SB_province'],
+                    cp_item['SB_district'],
+                    cp_item['SB_area'],
+                    cp_item['SB_nahia']
+                )
+                cp_counts_dict[cp_key] = {
+                    'cp_count': cp_item['cp_count'],
+                    'cp_selected': cp_item['cp_selected']
+                }
+                
+
+            # Convert counts queryset to list for modification
+            counts_list = list(counts)
+
+            # Calculate and append exclusion error based on TPM_EE_Data counts and cp_count from CPDataModel1
+            for item in counts_list:
+                key = (
+                    item['cp_id__SB_ao'],
+                    item['cp_id__SB_province'],
+                    item['cp_id__SB_district'],
+                    item['cp_id__SB_area'],
+                    item['cp_id__SB_nahia']
+                )
+                # Get EE data for exclusion error calculation
+                ee_data = tpmee_counts_dict.get(key, {})
+                if ee_data.get('total_ee_count', 0) > 0:
+                    exclusion_error = ee_data['ee_vul_yes_count'] / ee_data['total_ee_count']
+                else:
+                    exclusion_error = 0  # Default to 0 if no EE data
+
+                item['exclusion_error'] = exclusion_error * 100
+                item['total_ee_count'] = ee_data.get('total_ee_count', 0)
+
+                # Get cp_count from CPDataModel1
+                item['cp_count'] = cp_counts_dict.get(key, 0)
+
+            # Prepare the result
+            result = {
+                'counts': counts_list
+            }
+
+            # Return JSON response
+            return JsonResponse(result, safe=True)
+
+        except Exception as e:
+            logger.exception("An error occurred while fetching sampled locations.")
+            return JsonResponse(
+                {'error': 'An error occurred while processing your request.'},
+                status=500
+            )
+
+
 
 
 

@@ -18,7 +18,7 @@
               <i class="fa fa-user-group fa-2x opacity-25"></i>
             </div>
             <div>
-              <div class="fs-3 fw-semibold">1500</div>
+              <div class="fs-3 fw-semibold" id="totalAssessment"></div>
               <div class="fs-sm fw-semibold text-uppercase text-muted">Ben: Assesed</div>
             </div>
           </div>
@@ -31,7 +31,7 @@
               <i class="fa fa-user-group fa-2x opacity-25"></i>
             </div>
             <div>
-              <div class="fs-3 fw-semibold">150</div>
+              <div class="fs-3 fw-semibold" id="total_tpm"></div>
               <div class="fs-sm fw-semibold text-uppercase text-muted">Ben: spot-check</div>
             </div>
           </div>
@@ -45,7 +45,7 @@
               <i class="fa fa-circle-exclamation fa-2x opacity-25"></i>
             </div>
             <div>
-              <div class="fs-3 fw-semibold">15%</div>
+              <div class="fs-3 fw-semibold" id="inclusion_error_percent_avg"></div>
               <div class="fs-sm fw-semibold text-uppercase text-danger">Inclusion Error</div>
             </div>
           </div>
@@ -58,7 +58,7 @@
               <i class="fa fa-map-pin fa-2x opacity-25"></i>
             </div>
             <div>
-              <div class="fs-3 fw-semibold">10</div>
+              <div class="fs-3 fw-semibold" id="totaldistrict"></div>
               <div class="fs-sm fw-semibold text-uppercase text-muted">District Assessed</div>
             </div>
           </div>
@@ -72,11 +72,11 @@
         <div class="card push">
           <div class="card-header border-bottom-0">
             <h3 class="block-title">
-              Bootstrap <small>Card</small>
+              Total Summary <small>Table</small>
             </h3>
           </div>
           <div class="card-body">
-            <table id="summaryTable" class="display table table-bordered table-striped table-vcenter js-dataTable-full dataTable" style="width:100%">
+            <table id="summaryTable" class="display table table-bordered table-striped table-vcenter js-dataTable-full dataTable table-sm" style="width:100%">
               <thead>
                   <tr>
                       <th>AO</th>
@@ -85,9 +85,12 @@
                       <th>Area</th>
                       <th>Nahia</th>
                       <th>Total CP</th>
+                      <th>CP Selected</th>
                       <th>Samples</th>
                       <th>Total SC</th>
+                      <th>Inclusion Error</th>
                       <th>Total EE</th>
+                      <th>Exlusion Error</th>
                   </tr>
               </thead>
               <tbody>
@@ -99,178 +102,7 @@
       
       <!-- END Row #2 -->
     </div>
-    <div class="row">
-      <!-- Row #3 -->
-      <div class="col-md-4">
-        <div class="block block-rounded">
-          <div class="block-content block-content-full">
-            <div class="py-3 text-center">
-              <div class="mb-3">
-                <i class="fa fa-envelope-open fa-4x opacity-25"></i>
-              </div>
-              <div class="fs-4 fw-semibold">9.25k Subscribers</div>
-              <div class="text-muted">Your main list is growing!</div>
-              <div class="pt-3">
-                <a class="btn btn-primary" href="javascript:void(0)">
-                  <i class="fa fa-cog opacity-50 me-1"></i> Manage list
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="block block-rounded">
-          <div class="block-content block-content-full">
-            <div class="py-3 text-center">
-              <div class="mb-3">
-                <i class="fa fab fa-twitter fa-4x opacity-25"></i>
-              </div>
-              <div class="fs-4 fw-semibold">+36 followers</div>
-              <div class="text-muted">You are doing great!</div>
-              <div class="pt-3">
-                <a class="btn btn-primary" href="javascript:void(0)">
-                  <i class="fa fa-users opacity-50 me-1"></i> Check them out
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="block block-rounded">
-          <div class="block-content block-content-full">
-            <div class="py-3 text-center">
-              <div class="mb-3">
-                <i class="fa fa-check fa-4x opacity-25"></i>
-              </div>
-              <div class="fs-4 fw-semibold">Business Plan</div>
-              <div class="text-muted">This is your current active plan</div>
-              <div class="pt-3">
-                <a class="btn btn-primary" href="javascript:void(0)">
-                  <i class="fa fa-arrow-up opacity-50 me-1"></i> Upgrade to VIP
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- END Row #3 -->
-    </div>
-    <div class="row">
-      <!-- Row #4 -->
-      <div class="col-md-6">
-        <a class="block block-rounded block-link-shadow overflow-hidden" href="javascript:void(0)">
-          <div class="block-content block-content-full">
-            <i class="si si-briefcase fa-2x opacity-25"></i>
-            <div class="row g-5 py-3">
-              <div class="col-6 text-end border-end">
-                <div>
-                  <div class="fs-3 fw-semibold">16</div>
-                  <div class="fs-sm fw-semibold text-uppercase text-muted">Projects</div>
-                </div>
-              </div>
-              <div class="col-6">
-                <div>
-                  <div class="fs-3 fw-semibold">2</div>
-                  <div class="fs-sm fw-semibold text-uppercase text-muted">Active</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-6">
-        <a class="block block-rounded block-link-shadow overflow-hidden" href="javascript:void(0)">
-          <div class="block-content block-content-full">
-            <div class="text-end">
-              <i class="si si-users fa-2x opacity-25"></i>
-            </div>
-            <div class="row g-5 py-3">
-              <div class="col-6 text-end border-end">
-                <div>
-                  <div class="fs-3 fw-semibold text-info">63250</div>
-                  <div class="fs-sm fw-semibold text-uppercase text-muted">Accounts</div>
-                </div>
-              </div>
-              <div class="col-6">
-                <div>
-                  <div class="fs-3 fw-semibold text-success">97%</div>
-                  <div class="fs-sm fw-semibold text-uppercase text-muted">Active</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-      <!-- END Row #4 -->
-    </div>
-    <div class="row">
-      <!-- Row #5 -->
-      <div class="col-6 col-md-4 col-xl-2">
-        <a class="block block-rounded block-link-shadow text-center" href="be_pages_generic_inbox.html">
-          <div class="block-content ribbon ribbon-bookmark ribbon-primary ribbon-left">
-            <div class="ribbon-box">15</div>
-            <p class="my-3">
-              <i class="si si-envelope-letter fa-2x"></i>
-            </p>
-            <p class="fw-semibold">Inbox</p>
-          </div>
-        </a>
-      </div>
-      <div class="col-6 col-md-4 col-xl-2">
-        <a class="block block-rounded block-link-shadow text-center" href="be_pages_generic_profile.html">
-          <div class="block-content">
-            <p class="my-3">
-              <i class="si si-user fa-2x"></i>
-            </p>
-            <p class="fw-semibold">Profile</p>
-          </div>
-        </a>
-      </div>
-      <div class="col-6 col-md-4 col-xl-2">
-        <a class="block block-rounded block-link-shadow text-center" href="be_pages_forum_categories.html">
-          <div class="block-content ribbon ribbon-bookmark ribbon-primary ribbon-left">
-            <div class="ribbon-box">3</div>
-            <p class="my-3">
-              <i class="si si-bubbles fa-2x"></i>
-            </p>
-            <p class="fw-semibold">Forum</p>
-          </div>
-        </a>
-      </div>
-      <div class="col-6 col-md-4 col-xl-2">
-        <a class="block block-rounded block-link-shadow text-center" href="be_pages_generic_search.html">
-          <div class="block-content">
-            <p class="my-3">
-              <i class="si si-magnifier fa-2x"></i>
-            </p>
-            <p class="fw-semibold">Search</p>
-          </div>
-        </a>
-      </div>
-      <div class="col-6 col-md-4 col-xl-2">
-        <a class="block block-rounded block-link-shadow text-center" href="be_comp_charts.html">
-          <div class="block-content">
-            <p class="my-3">
-              <i class="si si-bar-chart fa-2x"></i>
-            </p>
-            <p class="fw-semibold">Live Stats</p>
-          </div>
-        </a>
-      </div>
-      <div class="col-6 col-md-4 col-xl-2">
-        <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
-          <div class="block-content">
-            <p class="my-3">
-              <i class="si si-settings fa-2x"></i>
-            </p>
-            <p class="fw-semibold">Settings</p>
-          </div>
-        </a>
-      </div>
-      <!-- END Row #5 -->
-    </div>
+   
   </div>
   
 
@@ -298,23 +130,62 @@
             success: function (data) {
                 // Populate DataTable with the data
                 $('#summaryTable').DataTable({
-                    data: data.counts, // Assign the JSON data to the DataTable
-                    columns: [
-                        { data: 'SB_ao' },
-                        { data: 'SB_province' },
-                        { data: 'SB_district' },
-                        { data: 'SB_area' },
-                        { data: 'SB_nahia', defaultContent: 'N/A' }, // Handle nulls in SB_nahia
-                        { data: 'cp_count' },
-                        { data: 'sample_count' },
-                        { data: 'tpm_sc_count' },
-                        { data: 'tpm_ee_count' }
-                    ],
-                    dom: 'Bfrtip', // Enables export buttons
-                    buttons: [
-                        'copy', 'csv', 'excel', 'pdf', 'print' // Add export buttons
-                    ]
-                });
+                  data: data.counts, // Assign the JSON data to the DataTable
+                  columns: [
+                      { data: 'cp_id__SB_ao' },
+                      { data: 'cp_id__SB_province' },
+                      { data: 'cp_id__SB_district' },
+                      { data: 'cp_id__SB_area' },
+                      { data: 'cp_id__SB_nahia', defaultContent: 'N/A' }, // Handle nulls in SB_nahia
+                      { data: 'cp_count.cp_count', defaultContent: 'N/A', },  // Access cp_count from nested object
+                      { data: 'cp_count.cp_selected', defaultContent: 'N/A', },  // Access cp_selected from nested object
+                      { data: 'sample_count' },
+                      { data: 'total_tpm' },
+                      { data: 'inclusion_error_percent', render: function (data, type, row) {
+                          return data ? data.toFixed(2) + '%' : 'N/A';
+                      }},  // Custom rendering for inclusion_error_percent
+                      { data: 'total_ee_count' },
+                      { data: 'exclusion_error', render: function (data, type, row) {
+                          return data ? data.toFixed(2) + '%' : 'N/A';
+                      }}  // Custom rendering for exclusion_error
+                  ],
+                  dom: 'Bfrtip', // Enables export buttons
+                  buttons: [
+                      'copy', 'csv', 'excel', 'pdf', 'print' // Add export buttons
+                  ]
+              });
+
+              totalAssessment = data.counts.reduce(function(total, current) {
+                  return total + current.cp_count.cp_count
+              }, 0);
+
+              $('#totalAssessment').text(totalAssessment);
+              total_tpm = data.counts.reduce(function(total, current) {
+                  return total + current.total_tpm
+              }, 0);
+
+              $('#total_tpm').text(total_tpm);
+
+              // Average inclusion error
+              var inclusion_error_percent_sum = data.counts.reduce(function(total, current) {
+                  return total + current.inclusion_error_percent
+                  }, 0);
+              
+              // count inclusion errors
+              var inclusion_error_count = data.counts.reduce(function(total, current) {
+                  if (current.inclusion_error_percent) {
+                    return total + 1
+                  }else{
+                    return total
+                  }
+                  }, 0);
+
+              var inclusion_error_percent_avg = inclusion_error_percent_sum / inclusion_error_count;
+            $('#inclusion_error_percent_avg').text(inclusion_error_percent_avg.toFixed(2) + '%');
+
+            totaldistrict = data.counts.length;
+            $('#totaldistrict').text(totaldistrict);
+
             },
             error: function (error) {
                 console.error('Error fetching data', error);

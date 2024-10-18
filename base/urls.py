@@ -33,7 +33,7 @@ urlpatterns = [
     path('filal_list_locations/', views.SampledLocations.as_view(), name='filal_list_locations'),
     path('final_list_data_analysis/', views.FinalListDataAnalysis.as_view(), name='final_list_data_analysis'),
     path('check_keys_in_excel/', views.check_keys_in_excel, name='check_keys_in_excel'),
-    path('summary_view/', views.summary_view, name='summary_view'),
+    path('summary_view/', views.summary_view.as_view(), name='summary_view'),
     
     path('export/<str:model_name>/', views.export_model_to_excel, name='export_model_to_excel'),
     
