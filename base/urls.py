@@ -24,6 +24,12 @@ urlpatterns = [
     path('generate_sample/', views.GenerateSampleView.as_view(), name='generate_sample'),
     path('approve_sample/', views.ApproveSampleView.as_view(), name='approve_sample'),
     
+    path('sampling_borderline/', views.sampling_borderline, name='sampling_borderline'),
+    path('est_borderline_sample/', views.SampledLocations_bordeline.as_view(), name='est_borderline_sample'),
+    # path('est_sample_borderline/', views.CSVDataCountViewBorderline.as_view(), name='est_sample_borderline'),
+    path('gen_borderline_sample/', views.GenerateRandomSites.as_view(), name='gen_borderline_sample'),
+    # path('approve_sample/', views.ApproveSampleView.as_view(), name='approve_sample'),
+    
     path('filal_list_locations/', views.SampledLocations.as_view(), name='filal_list_locations'),
     path('final_list_data_analysis/', views.FinalListDataAnalysis.as_view(), name='final_list_data_analysis'),
     path('check_keys_in_excel/', views.check_keys_in_excel, name='check_keys_in_excel'),

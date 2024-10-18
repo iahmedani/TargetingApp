@@ -1,247 +1,238 @@
-
 {% extends "main.html" %}
 {% load static %}
 {% block styles %}
-<!-- Page JS Plugins CSS -->
-<link rel="stylesheet" href="{% static '/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css'%}">
-<link rel="stylesheet" href="{% static '/js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css'%}">
-<link rel="stylesheet" href="{% static '/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css'%}">
-<link rel="stylesheet" href="{% static '/js/plugins/sweetalert2/sweetalert2.min.css'%}">
-
+  <!-- Page JS Plugins CSS -->
+  <link rel="stylesheet"
+        href="{% static '/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css' %}">
+  <link rel="stylesheet"
+        href="{% static '/js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css' %}">
+  <link rel="stylesheet"
+        href="{% static '/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css' %}">
+  <link rel="stylesheet"
+        href="{% static '/js/plugins/sweetalert2/sweetalert2.min.css' %}">
+  <style> 
+    .disabled-link {
+      pointer-events: none;
+      opacity: 0.6;
+      cursor: not-allowed;
+  }
+  </style>
 {% endblock styles %}
-
-
-
 {% block content %}
-<div class="content">
+  <div class="content">
     <div class="block block-rounded">
-        <div class="block-header block-header-default">
-          <h3 class="block-title">{{ title }}</h3>
-        </div>
-        <div class="block-content block-content-full">
-          <div class="row">
-            <div class="col-lg-12 space-y-2">
-              <!-- Form Inline - Default Style -->
-              <form class="row row-cols-auto g-3 align-items-center" onsubmit="return false;">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">{{ title }}</h3>
+      </div>
+      <div class="block-content block-content-full">
+        <div class="row">
+          <div class="col-lg-12 space-y-2">
+            <!-- Form Inline - Default Style -->
+            <form class="row row-cols-auto g-3 align-items-center"
+                  onsubmit="return false;">
               {% csrf_token %}
-                <div class="col-3">
-                    <label class="form-label form-control-sm" for="ddAreaOffice">Select AO</label>
-                  
-                  <select class="form-control form-control-sm" name="ddAreaOffice" id="ddAreaOffice" required="">
-                    <option>Select</option>
-                  </select>
-                </div>
-                <div class="col-3">
-                    <label class="form-label form-control-sm" for="province">Select Province</label>
-                  
-                  <select class="form-control form-control-sm" name="province" id="ddProvinces" required="">
-                    <option>Select</option>
-                  </select>
-                </div>
-                <div class="col-3">
-                    <label class="form-label form-control-sm" for="district">Select District</label>
-                  
-                  <select class="form-control form-control-sm" name="district" id="ddDistrict">
-                    <option>Select</option>
-                  </select>
-                </div>
-                <div class="col-3">
-                    <label class="form-label form-control-sm" for="nahia">Select Nahia</label>
-                  
-                  <select class="form-control form-control-sm" name="nahia" id="ddNahia" required="">
-                    <option>Select</option>
-                    
-                    
-                  </select>
-                </div>
-                <div class="col-3">
-                  <button id="Analyze" class="form-control form-control-sm btn btn-primary btn-sm">Analyze</button>
-                </div>
-                <div class="col-3">
-                    <button id="ApproveFinalList" class="form-control form-control-sm btn btn-primary btn-sm" >Approve Final List</button>
-                </div>
-                
-                
-
-              </form>
-              <!-- END Form Inline - Default Style -->
-
-              
-            </div>
+              <div class="col-3">
+                <label class="form-label form-control-sm" for="ddAreaOffice">Select AO</label>
+                <select class="form-control form-control-sm"
+                        name="ddAreaOffice"
+                        id="ddAreaOffice"
+                        required="">
+                  <option>Select</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label class="form-label form-control-sm" for="province">Select Province</label>
+                <select class="form-control form-control-sm"
+                        name="province"
+                        id="ddProvinces"
+                        required="">
+                  <option>Select</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label class="form-label form-control-sm" for="district">Select District</label>
+                <select class="form-control form-control-sm" name="district" id="ddDistrict">
+                  <option>Select</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label class="form-label form-control-sm" for="nahia">Select Nahia</label>
+                <select class="form-control form-control-sm"
+                        name="nahia"
+                        id="ddNahia"
+                        required="">
+                  <option>Select</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <button id="Analyze"
+                        class="form-control form-control-sm btn btn-primary btn-sm">Analyze</button>
+              </div>
+              <div class="col-3">
+                <button id="ApproveFinalList"
+                        class="form-control form-control-sm btn btn-primary btn-sm">Approve Final List</button>
+              </div>
+              <div class="col-3">
+                <a id="BorderlineSample"
+                        class="form-control form-control-sm btn btn-warning btn-sm disabled-link" href="{% url 'sampling_borderline' %}" disabled>Generate Borderline Sample</a>
+              </div>
+            </form>
+            <!-- END Form Inline - Default Style -->
           </div>
-          
         </div>
       </div>
-      <div class="block block-rounded">
-          <div class="col-12">
-            <!-- Portfolio -->
-            <div class="block block-rounded h-100 mb-0">
-              <div class="block-header block-header-default">
-                <h3 class="block-title">Analysis <small class="text text-muted" id="sampleSize"></small></h3>
-                <div class="block-options">
-                  <button type="button" class="btn-block-option">
-                    <i class="si si-wrench"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="block-content">
+    </div>
+    <div class="block block-rounded">
+      <div class="col-12">
+        <!-- Portfolio -->
+        <div class="block block-rounded h-100 mb-0">
+          <div class="block-header block-header-default">
+            <h3 class="block-title">
+              Analysis <small class="text text-muted" id="sampleSize"></small>
+            </h3>
+            <div class="block-options">
+              <button type="button" class="btn-block-option">
+                <i class="si si-wrench"></i>
+              </button>
+            </div>
+          </div>
+          <div class="block-content">
             <table class="table table-borderless table-striped table-vcenter fs-sm">
-                <tbody>
-                    <tr>
-                        <td style="width: 32px;">
-                            <i id="inclusion_icon" class="fa fa-circle"></i>
-                        </td>
-                        <td style="width: 250px;">
-                            <span class="fw-semibold">Inclusion Error</span>
-                        </td>
-                        <td class="d-none d-sm-table-cell" style="width: 250px;">
-                            <div class="progress mb-0" style="height: 10px;" role="progressbar">
-                                <div id="inclusion_progress" class="progress-bar" style="width: 0%"></div>
-                            </div>
-                        </td>
-                        <td id="inclusion_value" class="text-end">
-                            0%
-                        </td>
-                        <td class="d-none d-sm-table-cell text-end text-muted">
-                            <!-- Optional additional data -->
-                            Acceptable Range: 0% - 10%
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <i id="exclusion_icon" class="fa fa-circle"></i>
-                        </td>
-                        <td>
-                            <span class="fw-semibold">Exclusion Error</span>
-                        </td>
-                        <td class="d-none d-sm-table-cell">
-                            <div class="progress mb-0" style="height: 10px;" role="progressbar">
-                                <div id="exclusion_progress" class="progress-bar" style="width: 0%"></div>
-                            </div>
-                        </td>
-                        <td id="exclusion_value" class="text-end">
-                            0%
-                        </td>
-                        <td class="d-none d-sm-table-cell text-end text-muted">
-                            <!-- Optional additional data -->
-                             Acceptable Range: 0%-15%
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <i id="hh_not_found_icon" class="fa fa-circle"></i>
-                        </td>
-                        <td>
-                            <span class="fw-semibold">Household Not Found</span>
-                        </td>
-                        <td class="d-none d-sm-table-cell">
-                            <div class="progress mb-0" style="height: 10px;" role="progressbar">
-                                <div id="hh_not_found_progress" class="progress-bar" style="width: 0%"></div>
-                            </div>
-                        </td>
-                        <td id="hh_not_found_value" class="text-end">
-                            0%
-                        </td>
-                        <td class="d-none d-sm-table-cell text-end text-muted">
-                            Acceptable Range: 0% - 5%
-                        </td>
-                    </tr>
-                    <tr>
-                      <td style="width: 32px;">
-                          <i id="sample_coverage_icon" class="fa fa-circle"></i>
-                      </td>
-                      <td style="width: 250px;">
-                          <span class="fw-semibold">Sample Reached by TPM</span>
-                      </td>
-                      <td class="d-none d-sm-table-cell" style="width: 250px;">
-                          <div class="progress mb-0" style="height: 10px;" role="progressbar">
-                              <div id="sample_coverage" class="progress-bar" style="width: 0%"></div>
-                          </div>
-                      </td>
-                      <td id="sample_coverage_value" class="text-end">
-                          0%
-                      </td>
-                      <td class="d-none d-sm-table-cell text-end text-muted">
-                          Acceptable Range: 95% - 100%
-                      </td>
-                  </tr>
-                </tbody>
+              <tbody>
+                <tr>
+                  <td style="width: 32px;">
+                    <i id="inclusion_icon" class="fa fa-circle"></i>
+                  </td>
+                  <td style="width: 250px;">
+                    <span class="fw-semibold">Inclusion Error</span>
+                  </td>
+                  <td class="d-none d-sm-table-cell" style="width: 250px;">
+                    <div class="progress mb-0" style="height: 10px;" role="progressbar">
+                      <div id="inclusion_progress" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                  </td>
+                  <td id="inclusion_value" class="text-end">0%</td>
+                  <td class="d-none d-sm-table-cell text-end text-muted">
+                    <!-- Optional additional data -->
+                    Acceptable Range: 0% - 10%
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <i id="exclusion_icon" class="fa fa-circle"></i>
+                  </td>
+                  <td>
+                    <span class="fw-semibold">Exclusion Error</span>
+                  </td>
+                  <td class="d-none d-sm-table-cell">
+                    <div class="progress mb-0" style="height: 10px;" role="progressbar">
+                      <div id="exclusion_progress" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                  </td>
+                  <td id="exclusion_value" class="text-end">0%</td>
+                  <td class="d-none d-sm-table-cell text-end text-muted">
+                    <!-- Optional additional data -->
+                    Acceptable Range: 0%-15%
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <i id="hh_not_found_icon" class="fa fa-circle"></i>
+                  </td>
+                  <td>
+                    <span class="fw-semibold">Household Not Found</span>
+                  </td>
+                  <td class="d-none d-sm-table-cell">
+                    <div class="progress mb-0" style="height: 10px;" role="progressbar">
+                      <div id="hh_not_found_progress" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                  </td>
+                  <td id="hh_not_found_value" class="text-end">0%</td>
+                  <td class="d-none d-sm-table-cell text-end text-muted">Acceptable Range: 0% - 5%</td>
+                </tr>
+                <tr>
+                  <td style="width: 32px;">
+                    <i id="sample_coverage_icon" class="fa fa-circle"></i>
+                  </td>
+                  <td style="width: 250px;">
+                    <span class="fw-semibold">Sample Reached by TPM</span>
+                  </td>
+                  <td class="d-none d-sm-table-cell" style="width: 250px;">
+                    <div class="progress mb-0" style="height: 10px;" role="progressbar">
+                      <div id="sample_coverage" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                  </td>
+                  <td id="sample_coverage_value" class="text-end">0%</td>
+                  <td class="d-none d-sm-table-cell text-end text-muted">Acceptable Range: 95% - 100%</td>
+                </tr>
+              </tbody>
             </table>
-
-              </div>
-                <div class="block-content">
-                <h3 class="block-title">Key summary statistics of all assessment:</h3>
-
-                <ul class="list-group push" id="SummaryData">
-                  <!-- Dynamic content will be inserted here -->
-               </ul>
-              </div>
-            </div>
-            <!-- END Portfolio -->
           </div>
-      </div>
-      <div class="block block-rounded">
-        <div class="block-header block-header-default">
-          <h3 class="block-title">
-            Results of sample
-          </h3>
-          
+          <div class="block-content">
+            <h3 class="block-title">Key summary statistics of all assessment:</h3>
+            <ul class="list-group push" id="SummaryData">
+              <!-- Dynamic content will be inserted here -->
+            </ul>
+          </div>
         </div>
-        <div class="block-content block-content-full overflow-x-auto">
+        <!-- END Portfolio -->
+      </div>
+    </div>
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">Results of sample</h3>
+      </div>
+      <div class="block-content block-content-full overflow-x-auto">
         <div class="table-responsive" id="sampleTable">
-          <table id="SampleData" class="table table-striped table-sm" style="width:100%">
-
+          <table id="SampleData"
+                 class="table table-striped table-sm"
+                 style="width:100%">
           </table>
         </div>
-        </div>
       </div>
-      <div class="block block-rounded">
-        <div class="block-header block-header-default">
-          <h3 class="block-title">
-            Results of remaining data
-          </h3>
-          
-        </div>
-        <div class="block-content block-content-full overflow-x-auto">
+    </div>
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">Results of remaining data</h3>
+      </div>
+      <div class="block-content block-content-full overflow-x-auto">
         <div class="table-responsive" id="remaining">
-          <table id="RemaningData" class="table table-striped table-sm" style="width:100%">
-
+          <table id="RemaningData"
+                 class="table table-striped table-sm"
+                 style="width:100%">
           </table>
         </div>
-        </div>
       </div>
-      <div class="block block-rounded">
-        <div class="block-header block-header-default">
-          <h3 class="block-title">
-            Total Data
-          </h3>
-          
-        </div>
-        <div class="block-content block-content-full overflow-x-auto">
+    </div>
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">Total Data</h3>
+      </div>
+      <div class="block-content block-content-full overflow-x-auto">
         <div class="table-responsive" id="totalData">
-          <table id="CombinedData" class="table table-striped table-sm" style="width:100%">
-
+          <table id="CombinedData"
+                 class="table table-striped table-sm"
+                 style="width:100%">
           </table>
         </div>
-        </div>
       </div>
+    </div>
   </div>
-
 {% endblock content %}
 {% block scripts %}
-<script src="https://cdn.datatables.net/v/dt/dt-2.1.8/datatables.min.js"></script>
-<script src="{%static '/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js'%}"></script>
-<script src="{%static '/js/plugins/datatables-responsive/js/dataTables.responsive.min.js'%}"></script>
-<script src="{%static '/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js'%}"></script>
-<script src="{%static '/js/plugins/datatables-buttons/dataTables.buttons.min.js'%}"></script>
-<script src="{%static '/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js'%}"></script>
-<script src="{%static '/js/plugins/datatables-buttons-jszip/jszip.min.js'%}"></script>
-<script src="{%static '/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js'%}"></script>
-<script src="{%static '/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js'%}"></script>
-<script src="{%static '/js/plugins/datatables-buttons/buttons.print.min.js'%}"></script>
-<script src="{%static '/js/plugins/datatables-buttons/buttons.html5.min.js'%}"></script>
-<script src="{% static '/js/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
-<script>
+  <script src="https://cdn.datatables.net/v/dt/dt-2.1.8/datatables.min.js"></script>
+  <script src="{%static '/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-responsive/js/dataTables.responsive.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons/dataTables.buttons.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons-jszip/jszip.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons/buttons.print.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons/buttons.html5.min.js'%}"></script>
+  <script src="{% static '/js/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+  <script>
   document.addEventListener('DOMContentLoaded', function () {
       // Fetch data from the API when the page loads
       function calculateTotalsAndPercentage(data) {
@@ -278,7 +269,7 @@
             totalSum: totalSum,
             percentageYes: percentageYes
         };
-    }
+      }
       function createTable(tableEl, data, columnsToRemove = []) {
         // Assuming responseData is an array of objects
         const keys = Object.keys(data[0]);
@@ -317,7 +308,7 @@
             ordering: false, // Enable column sorting
             footer: true // Assumes that the table has a footer element
         });
-    }
+      }
       function summaryDisplay(uiel, data){
         const listGroup = document.querySelector(`#${uiel}`);
 
@@ -362,25 +353,21 @@
 
 
         let filteredData = data.counts.filter(item => 
-    (selectedNahia === 'null' || selectedNahia === undefined || selectedNahia === "")
-    ? (
-        item.cp_id__SB_ao === selectedAO && 
-        item.cp_id__SB_province === selectedProvince && 
-        item.cp_id__SB_district === selectedDistrict
-    )
-    : (
-        item.cp_id__SB_ao === selectedAO && 
-        item.cp_id__SB_province === selectedProvince && 
-        item.cp_id__SB_district === selectedDistrict && 
-        item.cp_id__SB_nahia == selectedNahia
-    )
-);
-
-
+            (selectedNahia === 'null' || selectedNahia === undefined || selectedNahia === "")
+            ? (
+                item.cp_id__SB_ao === selectedAO && 
+                item.cp_id__SB_province === selectedProvince && 
+                item.cp_id__SB_district === selectedDistrict
+            )
+            : (
+                item.cp_id__SB_ao === selectedAO && 
+                item.cp_id__SB_province === selectedProvince && 
+                item.cp_id__SB_district === selectedDistrict && 
+                item.cp_id__SB_nahia == selectedNahia
+            )
+        );
       
-      console.log("Filtered Data:", filteredData);
-      
-      ee = calculateTotalsAndPercentage(filteredData)
+        ee = calculateTotalsAndPercentage(filteredData)
 
         let x = filteredData[0];
         console.log(x)
@@ -390,7 +377,7 @@
         const exclusionError = (x.cp_exculsion_error / x.total_tpm) * 100;
         const hhNotFound = (x.tpm_hh_not_found / x.sample_count) * 100;
         const sampleCoverage = (x.total_tpm / x.sample_count) * 100;
-    
+        
         // Clear previous classes
         document.getElementById('inclusion_icon').className = 'fa fa-circle';
         document.getElementById('inclusion_progress').className = 'progress-bar';
@@ -408,10 +395,17 @@
         // Update inclusion error
         document.getElementById('inclusion_value').textContent = `${inclusionError.toFixed(2)}% (${x.cp_inclusion_error})`;
         document.getElementById('inclusion_progress').style.width = `${inclusionError.toFixed(2)}%`;
+        console.log(inclusionError)
         if (inclusionError <= 10) {
             document.getElementById('inclusion_icon').classList.add('text-success');
             document.getElementById('inclusion_progress').classList.add('bg-success');
+            document.getElementById('ApproveFinalList').removeAttribute('disabled');
+            document.getElementById('BorderlineSample').classList.add('disabled-link');  // To disable
+
+
         } else {
+           document.getElementById('ApproveFinalList').setAttribute('disabled', true);
+           document.getElementById('BorderlineSample').classList.remove('disabled-link');  // To enable
             document.getElementById('inclusion_icon').classList.add('text-danger');
             document.getElementById('inclusion_progress').classList.add('bg-danger');
         }
@@ -457,108 +451,105 @@
             'error_type': 'inclusion'
         };
 
-        fetch('/final_list_data_analysis/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            
-            sample = data.common_data
-            remaining = data.non_common_data
-            
-            const combinedData = [...sample, ...remaining];
-            console.log(combinedData)
-
-            createTable('CombinedData', combinedData, columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id']);
-
-            createTable('SampleData', sample,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'])
-            createTable('RemaningData', remaining,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'])
-          // Map combinedData to create the ApprovalData array
-const ApprovalData = combinedData.map(item => ({
-  id: item['id'],
-  status: item['status'],
-  tpm_vul: item['tpm_vul'],
-  HHFound: item['HHFound']
-}));
-
-// Add event listener to the button with ID 'ApproveFinalList'
-const finalListApprovals = document.getElementById('ApproveFinalList');
-finalListApprovals.addEventListener('click', async function () {
-  console.log(document.querySelector('input[name="csrfmiddlewaretoken"]').value);
-  const { value: comment } = await Swal.fire({
-    title: "Approval Final Comments",
-    input: "text",
-    inputAttributes: {
-      autocapitalize: "off"
-    },
-    showCancelButton: true,
-    confirmButtonText: "Approve",
-    showLoaderOnConfirm: true,
-    preConfirm: async (comment) => {
-      try {
-        const response = await fetch('/test_view_final_approval/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
-          },
-          body: JSON.stringify({
-            data: ApprovalData,
-            final_comment: comment
+          fetch('/final_list_data_analysis/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+              },
+              body: JSON.stringify(data)
           })
-        });
+          .then(response => response.json())
+          .then(data => {
+              
+              sample = data.common_data
+              remaining = data.non_common_data
+              
+              const combinedData = [...sample, ...remaining];
+              console.log(combinedData)
 
-        // Check if the response is ok (status 200-299)
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+              createTable('CombinedData', combinedData, columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id']);
 
-        const data = await response.json();
+              createTable('SampleData', sample,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'])
+              createTable('RemaningData', remaining,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'])
+                // Map combinedData to create the ApprovalData array
+              const ApprovalData = combinedData.map(item => ({
+                id: item['id'],
+                status: item['status'],
+                tpm_vul: item['tpm_vul'],
+                HHFound: item['HHFound']
+              }));
 
-        if (data.status === 'success') {
-          Swal.fire({
-            title: "Approval Status",
-            text: "Final List has been approved",
-            icon: "success",
-            confirmButtonText: "OK"
-          });
-        } else {
-          Swal.fire({
-            title: "Approval Status",
-            text: "Final List has not been approved",
-            icon: "error",
-            confirmButtonText: "OK"
-          });
-        }
-      } catch (error) {
-        Swal.fire({
-          title: "Error",
-          text: `An error occurred: ${error.message}`,
-          icon: "error",
-          confirmButtonText: "OK"
-        });
-      }
-    }
-  });
-});
+              // Add event listener to the button with ID 'ApproveFinalList'
+              const finalListApprovals = document.getElementById('ApproveFinalList');
+              finalListApprovals.addEventListener('click', async function () {
+                console.log(document.querySelector('input[name="csrfmiddlewaretoken"]').value);
+                const { value: comment } = await Swal.fire({
+                  title: "Approval Final Comments",
+                  input: "text",
+                  inputAttributes: {
+                    autocapitalize: "off"
+                  },
+                  showCancelButton: true,
+                  confirmButtonText: "Approve",
+                  showLoaderOnConfirm: true,
+                  preConfirm: async (comment) => {
+                    try {
+                      const response = await fetch('/test_view_final_approval/', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+                        },
+                        body: JSON.stringify({
+                          data: ApprovalData,
+                          final_comment: comment
+                        })
+                      });
 
+                      // Check if the response is ok (status 200-299)
+                      if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                      }
+
+                      const data = await response.json();
+
+                      if (data.status === 'success') {
+                        Swal.fire({
+                          title: "Approval Status",
+                          text: "Final List has been approved",
+                          icon: "success",
+                          confirmButtonText: "OK"
+                        });
+                      } else {
+                        Swal.fire({
+                          title: "Approval Status",
+                          text: "Final List has not been approved",
+                          icon: "error",
+                          confirmButtonText: "OK"
+                        });
+                      }
+                    } catch (error) {
+                      Swal.fire({
+                        title: "Error",
+                        text: `An error occurred: ${error.message}`,
+                        icon: "error",
+                        confirmButtonText: "OK"
+                      });
+                    }
+                  }
+                });
+              });
+              
+              summaryDisplay('SummaryData', data.counts)
+          })
+          .catch(error => {
             
-
-            summaryDisplay('SummaryData', data.counts)
-        })
-        .catch(error => {
-          
+            
+            console.error(error)
+          });
+      }
            
-           console.error(error)
-        });
-    }
-      
-      
 
       fetch('/filal_list_locations/')
           .then(response => response.json())
@@ -656,13 +647,8 @@ finalListApprovals.addEventListener('click', async function () {
           })
           .catch(error => console.error('Error fetching data:', error));
           
-          
-          
-          
-  
-  });
+      });
   
 
-</script>
-
-{% endblock scripts%}
+  </script>
+{% endblock scripts %}

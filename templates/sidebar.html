@@ -111,10 +111,16 @@
             <li class="nav-main-item">
               <a class="nav-main-link {% if '/sampling/' == request.path %} active {% endif %}" href="{% url 'sampling' %}">
                 <i class="nav-main-link-icon fa fa-shuffle"></i>
-                <span class="nav-main-link-name">Sample Generation</span>
+                <span class="nav-main-link-name">Regular Sample</span>
               </a>
             </li>
-            <li class="nav-main-heading">Final List Generation</li>
+            <li class="nav-main-item">
+              <a class="nav-main-link {% if '/sampling_borderline/' == request.path %} active {% endif %}" href="{% url 'sampling_borderline' %}">
+                <i class="nav-main-link-icon fa fa-shuffle"></i>
+                <span class="nav-main-link-name">Boderline Sample</span>
+              </a>
+            </li>
+            <li class="nav-main-heading">Final List</li>
             <li class="nav-main-item">
               <a class="nav-main-link {% if '/error_check/' == request.path %} active {% endif %}" href="{% url 'error_check' %}">
                 <i class="nav-main-link-icon fa fa-circle-exclamation"></i>

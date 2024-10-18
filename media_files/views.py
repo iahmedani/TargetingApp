@@ -62,6 +62,7 @@ def uploadSampleToMoDa(request):
         uploadSample(user)
         return JsonResponse({'success': 'Sample list uploaded successfully'})
     except Exception as e:
+        print(e)
         return JsonResponse({'error': f'{str(e)}, Sample list not uploaded'})
         
 def update_user_access(request):

@@ -108,6 +108,9 @@ def import_data(request):
 def sampling(request):
     return render(request, 'sample_gen.html', {'title': 'Generate Sample'})
 
+def sampling_borderline(request):
+    return render(request, 'sample_gen_borderline.html', {'title': 'Generate Borderline Sample'})
+
 def error_check(request):
     return render(request, 'temp.html', {'title': 'Error Checking'})
 
@@ -865,7 +868,10 @@ class ApproveSampleView(View):
             # For rural samples, exclude nahia from the query
         
         # Check if there are any existing samples
-        existing_samples = Sample1.objects.filter(cp_id__in=existing_csv_data).exists()
+        if sample_type == 'Regular':
+            existing_samples = Sample1.objects.filter(cp_id__in=existing_csv_data).exists()
+        elif sample_type == 'Borderline':
+            existing_samples = Sample1.objects.filter(cp_id__in=existing_csv_data, sample_type='Borderline').exists()
 
         if existing_samples:
             return JsonResponse({
@@ -874,6 +880,12 @@ class ApproveSampleView(View):
             }, status=400)
 
         # Create new Sample objects
+        # if sample_type == 'Borderline':
+        #     return JsonResponse({
+        #     'message': 'Samples test borderline approved successfully',
+        #     # 'count': len(new_samples)
+        # }, status=200)
+            
         new_samples = []
         for csv_data in csv_data_objects:
             new_sample = Sample1(
@@ -895,40 +907,7 @@ class ApproveSampleView(View):
             'count': len(new_samples)
         }, status=200)
         
-
-class SampledLocations(View):
-    def get(self, request):
-        # Perform the aggregation using related model fields
-        counts = Sample1.objects.filter(
-            sample_type='Regular'
-        ).values(
-            'cp_id__SB_ao', 'cp_id__SB_province', 'cp_id__SB_district', 'cp_id__SB_area', 'cp_id__SB_nahia'
-        ).annotate(
-            sample_count=Count('id'),  # Count of all Sample records
-            cp_exculsion_error=Count('id', filter=Q(cp_id__vul='No', tpm_records__vul='Yes')),
-            cp_inclusion_error=Count('id', filter=Q(cp_id__vul='Yes', tpm_records__vul='No')),
-            cp_vul_tpm_vul_null=Count('id', filter=Q(cp_id__vul=None, tpm_records__vul=None)),
-            cp_excluded=Count('id', filter=Q(cp_id__exclusion_1=True)),
-            tpm_excluded=Count('id', filter=Q(tpm_records__exclusion_1=True)),
-            total_tpm=Count(
-                'tpm_records__id'  # Count where vul=True in related TPMCSVData
-            ),
-            tpm_hh_not_found=Count(
-                'tpm_records__id',  # Count where vul=False in related TPMCSVData
-                filter=Q(tpm_records__HHFound=False)
-            )
-        ).order_by(
-            'cp_id__SB_ao', 'cp_id__SB_province', 'cp_id__SB_district', 'cp_id__SB_area', 'cp_id__SB_nahia'
-        )
-        
-        # Prepare the result
-        result = {
-            'counts': list(counts)
-        }
-
-        # Return JSON response with safe=True since the top-level object is a dictionary
-        return JsonResponse(result, safe=True)
-    
+  
 
 class SampledLocations(View):
     def get(self, request):
@@ -1008,6 +987,202 @@ class SampledLocations(View):
                 {'error': 'An error occurred while processing your request.'},
                 status=500
             )
+            
+from django.db.models import ExpressionWrapper, FloatField, F
+
+class SampledLocations_bordeline(View):
+    def get(self, request):
+        try:
+            # Base queryset for Sample1 with aggregations
+            counts = Sample1.objects.filter(
+                sample_type='Regular'
+            ).values(
+                'cp_id__SB_ao',
+                'cp_id__SB_province',
+                'cp_id__SB_district',
+                'cp_id__SB_area',
+                'cp_id__SB_nahia'
+            ).annotate(
+                sample_count=Count('id'),
+                cp_inclusion_error=Count('id', filter=Q(cp_id__vul='Yes', tpm_records__vul='No')),
+                total_tpm=Count('tpm_records__id'),
+                tpm_hh_not_found=Count('tpm_records__id', filter=Q(tpm_records__HHFound=False)),
+                inclusion_error_percent=ExpressionWrapper(
+                    F('cp_inclusion_error') * 100.0 / F('total_tpm'),
+                    output_field=FloatField()
+                )
+            ).filter(
+                inclusion_error_percent__gt=5
+            )
+
+           
+            # Get list of cp_ids in Sample1
+            sampled_cp_ids = Sample1.objects.values_list('cp_id', flat=True)
+
+            # Get counts of CPs matching the criteria and not in sample
+            cp_counts = CPDataModel1.objects.filter(
+                CP_Calculation__in=[6, 7],
+                vul='Yes'
+            ).exclude(
+                id__in=sampled_cp_ids
+            ).values(
+                'SB_ao',
+                'SB_province',
+                'SB_district',
+                'SB_area',
+                'SB_nahia'
+            ).annotate(
+                cp_not_in_sample_count=Count('id')
+            )
+
+            # Build a mapping from area keys to cp_not_in_sample_counts
+            cp_counts_dict = {}
+            for item in cp_counts:
+                key = (
+                    item['SB_ao'] or '',
+                    item['SB_province'] or '',
+                    item['SB_district'] or '',
+                    item['SB_area'] or '',
+                    item['SB_nahia'] or ''
+                )
+                cp_counts_dict[key] = item['cp_not_in_sample_count']
+
+            # Convert counts queryset to list
+            counts_list = list(counts)
+
+            # Add 'ee' key with TPM_EE_Data counts nested under it, cp_not_in_sample_count, and estimated_sample
+            for item in counts_list:
+                key = (
+                    item['cp_id__SB_ao'] or '',
+                    item['cp_id__SB_province'] or '',
+                    item['cp_id__SB_district'] or '',
+                    item['cp_id__SB_area'] or '',
+                    item['cp_id__SB_nahia'] or ''
+                )
+              
+
+                cp_not_in_sample_count = cp_counts_dict.get(key, 0)
+                item['cp_not_in_sample_count'] = cp_not_in_sample_count
+
+                # Calculate estimated_sample based on the condition
+                if cp_not_in_sample_count <= 500:
+                    estimated_sample = cp_not_in_sample_count
+                else:
+                    estimated_sample = 500
+                item['estimated_sample'] = estimated_sample
+
+            # Prepare the result
+            result = {
+                'counts': counts_list
+            }
+
+            # Return JSON response
+            return JsonResponse(result, safe=True)
+
+        except Exception as e:
+            logger.exception("An error occurred while fetching sampled locations.")
+            return JsonResponse(
+                {'error': 'An error occurred while processing your request.'},
+                status=500
+            )
+
+
+
+
+import random
+from django.db.models import Q
+
+import json
+from django.views import View
+from django.http import JsonResponse
+from django.db.models import Q
+
+class GenerateRandomSites(View):
+    def post(self, request):
+        try:
+            # Parse the JSON data from the request body
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
+
+            # Extract parameters from POST data
+            area_office = data.get('area_office')
+            province = data.get('province')
+            district = data.get('district')
+            nahia = data.get('nahia')
+            estimated_sample_size = data.get('estimated_sample_size')
+            estimated_sample_size = int(estimated_sample_size)
+            # print(estimated_sample_size)
+            # Validate input parameters
+            if nahia == 'null' or nahia is None:
+                nahia = None
+
+            # Validate that all required fields are provided
+            if not all([area_office, province, district, estimated_sample_size]):
+                return JsonResponse({'error': 'Missing required fields.'}, status=400)
+
+            # Validate that estimated_sample_size is a positive integer
+            if not isinstance(estimated_sample_size, int) or estimated_sample_size <= 0:
+                return JsonResponse({'error': 'Invalid estimated_sample_size provided.'}, status=400)
+
+            # Step 1: Filter cp_data having CP_Calculation 6 and 7
+            cp_data = CPDataModel1.objects.filter(
+                Q(CP_Calculation=6) | Q(CP_Calculation=7),
+                SB_ao=area_office,
+                SB_province=province,
+                SB_district=district
+            ).exclude(
+                id__in=Sample1.objects.values_list('cp_id', flat=True)
+            )
+
+            # If Nahia is provided, filter by it
+            if nahia:
+                cp_data = cp_data.filter(SB_nahia=nahia)
+
+            # Count the records with CP_Calculation 6 and 7
+            count_6 = cp_data.filter(CP_Calculation=6).count()
+            count_7 = cp_data.filter(CP_Calculation=7).count()
+            total_count = count_6 + count_7
+
+            selected_sites = []
+
+            if total_count <= 500:
+                # If total count is <= 500, include all records not in sample
+                selected_sites = list(cp_data)
+            else:
+                # Randomly select 'estimated_sample_size' records
+                selected_sites = list(cp_data.order_by('?')[:estimated_sample_size])
+            
+            samples = self.prepare_sample_data(selected_sites)
+            # Prepare the result
+            result = {
+                'selected_sites': samples
+            }
+
+            # Return JSON response
+            return JsonResponse(result, safe=True)
+
+        except Exception as e:
+            logger.exception("An error occurred while generating random sites.")
+            return JsonResponse(
+                {'error': 'An error occurred while processing your request.'},
+                status=500
+            )
+    def prepare_sample_data(self, sample):
+        sample_data = []
+        for record in sample:
+            record_data = {}
+            for field in record._meta.fields:
+                field_name = field.name
+                field_value = getattr(record, field_name)
+                # Convert non-JSON serializable types to string
+                if isinstance(field_value, (datetime.date, datetime.datetime)):
+                    field_value = field_value.isoformat()
+                record_data[field_name] = field_value
+            sample_data.append(record_data)
+        return sample_data
+
 
 
 # from django.views import View

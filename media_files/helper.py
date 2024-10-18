@@ -107,6 +107,7 @@ def upload_media(form_id, media_name, file_path, max_retries=5, delay=20):
             else:
                 print(f'Error uploading media: {response.status_code} - {response.text}')
         except Exception as e:
+            print(e)
             print(f'An exception occurred during attempt {attempt+1}: {e}')
         
         if attempt < max_retries - 1:
@@ -417,7 +418,7 @@ def SampleSerializer(data):
         'ben_gender': data.cp_id.ben_gender,
         'ben_age': data.cp_id.ben_age,
         'mob': data.cp_id.mob,
-        'id_doc': doc_type[str(data.cp_id.id_doc)],
+        'id_doc':doc_type[str(int(float(data.cp_id.id_doc)))],
         'id_doc_other': data.cp_id.id_doc_other,
         'id_number': data.cp_id.id_number,
         'date_return': data.cp_id.date_return,
@@ -453,7 +454,6 @@ def uploadSample(user):
     for form in forms:
         ao = form.area_office
         x = area_office[ao]
-        print(ao)
         mediaList = form.moda_media_files.values_list('file_name', flat=True)
         if 'samples' in mediaList:
     # Filter plans from the last six months
