@@ -12,6 +12,11 @@ from django.contrib import messages
 import os
 from datetime import datetime
 from openpyxl import load_workbook
+from .forms import ExcelCompareForm
+from openpyxl.styles import PatternFill
+from io import BytesIO
+from openpyxl.utils.dataframe import dataframe_to_rows
+
 
 
 from .data_quality_utils import (
@@ -543,3 +548,139 @@ def deduplicate_export(request):
         return HttpResponse("No file URL provided", status=400)
 
 
+def compare_excel_documents(request):
+    if request.method == 'POST':
+        form = ExcelCompareForm(request.POST, request.FILES)
+        if form.is_valid():
+            first_file = request.FILES['first_document']
+            second_file = request.FILES['second_document']
+
+            try:
+                # Read all sheets from both Excel files into dictionaries of DataFrames
+                first_df_dict = pd.read_excel(first_file, sheet_name=None)
+            except Exception as e:
+                messages.warning(request, f'Error reading the first Excel file: {e}')
+                return render(request, 'upload_c.html', {
+                    'form': form
+                })
+
+            try:
+                second_df_dict = pd.read_excel(second_file, sheet_name=None)
+            except Exception as e:
+                messages.warning(request, f'Error reading the second Excel file: {e}')
+                return render(request, 'upload_c.html', {
+                    'form': form
+                })
+
+            # Reset the file pointer of the second file for OpenPyXL
+            second_file.seek(0)
+            try:
+                wb = load_workbook(second_file)
+            except Exception as e:
+                messages.warning(request, f'Error loading the second Excel file with OpenPyXL: {e}')
+                return render(request, 'upload_c.html', {
+                    'form': form,
+                })
+
+            # Define the fill for highlighting differences (yellow color)
+            highlight_fill = PatternFill(start_color='FFFF00', end_color='FFFF00', fill_type='solid')
+
+            report = []
+
+            # Iterate through each sheet present in both documents
+            for sheet_name in first_df_dict.keys():
+                if sheet_name in second_df_dict:
+                    first_sheet_df = first_df_dict[sheet_name]
+                    second_sheet_df = second_df_dict[sheet_name]
+
+                    # Ensure both sheets have the same shape
+                    if first_sheet_df.shape != second_sheet_df.shape:
+                        report.append({
+                            'Sheet': sheet_name,
+                            'Issue': 'Sheet shapes differ between documents.'
+                        })
+                        continue  # Skip comparison for this sheet
+
+                    # Access the corresponding worksheet in OpenPyXL
+                    ws = wb[sheet_name]
+
+                    # Iterate through each cell to find differences
+                    for row_idx in range(1, second_sheet_df.shape[0] + 1):
+                        for col_idx in range(1, second_sheet_df.shape[1] + 1):
+                            first_value = first_sheet_df.iat[row_idx - 1, col_idx - 1]
+                            second_value = second_sheet_df.iat[row_idx - 1, col_idx - 1]
+
+                            # Handle NaN values
+                            if pd.isna(first_value) and pd.isna(second_value):
+                                continue  # Both are NaN, consider equal
+                            if first_value != second_value:
+                                # Highlight the cell in the second workbook
+                                cell = ws.cell(row=row_idx, column=col_idx)
+                                cell.fill = highlight_fill
+
+                                # Record the difference in the report
+                                report.append({
+                                    'Sheet': sheet_name,
+                                    'Cell': cell.coordinate,
+                                    'First Document Value': first_value,
+                                    'Second Document Value': second_value
+                                })
+                else:
+                    # Sheet is missing in the second document
+                    report.append({
+                        'Sheet': sheet_name,
+                        'Issue': 'Sheet missing in the second document.'
+                    })
+
+            # If there are differences, add the Comparison Report sheet
+            if report:
+                # Create a DataFrame from the report
+                report_df = pd.DataFrame(report)
+
+                # Add a new sheet for the report
+                report_sheet_title = 'Comparison Report'
+                if report_sheet_title in wb.sheetnames:
+                    # If the report sheet already exists, remove it to avoid duplication
+                    std = wb[report_sheet_title]
+                    wb.remove(std)
+
+                report_ws = wb.create_sheet(title=report_sheet_title)
+
+                # Write the DataFrame to the report sheet
+                for r_idx, row in enumerate(dataframe_to_rows(report_df, index=False, header=True), 1):
+                    for c_idx, value in enumerate(row, 1):
+                        cell = report_ws.cell(row=r_idx, column=c_idx, value=value)
+                        # Optionally, style the header row
+                        if r_idx == 1:
+                            cell.font = cell.font.copy(bold=True)
+
+                # Save the modified workbook to a BytesIO buffer
+                buffer = BytesIO()
+                try:
+                    wb.save(buffer)
+                except Exception as e:
+                    messages.error(request, f'Error saving the modified Excel file: {e}')
+                    return render(request, 'upload_c.html', {
+                        'form': form
+                    })
+
+                buffer.seek(0)  # Reset buffer position
+
+                # Prepare the HTTP response with the modified Excel file
+                response = HttpResponse(
+                    buffer,
+                    content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                )
+                response['Content-Disposition'] = 'attachment; filename=Compared_Document.xlsx'
+                return response
+            else:
+                # No differences found
+                messages.success(request, 'No differences found between the two documents.')
+                return render(request, 'upload_c.html', {
+                    'form': form
+                })
+
+    else:
+        form = ExcelCompareForm()
+
+    return render(request, 'upload_c.html', {'form': form})

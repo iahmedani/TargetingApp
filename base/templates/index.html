@@ -132,13 +132,13 @@
                 $('#summaryTable').DataTable({
                   data: data.counts, // Assign the JSON data to the DataTable
                   columns: [
-                      { data: 'cp_id__SB_ao' },
-                      { data: 'cp_id__SB_province' },
-                      { data: 'cp_id__SB_district' },
-                      { data: 'cp_id__SB_area' },
-                      { data: 'cp_id__SB_nahia', defaultContent: 'N/A' }, // Handle nulls in SB_nahia
-                      { data: 'cp_count.cp_count', defaultContent: 'N/A', },  // Access cp_count from nested object
-                      { data: 'cp_count.cp_selected', defaultContent: 'N/A', },  // Access cp_selected from nested object
+                      { data: 'SB_ao' },
+                      { data: 'SB_province' },
+                      { data: 'SB_district' },
+                      { data: 'SB_area' },
+                      { data: 'SB_nahia', defaultContent: 'N/A' }, // Handle nulls in SB_nahia
+                      { data: 'cp_count', defaultContent: 'N/A', },  // Access cp_count from nested object
+                      { data: 'cp_count', defaultContent: 'N/A', },  // Access cp_selected from nested object
                       { data: 'sample_count' },
                       { data: 'total_tpm' },
                       { data: 'inclusion_error_percent', render: function (data, type, row) {
@@ -156,7 +156,7 @@
               });
 
               totalAssessment = data.counts.reduce(function(total, current) {
-                  return total + current.cp_count.cp_count
+                  return total + current.cp_count
               }, 0);
 
               $('#totalAssessment').text(totalAssessment);

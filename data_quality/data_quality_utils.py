@@ -13,11 +13,38 @@ def read_dataset(file):
 
 
 def find_duplicate_id_number(df):
-    """Section Two: Duplicate id_number."""
-    dup_rows = df[(df['id_doc'].isin([1, 7])) & (df['id_number'].duplicated(keep=False))]
+    """
+    Identifies duplicate `id_number` entries within the DataFrame based on specific `id_doc` values.
+    
+    If `id_doc` is 6 or 7, removes any non-numeric characters from `id_number` before checking for duplicates.
+    
+    Parameters:
+    df (pd.DataFrame): The input DataFrame containing `id_doc` and `id_number` columns among others.
+    
+    Returns:
+    pd.DataFrame: A sorted DataFrame containing the duplicate `id_number` entries.
+    """
+    
+    # Create a copy to avoid modifying the original DataFrame
+    df_clean = df.copy()
+    
+    # Define the `id_doc` values that require cleaning
+    docs_to_clean = [6, 7]
+    
+    # Remove non-numeric characters from `id_number` where `id_doc` is 6 or 7
+    mask = df_clean['id_doc'].isin(docs_to_clean)
+    df_clean.loc[mask, 'id_number'] = df_clean.loc[mask, 'id_number'].astype(str).str.replace(r'\D', '', regex=True)
+    
+    # Define the `id_doc` values to consider for duplicate checking
+    docs_to_check = [1, 7]
+    
+    # Identify duplicate `id_number` entries within the specified `id_doc` values
+    dup_rows = df_clean[df_clean['id_doc'].isin(docs_to_check) & df_clean['id_number'].duplicated(keep=False)]
+    
+    # Sort the resulting duplicates for easier analysis
     dup_rows_sorted = dup_rows.sort_values(by=['SB-district', 'SB-cfac_name', 'id_doc', 'id_number'])
+    
     return dup_rows_sorted
-
 
 def find_duplicate_mobile_number(df):
     """Section Three: Duplicate Mobile Number."""

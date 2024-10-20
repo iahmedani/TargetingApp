@@ -12,6 +12,7 @@ urlpatterns = [
     path('std_data_analysis/', views.std_data_analysis, name='analyze_data'),
     path('cfac_excel_upload_view/', views.cfac_excel_upload_view, name='cfac_excel_import'),
     path('cfac_village_list_prep/', views.process_excel_file, name='cfac_village_list_prep'),
-     path('deduplicate_upload/', views.deduplicate_upload, name='deduplicate_upload'),
-    path('deduplicate_export/', views.deduplicate_export, name='deduplicate_export')
+    path('deduplicate_upload/', views.deduplicate_upload, name='deduplicate_upload'),
+    path('deduplicate_export/', views.deduplicate_export, name='deduplicate_export'),
+    path('compare_files/', views.compare_excel_documents, name='compare_files')
 ]
