@@ -1,0 +1,45 @@
+
+
+{% extends "main.html" %}
+{% block content %}
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-content block-content-full">
+          <div class="py-3 text-center">
+            <h1 class="h3 fw-extrabold mb-1">
+                Compare Two Excel Documents
+            </h1>
+            <h2 class="fs-sm fw-medium text-muted mb-0">
+             Compare documents to find the differences between them.
+            </h2>
+          </div>
+        </div>
+      </div>
+      <div class="block block-rounded">
+        <div class="block-content block-content-full">
+          <div class="py-3 text-left">
+            <div class="container">
+                
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="excel_file">Select Excel file:</label>
+                <input type="file" name="excel_file" id="excel_file" class="form-control" required><br><br>
+            
+                <label for="password1">Password to open the file:</label>
+                <input type="password" name="password1" id="password1" class="form-control"  required><br><br>
+            
+                <label for="password2">Password to modify the file:</label>
+                <input type="password" name="password2" id="password2" class="form-control"  required><br><br>
+            
+                <button type="submit">Upload and Process</button>
+            </form>
+            
+            </div>
+           
+            
+          </div>
+        </div>
+      </div>
+        
+</div>
+{% endblock content %}

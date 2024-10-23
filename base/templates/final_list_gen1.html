@@ -270,7 +270,7 @@
             percentageYes: percentageYes
         };
       }
-      function createTable(tableEl, data, columnsToRemove = []) {
+      function createTable(tableEl, data, columnsToRemove = [], filename) {
         // Assuming responseData is an array of objects
         const keys = Object.keys(data[0]);
         let columns = keys.map(key => ({
@@ -296,12 +296,25 @@
     
         $(`#${tableEl}`).DataTable({
             data: data,
+            title:filename,
             columns: columns,
             layout: {
+          
               top1Start: {
-                  buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                  buttons: [{
+                    'extend':'copy',
+                  },{
+                    extend:'csv',
+                    filename: `${filename}_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}_${data[0].SB_nahia}`
+                  },{
+                    
+                    extend:'excel',
+                    filename: `${filename}_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}_${data[0].SB_nahia}`
+                  }
+                  ]
               },
-            },
+    
+          },
             fixedHeader: true, // Correct option for fixed headers
             searching: true, // Correct option for enabling search
             paging: true, // Enable pagination
@@ -468,10 +481,10 @@
               const combinedData = [...sample, ...remaining];
               console.log(combinedData)
 
-              createTable('CombinedData', combinedData, columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id']);
+              createTable('CombinedData', combinedData, columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'], 'FinalList');
 
-              createTable('SampleData', sample,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'])
-              createTable('RemaningData', remaining,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'])
+              createTable('SampleData', sample,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'], 'SampleResults')
+              createTable('RemaningData', remaining,columnsToRemove=['id','phonenumber','email','username','meta_instanceID','meta_instanceName','_uuid','_version','_xform_id'], 'CP_Data_Results')
                 // Map combinedData to create the ApprovalData array
               const ApprovalData = combinedData.map(item => ({
                 id: item['id'],

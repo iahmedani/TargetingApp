@@ -166,6 +166,12 @@
                 <span class="nav-main-link-name">Compare Files</span>
               </a>
             </li>
+            <li class="nav-main-item">
+              <a class="nav-main-link {% if '/prepare_final_list/' == request.path %} active {% endif %}" href="{% url 'data_quality:prepare_final_list'%}">
+              <i class="nav-main-link-icon fa fa-gear"></i>
+              <span class="nav-main-link-name">Prepare Final List </span>
+            </a>
+          </li>
             
           </ul>
         </div>

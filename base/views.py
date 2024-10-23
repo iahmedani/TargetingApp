@@ -142,11 +142,13 @@ class CSVImportView(View):
     def post(self, request):
         # Check if this is supposed to be a PUT request
         if request.POST.get('_method') == 'PUT':
-            return self._handle_file_upload(request, is_update=True)
+            return self._handle_file_upload(request, is_update=True, id_update=False)
+        elif request.POST.get('_method') == 'ID_PUT':
+            return self._handle_file_upload(request, is_update=True, id_update=True)
         else:
-            return self._handle_file_upload(request, is_update=False)
+            return self._handle_file_upload(request, is_update=False, id_update=False)
 
-    def _handle_file_upload(self, request, is_update):
+    def _handle_file_upload(self, request, is_update, id_update=False):
         csv_file = request.FILES.get('csv_file')
         if not csv_file:
             messages.error(request, 'Please upload a CSV file.')
@@ -164,7 +166,7 @@ class CSVImportView(View):
                 return render(request, self.template_name)
             
             # Process the DataFrame
-            df, error_rows = self.process_dataframe(df, is_update)
+            df, error_rows = self.process_dataframe(df, is_update, id_update)
 
             # Generate response CSV
             output = BytesIO()
@@ -186,8 +188,9 @@ class CSVImportView(View):
             logger.error(f"Error processing CSV: {str(e)}")
             messages.error(request, f'An error occurred while processing the CSV: {str(e)}')
             return render(request, self.template_name)
+        
 
-    def process_dataframe(self, df, is_update):
+    def process_dataframe(self, df, is_update, id_update):
         # Add import_status column
         df['import_status'] = ''
 
@@ -243,13 +246,22 @@ class CSVImportView(View):
                                 v = v.tz_convert(current_tz)
                             valid_data[k] = v
 
-                    if is_update:
+                    if is_update and id_update == False:
                         try:
                             obj = CPDataModel1.objects.get(key=valid_data['key'])
                             for key, value in valid_data.items():
                                 setattr(obj, key, value)
                             obj.save()
                             df.at[index, 'import_status'] = 'Updated'
+                        except CPDataModel1.DoesNotExist:
+                            df.at[index, 'import_status'] = 'Not found - Update skipped'
+                            
+                    elif is_update and id_update:
+                        try:
+                            obj = CPDataModel1.objects.get(key=valid_data['key'])
+                            obj.id_number = valid_data['id_number']
+                            obj.save()
+                            df.at[index, 'import_status'] = 'id_number updated'
                         except CPDataModel1.DoesNotExist:
                             df.at[index, 'import_status'] = 'Not found - Update skipped'
                     else:
@@ -511,7 +523,7 @@ class CSVDataCountView(View):
     def get(self, request):
         # Perform the aggregation
         counts = CPDataModel1.objects.exclude(
-            assessmentType='Replacement Assessment'
+            assessmentType='Replacement'
         ).values(
             'SB_ao', 'SB_province', 'SB_district', 'SB_area', 'SB_nahia'
         ).annotate(
@@ -1415,14 +1427,14 @@ class FinalListDataAnalysis(View):
             
 
     def determine_non_common_status(self, cp):
-        if cp.assessmentType != 'Replacement Assessment':
+        if cp.assessmentType != 'Replacement':
             if cp.vul == 'Excluded':
                 return 'Rejected: Exclusion by CP'
             return 'Selected: During CP Verification' if cp.vul == 'Yes' else 'Rejected: During CP Verification'
-        if cp.assessmentType == 'Replacement Assessment':
+        if cp.assessmentType == 'Replacement':
             if cp.vul == 'Excluded':
                 return 'Rejected: Exclusion by CP'
-        return 'Selected: During replacement Assessment' if cp.vul =='Yes' else 'Rejected: During replacement Assessment'
+        return 'Selected: During replacement' if cp.vul =='Yes' else 'Rejected: During replacement Assessment'
 
     def get_all_cp_data(self, cp):
         result = {field.name: getattr(cp, field.name) for field in CPDataModel1._meta.fields}
@@ -1445,7 +1457,7 @@ class FinalListDataAnalysis(View):
         )
 
         total_replacement = cp_data.filter(
-            assessmentType='Replacement Assessment', vul='Yes'
+            assessmentType='Replacement', vul='Yes'
         ).count()
 
         percentage_selected = (total_selected / total_cp_data) * 100 if total_cp_data > 0 else 0
@@ -1454,7 +1466,7 @@ class FinalListDataAnalysis(View):
         total_unique_tpm_entries = tpm_data.distinct().count()
 
         total_non_replacement = cp_data.exclude(
-            assessmentType='Replacement Assessment'
+            assessmentType='Replacement'
         ).count()
 
 
@@ -1609,7 +1621,7 @@ class FinalListDataAnalysis(View):
         if cp.vul == 'Excluded':
             return 'Rejected: Exclusion by CP based on exlusion question'
 
-        if cp.assessmentType == 'Replacement Assessment':
+        if cp.assessmentType == 'Replacement':
             return ('Selected: During Replacement Assessment' if cp.vul == 'Yes'
                     else 'Rejected: During Replacement Assessment')
 
@@ -1635,7 +1647,7 @@ class FinalListDataAnalysis(View):
         )
 
         total_replacement = cp_data.filter(
-            assessmentType='Replacement Assessment', vul='Yes'
+            assessmentType='Replacement', vul='Yes'
         ).count()
 
         percentage_selected = (total_selected / total_cp_data) * 100 if total_cp_data > 0 else 0
@@ -1644,7 +1656,7 @@ class FinalListDataAnalysis(View):
         total_unique_tpm_entries = tpm_data.values('sample__cp_id').distinct().count()
 
         total_non_replacement = cp_data.exclude(
-            assessmentType='Replacement Assessment'
+            assessmentType='Replacement'
         ).count()
 
         # Calculate rejection reasons distribution

@@ -14,5 +14,6 @@ urlpatterns = [
     path('cfac_village_list_prep/', views.process_excel_file, name='cfac_village_list_prep'),
     path('deduplicate_upload/', views.deduplicate_upload, name='deduplicate_upload'),
     path('deduplicate_export/', views.deduplicate_export, name='deduplicate_export'),
-    path('compare_files/', views.compare_excel_documents, name='compare_files')
+    path('compare_files/', views.compare_excel_documents, name='compare_files'),
+    path('prepare_final_list/', views.prepare_final_list, name='prepare_final_list')
 ]

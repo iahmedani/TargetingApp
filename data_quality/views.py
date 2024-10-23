@@ -597,7 +597,7 @@ def compare_excel_documents(request):
                     if first_sheet_df.shape != second_sheet_df.shape:
                         report.append({
                             'Sheet': sheet_name,
-                            'Issue': 'Sheet shapes differ between documents.'
+                            'Issue': f'Sheet shapes differ between documents. ({first_sheet_df.shape} vs. {second_sheet_df.shape})'
                         })
                         continue  # Skip comparison for this sheet
 
@@ -684,3 +684,119 @@ def compare_excel_documents(request):
         form = ExcelCompareForm()
 
     return render(request, 'upload_c.html', {'form': form})
+
+
+
+    
+from django.shortcuts import render
+from django.http import HttpResponse
+import pandas as pd
+import io
+import os
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
+
+def prepare_final_list(request):
+    if request.method == 'POST':
+        # Get the uploaded file and passwords
+        excel_file = request.FILES['excel_file']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+
+        # Load the workbook with openpyxl
+        wb = load_workbook(filename=excel_file, read_only=False, data_only=True)
+        ws = wb.active
+
+        # Extract the merged cell value from the first row
+        merged_value = None
+        for merged_range in ws.merged_cells.ranges:
+            if merged_range.min_row == 1:
+                # Get the cell value
+                cell = ws.cell(row=merged_range.min_row, column=merged_range.min_col)
+                merged_value = cell.value
+                break
+
+        # Remove the first row
+        ws.delete_rows(1)
+
+        # Save the modified workbook to a BytesIO object
+        temp_excel = io.BytesIO()
+        wb.save(temp_excel)
+        temp_excel.seek(0)
+
+        # Read the modified Excel file into pandas DataFrame
+        df = pd.read_excel(temp_excel)
+
+        # Optionally, add the merged cell data back into the DataFrame
+        if merged_value is not None:
+            df['MergedData'] = merged_value
+
+        # Create a summary of the 'status' column
+        status_counts = df['status'].value_counts().reset_index()
+        status_counts.columns = ['status', 'count']
+
+        # Create DataFrames for 'Selected HH' and 'Rejected HH'
+        selected_hh = df[df['status'].str.contains('Selected:')]
+        rejected_hh = df[df['status'].str.contains('Rejected:')]
+
+        # Prepare the Excel writer using xlsxwriter with password1 to open the file
+        output = io.BytesIO()
+        writer = pd.ExcelWriter(
+            output,
+            engine='xlsxwriter',
+            engine_kwargs={'options': {'password': password1}}
+        )
+
+        # Write DataFrames to different sheets
+        # df.to_excel(writer, index=False, sheet_name='Sheet1')
+        status_counts.to_excel(writer, index=False, sheet_name='Summary')
+        selected_hh.to_excel(writer, index=False, sheet_name='Selected HH')
+        rejected_hh.to_excel(writer, index=False, sheet_name='Rejected HH')
+
+        # Protect each sheet with password2 to modify the file
+        workbook = writer.book
+        protect_options = {
+            'workbook': False,
+            'format_cells': False,
+            'format_columns': False,
+            'format_rows': False,
+            'insert_columns': False,
+            'insert_rows': False,
+            'insert_hyperlinks': False,
+            'delete_columns': False,
+            'delete_rows': False,
+            'select_locked_cells': True,
+            'sort': False,
+            'autofilter': False,
+            'pivot_tables': False,
+            'select_unlocked_cells': True,
+            'objects': False,
+            'scenarios': False,
+            'copy': False,
+            'print': False,
+            'edit_objects': False,
+            'edit_scenarios': False,
+        }
+
+        for worksheet in writer.sheets.values():
+            worksheet.protect(password=password2, options=protect_options)
+
+        # Close the writer to save the Excel file
+        writer.close()
+        output.seek(0)
+
+        # Modify the file name by adding 'processed' suffix
+        original_filename = excel_file.name
+        filename, ext = os.path.splitext(original_filename)
+        new_filename = f"{filename}_processed{ext}"
+
+        # Return the file as an HTTP response
+        response = HttpResponse(
+            output,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{new_filename}"'
+
+        return response
+    else:
+        return render(request, 'upload_finalList.html')
