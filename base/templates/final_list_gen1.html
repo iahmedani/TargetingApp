@@ -78,6 +78,8 @@
               </div>
             </form>
             <!-- END Form Inline - Default Style -->
+            <p class="text-danger d-none" id="FinalMessage">Inclusion error is higher than 10%. It is recommended to hold district and further discuss with the SO1 team.</p>
+
           </div>
         </div>
       </div>
@@ -402,26 +404,45 @@
         document.getElementById('sample_coverage').className = 'progress-bar';
 
         const sampleSize = x.sample_count;
+        if (sampleSize <= 250){
+          document.getElementById('sampleSize').textContent = `Sample Size: ${sampleSize}`;
 
-        document.getElementById('sampleSize').textContent = `Sample Size: ${sampleSize}`;
+        }else{
+          document.getElementById('sampleSize').textContent = `Sample Size: ${sampleSize} (it is combination of regular and borderline sample)`;
+
+        }
     
-        // Update inclusion error
+              // Update inclusion error
         document.getElementById('inclusion_value').textContent = `${inclusionError.toFixed(2)}% (${x.cp_inclusion_error})`;
         document.getElementById('inclusion_progress').style.width = `${inclusionError.toFixed(2)}%`;
-        console.log(inclusionError)
+        console.log(inclusionError);
+
         if (inclusionError <= 10) {
             document.getElementById('inclusion_icon').classList.add('text-success');
+            document.getElementById('inclusion_icon').classList.remove('text-danger'); // Ensure 'text-danger' is removed
             document.getElementById('inclusion_progress').classList.add('bg-success');
+            document.getElementById('inclusion_progress').classList.remove('bg-danger'); // Ensure 'bg-danger' is removed
             document.getElementById('ApproveFinalList').removeAttribute('disabled');
-            document.getElementById('BorderlineSample').classList.add('disabled-link');  // To disable
-
-
+            document.getElementById('BorderlineSample').classList.add('disabled-link');  // Disable
         } else {
-           document.getElementById('ApproveFinalList').setAttribute('disabled', true);
-           document.getElementById('BorderlineSample').classList.remove('disabled-link');  // To enable
+            document.getElementById('ApproveFinalList').setAttribute('disabled', true);
+
+            if (sampleSize > 250) {
+                document.getElementById('BorderlineSample').classList.add('disabled-link');  // Enable
+                // To show the message
+                document.getElementById('FinalMessage').classList.remove('d-none');
+            } else {
+                document.getElementById('BorderlineSample').classList.remove('disabled-link');  // Disable
+                document.getElementById('FinalMessage').classList.add('d-none');
+
+            }
+
             document.getElementById('inclusion_icon').classList.add('text-danger');
+            document.getElementById('inclusion_icon').classList.remove('text-success'); // Ensure 'text-success' is removed
             document.getElementById('inclusion_progress').classList.add('bg-danger');
+            document.getElementById('inclusion_progress').classList.remove('bg-success'); // Ensure 'bg-success' is removed
         }
+
     
         // Update exclusion error
         document.getElementById('exclusion_value').textContent = `${ee.percentageYes.toFixed(2)}% (${ee.totalSum})`;

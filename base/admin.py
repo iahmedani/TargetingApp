@@ -201,7 +201,7 @@ class TPMCSVDataAdmin(admin.ModelAdmin):
 @admin.register(Sample1)
 class SampleAdmin(admin.ModelAdmin):
     list_display = ('ben_id', 'get_SB_ao', 'get_SB_province', 'get_district', 'get_nahia', 'get_cfac_name', 'is_urban', 'remarks', 'created_by', 'created_at')
-    search_fields = ('get_SB_ao', 'get_SB_province', 'get_district', 'key')
+    search_fields = ('get_SB_ao', 'get_SB_province', 'get_district', 'key', 'sample_type')
     list_filter = (SBaoFilter, SBprovinceFilter,SBdisrictFilter, 'is_urban')
     
     actions = [export_as_csv]

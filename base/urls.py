@@ -23,6 +23,9 @@ urlpatterns = [
     path('est_sample/', views.CSVDataCountView.as_view(), name='est_sample'),
     path('generate_sample/', views.GenerateSampleView.as_view(), name='generate_sample'),
     path('approve_sample/', views.ApproveSampleView.as_view(), name='approve_sample'),
+    path('sampling_report/', views.sampling_report, name='sampling_report'),
+    path('sample_report/', views.SampleViewReport.as_view(), name='sample_report'),
+    
     
     path('sampling_borderline/', views.sampling_borderline, name='sampling_borderline'),
     path('est_borderline_sample/', views.SampledLocations_bordeline.as_view(), name='est_borderline_sample'),

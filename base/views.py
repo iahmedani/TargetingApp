@@ -29,6 +29,7 @@ from django.db.models.functions import Cast, Greatest, Coalesce
 import random
 import json
 import datetime 
+from django.forms.models import model_to_dict
 
 
 TOTAL_CLUSTERS = int(os.getenv('TOTAL_CLUSTERS'))
@@ -107,6 +108,9 @@ def import_data(request):
 
 def sampling(request):
     return render(request, 'sample_gen.html', {'title': 'Generate Sample'})
+
+def sampling_report(request):
+    return render(request, 'sample_report.html', {'title': 'Export Sample'})
 
 def sampling_borderline(request):
     return render(request, 'sample_gen_borderline.html', {'title': 'Generate Borderline Sample'})
@@ -832,6 +836,46 @@ class GenerateSampleView(View):
             sample_data.append(record_data)
         return sample_data
 
+class SampleViewReport(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+        area_office = data.get('area_office')
+        province = data.get('province')
+        district = data.get('district')
+        nahia = data.get('nahia')
+
+        # Validate input parameters
+        if nahia == 'null' or nahia is None:
+            nahia = None
+
+        if not all([area_office, province, district]):
+            return JsonResponse({'error': 'Missing required parameters'}, status=400)
+
+        # Base query for CPDataModel1
+        query = Q(SB_ao=area_office, SB_province=province, SB_district=district) & ~Q(assessmentType='Replacement')
+
+        # Add nahia to query if present
+        if nahia is not None:
+            query &= Q(SB_nahia=nahia)
+
+        # Find CPDataModel1 records that have related records in Sample1
+        cp_data_ids = Sample1.objects.values_list('cp_id', flat=True)
+        matching_cp_data = CPDataModel1.objects.filter(query, id__in=cp_data_ids)
+
+        # Serialize matching_cp_data to JSON-friendly format
+        if matching_cp_data.exists():
+            sample_data = list(matching_cp_data.values())  # Convert queryset to list of dictionaries
+            response_data = {
+                "sample_size": len(sample_data),
+                "sample": sample_data,
+            }
+            return JsonResponse(response_data, safe=False)
+        else:
+            return JsonResponse({'error': 'Sample does not exist for the given parameters'}, status=400)   
 class ApproveSampleView(View):
     @transaction.atomic
     def post(self, request, *args, **kwargs):
@@ -925,9 +969,7 @@ class SampledLocations(View):
     def get(self, request):
         try:
             # Base queryset for Sample1 with aggregations
-            counts = Sample1.objects.filter(
-                sample_type='Regular'
-            ).values(
+            counts = Sample1.objects.values(
                 'cp_id__SB_ao',
                 'cp_id__SB_province',
                 'cp_id__SB_district',
