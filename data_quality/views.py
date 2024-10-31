@@ -700,8 +700,8 @@ def prepare_final_list(request):
     if request.method == 'POST':
         # Get the uploaded file and passwords
         excel_file = request.FILES['excel_file']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
+        # password1 = request.POST['password1']
+        # password2 = request.POST['password2']
 
         # Load the workbook with openpyxl
         wb = load_workbook(filename=excel_file, read_only=False, data_only=True)
@@ -737,6 +737,9 @@ def prepare_final_list(request):
 
         # Create DataFrames for 'Selected HH' and 'Rejected HH'
         selected_hh = df[df['status'].str.contains('Selected:')]
+        selected_regular = selected_hh[selected_hh['assessmentType'].str.contains('Regular')]
+        selected_replacement = selected_hh[selected_hh['assessmentType'].str.contains('Replacement')]
+        selected_appeal = selected_hh[selected_hh['assessmentType'].str.contains('Appeal')]
         rejected_hh = df[df['status'].str.contains('Rejected:')]
 
         # Prepare the Excel writer using xlsxwriter with password1 to open the file
@@ -744,42 +747,45 @@ def prepare_final_list(request):
         writer = pd.ExcelWriter(
             output,
             engine='xlsxwriter',
-            engine_kwargs={'options': {'password': password1}}
+            # engine_kwargs={'options': {'password': password1}}
         )
 
         # Write DataFrames to different sheets
         # df.to_excel(writer, index=False, sheet_name='Sheet1')
         status_counts.to_excel(writer, index=False, sheet_name='Summary')
-        selected_hh.to_excel(writer, index=False, sheet_name='Selected HH')
+        selected_hh.to_excel(writer, index=False, sheet_name='All Selected HH')
+        selected_regular.to_excel(writer, index=False, sheet_name='Selected Regular HH')
+        selected_replacement.to_excel(writer, index=False, sheet_name='Selected Replacement HH')
+        selected_appeal.to_excel(writer, index=False, sheet_name='Selected Appeal HH')
         rejected_hh.to_excel(writer, index=False, sheet_name='Rejected HH')
 
         # Protect each sheet with password2 to modify the file
-        workbook = writer.book
-        protect_options = {
-            'workbook': False,
-            'format_cells': False,
-            'format_columns': False,
-            'format_rows': False,
-            'insert_columns': False,
-            'insert_rows': False,
-            'insert_hyperlinks': False,
-            'delete_columns': False,
-            'delete_rows': False,
-            'select_locked_cells': True,
-            'sort': False,
-            'autofilter': False,
-            'pivot_tables': False,
-            'select_unlocked_cells': True,
-            'objects': False,
-            'scenarios': False,
-            'copy': False,
-            'print': False,
-            'edit_objects': False,
-            'edit_scenarios': False,
-        }
+        # workbook = writer.book
+        # protect_options = {
+        #     'workbook': False,
+        #     'format_cells': False,
+        #     'format_columns': False,
+        #     'format_rows': False,
+        #     'insert_columns': False,
+        #     'insert_rows': False,
+        #     'insert_hyperlinks': False,
+        #     'delete_columns': False,
+        #     'delete_rows': False,
+        #     'select_locked_cells': True,
+        #     'sort': False,
+        #     'autofilter': False,
+        #     'pivot_tables': False,
+        #     'select_unlocked_cells': True,
+        #     'objects': False,
+        #     'scenarios': False,
+        #     'copy': False,
+        #     'print': False,
+        #     'edit_objects': False,
+        #     'edit_scenarios': False,
+        # }
 
-        for worksheet in writer.sheets.values():
-            worksheet.protect(password=password2, options=protect_options)
+        # for worksheet in writer.sheets.values():
+        #     worksheet.protect(password=password2, options=protect_options)
 
         # Close the writer to save the Excel file
         writer.close()
