@@ -1919,6 +1919,9 @@ class FinalListDataAnalysis(View):
         
         if cp.vul == 'Excluded'  and tpm.vul == 'Yes':
             return 'Selected: During spotcheck, initially marked excluded during CP verification'
+        
+        if cp.vul == 'Excluded'  and tpm.vul == 'No':
+            return 'Rejected: During spotcheck, initially marked excluded during CP verification'
 
         return 'Status Unknown'
 
