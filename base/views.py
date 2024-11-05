@@ -115,6 +115,9 @@ def sampling_report(request):
 def sampling_borderline(request):
     return render(request, 'sample_gen_borderline.html', {'title': 'Generate Borderline Sample'})
 
+def custom_sampling_borderline(request):
+    return render(request, 'custom_sample_gen_borderline.html', {'title': 'Generate Customized Borderline Sample'})
+
 def error_check(request):
     return render(request, 'temp.html', {'title': 'Error Checking'})
 
@@ -1140,6 +1143,122 @@ class SampledLocations_bordeline(View):
                 status=500
             )
 
+from django.views import View
+from django.http import JsonResponse
+from django.db.models import Count, Q, ExpressionWrapper, FloatField, F
+from collections import defaultdict
+
+from django.views import View
+from django.http import JsonResponse
+from django.db.models import Count, Q, ExpressionWrapper, FloatField, F
+from collections import defaultdict
+import logging
+
+# Configure logger if not already configured
+logger = logging.getLogger(__name__)
+
+class SampledLocations_bordeline_custom(View):
+    def get(self, request):
+        try:
+            # Retrieve 'max_vul_score' from query parameters
+            max_vul_score = request.GET.get('max_vul_score')
+            if max_vul_score is not None:
+                try:
+                    max_vul_score = int(max_vul_score)
+                except ValueError:
+                    return JsonResponse({'error': 'Invalid max_vul_score provided.'}, status=400)
+            else:
+                # Default value if not provided
+                max_vul_score = 12  # Adjust as needed
+
+            # Base queryset for Sample1 with aggregations
+            counts = Sample1.objects.filter(
+                sample_type='Regular'
+            ).values(
+                'cp_id__SB_ao',
+                'cp_id__SB_province',
+                'cp_id__SB_district',
+                'cp_id__SB_area',
+                'cp_id__SB_nahia'
+            ).annotate(
+                sample_count=Count('id'),
+                cp_inclusion_error=Count('id', filter=Q(cp_id__vul='Yes', tpm_records__vul='No')),
+                total_tpm=Count('tpm_records__id'),
+                tpm_hh_not_found=Count('tpm_records__id', filter=Q(tpm_records__HHFound=False)),
+                inclusion_error_percent=ExpressionWrapper(
+                    F('cp_inclusion_error') * 100.0 / F('total_tpm'),
+                    output_field=FloatField()
+                )
+            ).filter(
+                inclusion_error_percent__gt=10
+            )
+
+            # Get list of cp_ids in Sample1
+            sampled_cp_ids = Sample1.objects.values_list('cp_id', flat=True)
+
+            # Get counts of CPs matching the criteria and not in sample
+            cp_data = CPDataModel1.objects.filter(
+                CP_Calculation__gte=6,
+                vul='Yes'
+            ).exclude(
+                id__in=sampled_cp_ids
+            ).values(
+                'SB_ao',
+                'SB_province',
+                'SB_district',
+                'SB_area',
+                'SB_nahia',
+                'CP_Calculation'
+            )
+
+            # Build a mapping from area keys to counts of CP_Calculation
+            cp_counts_dict = defaultdict(lambda: defaultdict(int))
+
+            for item in cp_data:
+                key = (
+                    item['SB_ao'] or '',
+                    item['SB_province'] or '',
+                    item['SB_district'] or '',
+                    item['SB_area'] or '',
+                    item['SB_nahia'] or ''
+                )
+                cp_calc = item['CP_Calculation']
+                cp_counts_dict[key][cp_calc] += 1
+
+            # Convert counts queryset to list
+            counts_list = list(counts)
+
+            # Add 'counts' key with counts per CP_Calculation, 'totalRecords', and 'estimated_sample'
+            for item in counts_list:
+                key = (
+                    item['cp_id__SB_ao'] or '',
+                    item['cp_id__SB_province'] or '',
+                    item['cp_id__SB_district'] or '',
+                    item['cp_id__SB_area'] or '',
+                    item['cp_id__SB_nahia'] or ''
+                )
+
+                counts = cp_counts_dict.get(key, {})
+                # Ensure all CP_Calculation keys are strings for consistency
+                item['counts'] = {str(k): v for k, v in counts.items()}
+
+                
+
+            # Prepare the result
+            result = {
+                'counts': counts_list
+            }
+
+            # Return JSON response
+            return JsonResponse(result, safe=False)
+
+        except Exception as e:
+            logger.exception("An error occurred while fetching sampled locations.")
+            return JsonResponse(
+                {'error': 'An error occurred while processing your request.'},
+                status=500
+            )
+
 
 
 
@@ -1185,7 +1304,8 @@ class GenerateRandomSites(View):
                 Q(CP_Calculation=6) | Q(CP_Calculation=7),
                 SB_ao=area_office,
                 SB_province=province,
-                SB_district=district
+                SB_district=district,
+                vul='Yes'
             ).exclude(
                 id__in=Sample1.objects.values_list('cp_id', flat=True)
             )
@@ -1237,6 +1357,104 @@ class GenerateRandomSites(View):
             sample_data.append(record_data)
         return sample_data
 
+class GenerateRandomSites_custom(View):
+    def post(self, request):
+        try:
+            # Parse the JSON data from the request body
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
+
+            # Extract parameters from POST data
+            area_office = data.get('area_office')
+            province = data.get('province')
+            district = data.get('district')
+            max_vul_score = data.get('max_vul_score')
+            nahia = data.get('nahia')
+            estimated_sample_size = data.get('estimated_sample_size')
+
+            # Validate and convert estimated_sample_size to int
+            try:
+                estimated_sample_size = int(estimated_sample_size)
+                if estimated_sample_size <= 0:
+                    raise ValueError
+            except (TypeError, ValueError):
+                return JsonResponse({'error': 'Invalid estimated_sample_size provided.'}, status=400)
+
+            # Validate and convert max_vul_score to int, if provided
+            if max_vul_score is not None:
+                try:
+                    max_vul_score = int(max_vul_score)
+                except ValueError:
+                    return JsonResponse({'error': 'Invalid max_vul_score provided.'}, status=400)
+            else:
+                max_vul_score = 7  # Default value if not provided
+
+            # Validate input parameters
+            if nahia == 'null' or nahia == '':
+                nahia = None
+
+            # Validate that all required fields are provided
+            if not all([area_office, province, district]):
+                return JsonResponse({'error': 'Missing required fields.'}, status=400)
+
+            # Step 1: Filter cp_data having CP_Calculation between 6 and max_vul_score
+            cp_data = CPDataModel1.objects.filter(
+                CP_Calculation__gte=6,
+                CP_Calculation__lte=max_vul_score,
+                SB_ao=area_office,
+                SB_province=province,
+                SB_district=district,
+                vul='Yes'
+            ).exclude(
+                id__in=Sample1.objects.values_list('cp_id', flat=True)
+            )
+
+            # If Nahia is provided, filter by it
+            if nahia:
+                cp_data = cp_data.filter(SB_nahia=nahia)
+
+            # Count the records
+            total_count = cp_data.count()
+
+            if total_count <= 500:
+                # If total count is <= 500, include all records not in sample
+                selected_sites = list(cp_data)
+            else:
+                # Randomly select 'estimated_sample_size' records
+                selected_sites = list(cp_data.order_by('?')[:estimated_sample_size])
+
+            samples = self.prepare_sample_data(selected_sites)
+
+            # Prepare the result
+            result = {
+                'selected_sites': samples
+            }
+
+            # Return JSON response
+            return JsonResponse(result, safe=True)
+
+        except Exception as e:
+            logger.exception("An error occurred while generating random sites.")
+            return JsonResponse(
+                {'error': 'An error occurred while processing your request.'},
+                status=500
+            )
+
+    def prepare_sample_data(self, sample):
+        sample_data = []
+        for record in sample:
+            record_data = {}
+            for field in record._meta.fields:
+                field_name = field.name
+                field_value = getattr(record, field_name)
+                # Convert non-JSON serializable types to string
+                if isinstance(field_value, (datetime.date, datetime.datetime)):
+                    field_value = field_value.isoformat()
+                record_data[field_name] = field_value
+            sample_data.append(record_data)
+        return sample_data
 
 
 # from django.views import View
@@ -1698,6 +1916,9 @@ class FinalListDataAnalysis(View):
 
         if cp.vul == 'No' and tpm.vul == 'Yes':
             return 'Selected: During spotcheck, initially rejected during CP verification'
+        
+        if cp.vul == 'Excluded'  and tpm.vul == 'Yes':
+            return 'Selected: During spotcheck, initially marked excluded during CP verification'
 
         return 'Status Unknown'
 

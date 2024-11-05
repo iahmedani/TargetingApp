@@ -1,0 +1,466 @@
+
+{% extends "main.html" %}
+{% load static %}
+{% block styles %}
+<!-- Page JS Plugins CSS -->
+<link rel="stylesheet" href="{% static '/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css'%}">
+<link rel="stylesheet" href="{% static '/js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css'%}">
+<link rel="stylesheet" href="{% static '/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css'%}">
+{% endblock styles %}
+
+{% block content %}
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-header block-header-default">
+          <h3 class="block-title">{{ title }}</h3>
+        </div>
+        <div class="block-content block-content-full">
+          <div class="row">
+            <div class="col-lg-12 space-y-2">
+              <!-- Form Inline - Default Style -->
+              <form class="row row-cols-auto g-3 align-items-center" onsubmit="return false;">
+                {% csrf_token %}
+                <div class="col-2">
+                    <label class="form-label" for="ddAreaOffice">Select AO</label>
+                  
+                  <select class="form-control form-control-sm" name="ddAreaOffice" id="ddAreaOffice" required="">
+                    <option>Select</option>
+                  </select>
+                </div>
+                <div class="col-2">
+                    <label class="form-label" for="province">Select Province</label>
+                  
+                  <select class="form-control form-control-sm" name="province" id="ddProvinces" required="">
+                    <option>Select</option>
+                  </select>
+                </div>
+                <div class="col-2">
+                    <label class="form-label" for="district">Select District</label>
+                  
+                  <select class="form-control form-control-sm" name="district" id="ddDistrict">
+                    <option>Select</option>
+                  </select>
+                </div>
+                <div class="col-1">
+                    <label class="form-label" for="nahia">Nahia</label>
+                  
+                  <select class="form-control form-control-sm" name="nahia" id="ddNahia" required="">
+                    <option>Select</option>
+                    
+                    
+                  </select>
+                </div>
+                <div class="col-1">
+                  <label class="form-label" for="max_vul_score">Max Score</label>
+                
+                <select class="form-control form-control-sm" name="max_vul_score" id="max_vul_score" required="">
+                  <option>Select</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                  
+                  
+                </select>
+              </div>
+                
+                <div class="col-2">
+                  
+                  
+                  
+                    <label class="form-label" for="totalRecords">Total Records</label>
+                    <input type="number" class="form-control form-control-sm" name="totalRecords" id="totalRecords" placeholder="Total records " readonly>
+
+                </div>
+                <div class="d-grid col-2">
+                    <label class="form-label" for="estSample">Sample Size</label>
+                    <input type="number" class="form-control form-control-sm" name="estSample" id="sampleSize" placeholder="Sample size "readonly>
+                </div>
+                <div class="col-3">
+                    <button id="showSample" class="form-control form-control-sm btn btn-primary btn-sm">Generate Boderline Sample</button>
+                </div>
+
+                <div class="col-3">
+                    <button id="ApproveSample" class="form-control form-control-sm btn btn-primary btn-sm">Approve Borderline Sample</button>
+                  </div>
+
+              </form>
+              <!-- END Form Inline - Default Style -->
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="block block-rounded">
+        <div class="block-header block-header-default">
+          <h3 class="block-title">
+            Households Sampled <small>for TPM Boderline Assessment</small>
+          </h3>
+          
+        </div>
+        <div class="block-content block-content-full overflow-x-auto">
+          <h3 class="block-title">
+            Important Note: <small id="SampleMessage">Borderline samples, due to higher inclusion error</small>
+          </h3>
+        <div class="table-responsive" id="sampleTable">
+          <table id="Samples" class="table table-striped table-sm" style="width:100%">
+
+          </table>
+        </div>
+        </div>
+      </div>
+  </div>
+
+{% endblock content %}
+{% block scripts %}
+<script src="{%static '/js/plugins/datatables/dataTables.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-responsive/js/dataTables.responsive.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons/dataTables.buttons.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-jszip/jszip.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons/buttons.print.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons/buttons.html5.min.js'%}"></script>
+<script>
+  // Fetch data when the document is ready
+
+  
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    fetch('/est_custom_borderline_sample/')
+      .then(response => response.json())
+      .then(data => {
+          let counts = data.counts;
+
+          // Populate Area Office dropdown with a default "Select" option
+          let areaOfficeDropdown = document.getElementById('ddAreaOffice');
+          areaOfficeDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+          let areaOffices = [...new Set(counts.map(item => item.cp_id__SB_ao))];
+          areaOffices.forEach(ao => {
+              let option = new Option(ao, ao);
+              areaOfficeDropdown.appendChild(option);
+          });
+
+          // Variable to store counts data for selected Nahia
+          let selectedCountsData = null;
+
+          // Event listener for Area Office dropdown
+          areaOfficeDropdown.addEventListener('change', function () {
+              let selectedAO = this.value;
+
+              // Filter provinces based on selected Area Office
+              let filteredProvinces = [...new Set(counts
+                  .filter(item => item.cp_id__SB_ao === selectedAO)
+                  .map(item => item.cp_id__SB_province)
+                  .filter(province => province !== null))];
+
+              // Populate Provinces dropdown with a default "Select" option
+              let provincesDropdown = document.getElementById('ddProvinces');
+              provincesDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+              filteredProvinces.forEach(province => {
+                  let option = new Option(province, province);
+                  provincesDropdown.appendChild(option);
+              });
+
+              // Clear the lower-level dropdowns and input fields
+              document.getElementById('ddDistrict').innerHTML = '<option value="">Select</option>';
+              document.getElementById('ddNahia').innerHTML = '<option value="">Select</option>';
+              document.getElementById('totalRecords').value = '';
+              document.getElementById('sampleSize').value = '';
+
+              // Clear stored counts data
+              selectedCountsData = null;
+          });
+
+          // Event listener for Provinces dropdown
+          document.getElementById('ddProvinces').addEventListener('change', function () {
+              let selectedAO = document.getElementById('ddAreaOffice').value;
+              let selectedProvince = this.value;
+
+              // Filter districts based on selected Province
+              let filteredDistricts = [...new Set(counts
+                  .filter(item => item.cp_id__SB_ao === selectedAO && item.cp_id__SB_province === selectedProvince)
+                  .map(item => item.cp_id__SB_district)
+                  .filter(district => district !== null))];
+
+              // Populate District dropdown with a default "Select" option
+              let districtsDropdown = document.getElementById('ddDistrict');
+              districtsDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+              filteredDistricts.forEach(district => {
+                  let option = new Option(district, district);
+                  districtsDropdown.appendChild(option);
+              });
+
+              // Clear the Nahia dropdown and input fields
+              document.getElementById('ddNahia').innerHTML = '<option value="">Select</option>';
+              document.getElementById('totalRecords').value = '';
+              document.getElementById('sampleSize').value = '';
+
+              // Clear stored counts data
+              selectedCountsData = null;
+          });
+
+          // Event listener for District dropdown
+          document.getElementById('ddDistrict').addEventListener('change', function () {
+              let selectedAO = document.getElementById('ddAreaOffice').value;
+              let selectedProvince = document.getElementById('ddProvinces').value;
+              let selectedDistrict = this.value;
+
+              // Filter Nahias based on selected District
+              let filteredNahias = counts
+                  .filter(item => item.cp_id__SB_ao === selectedAO && item.cp_id__SB_province === selectedProvince && item.cp_id__SB_district === selectedDistrict)
+                  .map(item => ({
+                      nahia: item.cp_id__SB_nahia,
+                      countsData: item.counts
+                  }));
+
+              // Populate Nahia dropdown with a default "Select" option
+              let nahiaDropdown = document.getElementById('ddNahia');
+              nahiaDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+              filteredNahias.forEach(nahiaData => {
+                  let option = new Option(nahiaData.nahia, nahiaData.nahia);
+                  // Store counts data as JSON string in data attribute
+                  option.dataset.countsData = JSON.stringify(nahiaData.countsData);
+                  nahiaDropdown.appendChild(option);
+              });
+
+              // Clear the input fields
+              document.getElementById('totalRecords').value = '';
+              document.getElementById('sampleSize').value = '';
+
+              // Clear stored counts data
+              selectedCountsData = null;
+          });
+
+          // Event listener for Nahia dropdown
+          document.getElementById('ddNahia').addEventListener('change', function () {
+              let selectedOption = this.options[this.selectedIndex];
+              let countsDataString = selectedOption.dataset.countsData;
+
+              // Parse counts data from JSON string
+              selectedCountsData = countsDataString ? JSON.parse(countsDataString) : {};
+
+              // Recalculate totalRecords and sampleSize
+              recalculateTotals();
+          });
+
+          // Event listener for max_vul_score dropdown
+          document.getElementById('max_vul_score').addEventListener('change', function () {
+              // Recalculate totalRecords and sampleSize
+              recalculateTotals();
+          });
+
+          function recalculateTotals() {
+              if (!selectedCountsData) {
+                  document.getElementById('totalRecords').value = '';
+                  document.getElementById('sampleSize').value = '';
+                  return;
+              }
+
+              let maxVulScore = parseInt(document.getElementById('max_vul_score').value);
+              if (isNaN(maxVulScore)) {
+                  document.getElementById('totalRecords').value = '';
+                  document.getElementById('sampleSize').value = '';
+                  return;
+              }
+
+              // Sum counts up to max_vul_score
+              let totalRecords = 0;
+              for (let score in selectedCountsData) {
+                  let scoreInt = parseInt(score);
+                  if (scoreInt <= maxVulScore) {
+                      totalRecords += selectedCountsData[score];
+                  }
+              }
+
+              document.getElementById('totalRecords').value = totalRecords;
+
+              // Calculate sampleSize
+              let sampleSize = totalRecords >= 500 ? 500 : totalRecords;
+              document.getElementById('sampleSize').value = sampleSize;
+          }
+
+      })
+      .catch(error => console.error('Error fetching data:', error));
+
+          
+  
+          
+  });
+  function ApproveSample(data, is_urban, remarks){
+    //const csrftoken = getCookie('csrftoken');
+
+    const ids = data.map(item => item.id);
+
+    data = {
+        'ids': ids,
+        'is_urban': is_urban,
+        'remarks': remarks,
+        'sample_type':'Borderline'
+    };
+
+    console.log(data)
+    fetch('/approve_sample/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        //console.log(data);
+        if (data.message === 'Samples approved successfully') {
+            alert('Samples approved successfully');
+        }else if (data.message === 'Samples test borderline approved successfully'){
+            alert('Samples test borderline approved successfully');
+        } else {
+            alert(data.error);
+        }
+        // Handle the received data here
+    })
+
+
+  }
+
+  function initializeDataTable(data, instruction) {
+    // If the DataTable already exists, destroy it
+    if ($.fn.DataTable.isDataTable('#Samples')) {
+        $('#Samples').DataTable().destroy();
+    }
+
+    // Clear the table body (optional if the table body is empty after destroying)
+    $('#Samples tbody').empty();
+
+    // Reinitialize the DataTable with new data
+    $('#Samples').DataTable({
+        title: 'Households Sampled for TPM Spot-check',
+        data: data,  // Load the data into the DataTable
+        layout: {
+          
+          top1Start: {
+              buttons: [{
+                'extend':'copy',
+                messageTop: instruction
+              },{
+                extend:'csv',
+                messageTop: instruction,
+                filename: `TPM_Borderline_HHs_Sampled_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}`
+              },{
+                
+                extend:'excel',
+                messageTop: instruction,
+                filename: `TPM_Borderline_HHs_Sampled_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}`
+              }
+              ]
+          },
+
+      },
+          searchable: true,
+          fixedHeight: true,
+          fixedHeader: true,
+          sortable: true,
+          footer: true,
+          fixedColumns: true,
+        columns: [
+         // { "data": "id", "title": "ID" },
+          {"data": function (data, type, row, meta) {
+            return data.SB_ao + '_'+ data.id
+            },"title":'MODA_ID'},
+          { "data": "name_ben", "title": "Name Ben" },
+          { "data": "ben_fath", "title": "Ben Fath" },
+          { "data": "ben_gender", "title": "Gender" },
+          { "data": "ben_age", "title": "Age" },
+          { "data": "mob", "title": "Mobile" },
+          { "data": function (data, type, row, meta){
+            doc_type = {
+              1: 'Paper Tazkira',
+              7: 'Electronic Tazkira',
+              2:'Passport',
+              3:'Driving License',
+              4:'Election Card',
+              5:'SCOPE Card',
+              6:'Other ID'
+            }
+            return doc_type[data.id_doc]
+          },  "title": "ID Doc" },
+          { "data": "id_number", "title": "ID Number" },
+          { "data": "SB_ao", "title": "AO" },
+          { "data": "SB_province", "title": "Province" },
+          { "data": "SB_district", "title": "District" },
+          { "data": function(data, type, row, meta){
+            if (data.SB_area == '1') {
+                return 'Urban';
+            } else {
+                return 'Rural';
+            }
+          },"title": "Area" },
+          { "data": "SB_nahia", "title": "Nahia" },
+          { "data": "SB_B_3", "title": "Village" },
+          { "data": "SB_cfac_name", "title": "CFAC Name" },
+          { "data": "SB_Name_of_the_village_Gozar_Elder", "title": "FP1" },
+          { "data": "SB_Mobile_of_the_village_Gozar_Elder", "title": "FP1 Mobile#" },
+          { "data": "SB_Name_of_the_village_Gozar_Elder_001", "title": "FP2" },
+          { "data": "SB_Mobile_of_the_village_Gozar_Elder_001", "title": "FP2 Mobile#" },
+          { "data": "cp", "title": "CP" }                
+        ],
+        
+    });
+}
+    generateSample = document.getElementById('showSample');
+    generateSample.addEventListener('click', function () {
+        let selectedNahia = document.getElementById('ddNahia').value;
+        let totalRecords = document.getElementById('totalRecords').value;
+        let sampleSize = document.getElementById('sampleSize').value;
+        let province = document.getElementById('ddProvinces').value;
+        let district = document.getElementById('ddDistrict').value;
+        let areaOffice = document.getElementById('ddAreaOffice').value;
+        let max_vul_score = document.getElementById('max_vul_score').value;
+        let data = {
+            nahia: selectedNahia,
+            province: province,
+            district: district,
+            area_office: areaOffice,
+            estimated_sample_size: sampleSize,
+            max_vul_score: max_vul_score
+        }
+        fetch('/gen_custom_borderline_sample/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+          },
+          body: JSON.stringify(data)
+        })
+       .then(response => response.json())
+       .then(data => {
+        //console.log(data)
+        initializeDataTable(data.selected_sites, 'This is boderline sample for the district');
+        // Add event listener to the button with ID 'ApproveFinalList'
+        const finalListApprovals = document.getElementById('ApproveSample');
+        finalListApprovals.addEventListener('click', function () {
+          let is_urban = selectedNahia == 'null' ? false : true; 
+
+            let remarks = 'Borderline sample for the district'  ;
+            ApproveSample(data.selected_sites, is_urban, remarks);
+        })
+      })
+        
+    
+    });
+  
+
+</script>
+
+{% endblock scripts%}

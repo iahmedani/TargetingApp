@@ -121,6 +121,12 @@
               </a>
             </li>
             <li class="nav-main-item">
+              <a class="nav-main-link {% if '/custom_sampling_borderline/' == request.path %} active {% endif %}" href="{% url 'custom_sampling_borderline' %}">
+                <i class="nav-main-link-icon fa fa-shuffle"></i>
+                <span class="nav-main-link-name">Custom Boderline Sample</span>
+              </a>
+            </li>
+            <li class="nav-main-item">
               <a class="nav-main-link {% if '/sampling_report/' == request.path %} active {% endif %}" href="{% url 'sampling_report' %}">
                 <i class="nav-main-link-icon fa fa-file-excel"></i>
                 <span class="nav-main-link-name">Export Sample</span>
