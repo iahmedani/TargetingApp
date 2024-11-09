@@ -149,13 +149,15 @@ class CSVImportView(View):
     def post(self, request):
         # Check if this is supposed to be a PUT request
         if request.POST.get('_method') == 'PUT':
-            return self._handle_file_upload(request, is_update=True, id_update=False)
+            return self._handle_file_upload(request, is_update=True, id_update=False, alternate=False)
         elif request.POST.get('_method') == 'ID_PUT':
-            return self._handle_file_upload(request, is_update=True, id_update=True)
+            return self._handle_file_upload(request, is_update=True, id_update=True, alternate=False)
+        elif request.POST.get('_method') == 'ALTERNATE_PUT':
+            return self._handle_file_upload(request, is_update=True, id_update=True, alternate=True)
         else:
-            return self._handle_file_upload(request, is_update=False, id_update=False)
+            return self._handle_file_upload(request, is_update=False, id_update=False, alternate=False)
 
-    def _handle_file_upload(self, request, is_update, id_update=False):
+    def _handle_file_upload(self, request, is_update, id_update=False, alternate=False):
         csv_file = request.FILES.get('csv_file')
         if not csv_file:
             messages.error(request, 'Please upload a CSV file.')
@@ -173,7 +175,7 @@ class CSVImportView(View):
                 return render(request, self.template_name)
             
             # Process the DataFrame
-            df, error_rows = self.process_dataframe(df, is_update, id_update)
+            df, error_rows = self.process_dataframe(df, is_update, id_update, alternate)
 
             # Generate response CSV
             output = BytesIO()
@@ -197,7 +199,7 @@ class CSVImportView(View):
             return render(request, self.template_name)
         
 
-    def process_dataframe(self, df, is_update, id_update):
+    def process_dataframe(self, df, is_update, id_update, alternate):
         # Add import_status column
         df['import_status'] = ''
 
@@ -253,22 +255,30 @@ class CSVImportView(View):
                                 v = v.tz_convert(current_tz)
                             valid_data[k] = v
 
-                    if is_update and id_update == False:
+                    if is_update and id_update == False and alternate == False:
                         try:
                             obj = CPDataModel1.objects.get(key=valid_data['key'])
                             for key, value in valid_data.items():
                                 setattr(obj, key, value)
                             obj.save()
-                            df.at[index, 'import_status'] = 'Updated'
+                            df.at[index, 'import_status'] = 'Updated complete record'
                         except CPDataModel1.DoesNotExist:
                             df.at[index, 'import_status'] = 'Not found - Update skipped'
                             
-                    elif is_update and id_update:
+                    elif is_update and id_update and alternate == False:
                         try:
                             obj = CPDataModel1.objects.get(key=valid_data['key'])
                             obj.id_number = valid_data['id_number']
                             obj.save()
                             df.at[index, 'import_status'] = 'id_number updated'
+                        except CPDataModel1.DoesNotExist:
+                            df.at[index, 'import_status'] = 'Not found - Update skipped'
+                    elif is_update and id_update and alternate == True:
+                        try:
+                            obj = CPDataModel1.objects.get(key=valid_data['key'])
+                            obj.alter_id_number = valid_data['alter_id_number']
+                            obj.save()
+                            df.at[index, 'import_status'] = 'Alternate id_number is updated'
                         except CPDataModel1.DoesNotExist:
                             df.at[index, 'import_status'] = 'Not found - Update skipped'
                     else:

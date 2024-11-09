@@ -2,7 +2,7 @@ import csv
 from django.http import HttpResponse
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
-from .models import CPDataModel1, TargetingForms, TPMCSVData, Sample1, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District, MediaFilesType, TPM_SC_Data, TPM_EE_Data
+from .models import CPDataModel1, TargetingForms, TPMCSVData, Sample1, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District, MediaFilesType, TPM_SC_Data, TPM_EE_Data, FinalApproval
 from django.utils.translation import ngettext
 from import_export import resources
 
@@ -314,5 +314,37 @@ class DistrictAdmin(ImportExportModelAdmin,admin.ModelAdmin):
     list_filter = ('ao', 'province', 'status')
 # admin.site.register(TargetingForms, TargetingFormsAdmin)
 # admin.site.register(CSVData, CSVDataAdmin)
+
+@admin.register(FinalApproval)
+class FinalApprovalAdmin(admin.ModelAdmin):
+    list_display = ('get_name_ben', 'get_ben_fath', 'get_province', 'get_district', 'bs_key', 'bs')
+    search_fields = ('name_ben', 'ben_fath', 'bs_key')
+    list_filter = ('created_at', 'updated_at')
+    
+    actions = [export_as_csv]
+    
+    def get_name_ben(self, obj):
+        return obj.bs.name_ben
+    get_name_ben.short_description = 'Name'
+    
+    def get_ben_fath(self, obj):
+        return obj.bs.ben_fath
+    get_ben_fath.short_description = 'Father Name'
+    
+    def get_province(self, obj):
+        return obj.bs.SB_province
+    get_province.short_description = 'Province'
+    
+    def get_district(self, obj):
+        return obj.bs.SB_district
+    get_district.short_description = 'District'
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).order_by('bs__name_ben')
+    
+    
+    
+    
+    
 
 admin.site.register([MediaFilesType,TPM_SC_Data,TPM_EE_Data])

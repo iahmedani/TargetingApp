@@ -3,62 +3,87 @@
 {% block content %}
 <div class="content">
   <div class="content">
-    <div class="block block-rounded">
-      <ul class="nav nav-tabs nav-tabs-alt" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="btabs-alt-static-planVsActualReason-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-planVsActualReason" role="tab" aria-controls="btabs-alt-static-planVsActualReason" aria-selected="true" tabindex="-1">CP Data </button>
-        </li>
-        
-        <li class="nav-item" role="presentation">
-          <button class="nav-link " id="btabs-alt-static-InactivateFDPs-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-InactivateFDPs" role="tab" aria-controls="btabs-alt-static-InactivateFDPs" aria-selected="false">TPM SC Data</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link " id="btabs-alt-static-TPMEE-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-TPMEE" role="tab" aria-controls="btabs-alt-static-TPMEE" aria-selected="false">TPM EE Error Data</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link " id="btabs-alt-static-planVsActualReason1-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-planVsActualReason1" role="tab" aria-controls="btabs-alt-static-planVsActualReason1" aria-selected="false" tabindex="-1">Update CP Data </button>
-        </li>
-        
-        <li class="nav-item" role="presentation">
-          <button class="nav-link " id="btabs-alt-static-InactivateFDPs1-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-InactivateFDPs1" role="tab" aria-controls="btabs-alt-static-InactivateFDPs1" aria-selected="false">Update TPM SC Data</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link " id="btabs-alt-static-TPMEE_update-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-TPMEE_update" role="tab" aria-controls="btabs-alt-static-TPMEE_update" aria-selected="false">Update TPM EE Data</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link " id="btabs-alt-static-CPIDUPDATE-tab" data-bs-toggle="tab" data-bs-target="#btabs-alt-static-CPIDUPDATE" role="tab" aria-controls="btabs-alt-static-CPIDUPDATE" aria-selected="false" tabindex="-1">Tazkira Update</button>
-        </li>
-      </ul>
-     
-      <div class="block-content tab-content">
-        <div class="tab-pane active show" id="btabs-alt-static-planVsActualReason" role="tabpanel" aria-labelledby="btabs-alt-static-planVsActualReason-tab" tabindex="0">
-          <div class="block-content">
-            
-
-
+   <div class="row">
+    <div class="col-lg-12">
+      <!-- Vertical Block Tabs Default Style -->
+      <div class="block block-rounded row g-0 overflow-hidden">
+        <ul class="nav nav-tabs nav-tabs-block flex-md-column col-md-4 rounded-0" role="tablist">
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-home-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-home" role="tab" aria-controls="btabs-vertical-home" aria-selected="false" tabindex="-1">
+               Information
+            </button>
+          </li>
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-cpdata-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-cpdata" role="tab" aria-controls="btabs-vertical-cpdata" aria-selected="false" tabindex="-1">
+               Upload CP Data
+            </button>
+          </li>
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-spotcheck-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-spotcheck" role="tab" aria-controls="btabs-vertical-spotcheck" aria-selected="false" tabindex="-1">
+               Upload Spotcheck Data
+            </button>
+          </li>
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-exclusion-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-exclusion" role="tab" aria-controls="btabs-vertical-exclusion" aria-selected="false" tabindex="-1">
+               Upload Exclusion Data
+            </button>
+          </li>
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-update_cpdata-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-update_cpdata" role="tab" aria-controls="btabs-vertical-update_cpdata" aria-selected="false" tabindex="-1">
+               Update CP Data Data
+            </button>
+          </li>
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-update_cpdata_tazkira-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-update_cpdata_tazkira" role="tab" aria-controls="btabs-vertical-update_cpdata_tazkira" aria-selected="false" tabindex="-1">
+               Update CP Data Data (Tazkira Only)
+            </button>
+          </li>
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-update_cpdata_alternate-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-update_cpdata_alternate" role="tab" aria-controls="btabs-vertical-update_cpdata_alternate" aria-selected="false" tabindex="-1">
+               Update CP Data Data (Alternate Only)
+            </button>
+          </li>
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-update_spotcheck-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-update_spotcheck" role="tab" aria-controls="btabs-vertical-update_spotcheck" aria-selected="false" tabindex="-1">
+               Update Spotcheck Data
+            </button>
+          </li>
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-update_exclusion-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-update_exclusion" role="tab" aria-controls="btabs-vertical-update_exclusion" aria-selected="false" tabindex="-1">
+               Update Exclusion Data
+            </button>
+          </li>
+         
+        </ul>
+        <div class="tab-content col-md-8">
+          <div class="block-content tab-pane" id="btabs-vertical-home" role="tabpanel" aria-labelledby="btabs-vertical-home-tab" tabindex="0">
+            <h4 class="fw-semibold"> Important information</h4>
+            <p class="fs-sm">
+              This page will be used to upload and update CP data, spotcheck data, exclusion data, and other related data.
+            </p>
+          </div>
+          <div class="block-content tab-pane" id="btabs-vertical-cpdata" role="tabpanel" aria-labelledby="btabs-vertical-cpdata-tab" tabindex="0">
+            <h4 class="fw-semibold">Upload CP Data </h4>
             <form class="row row-cols-auto g-3 align-items-center" method="post" enctype="multipart/form-data" action="{% url 'csv_import' %}" >
               {% csrf_token %}
-              <input type="hidden" name="data_type" value="cp_data_non_ie">
+                <input type="hidden" name="data_type" value="cp_data_non_ie">
 
-              <div class="mb-6">
+                <div class="mb-6">
 
-                <input type="file" name="csv_file" class="form-control" required accept=".csv" id="id_file">
+                  <input type="file" name="csv_file" class="form-control" required accept=".csv" id="id_file">
 
-              </div>
-              <div class="mb-6">
+                </div>
+                <div class="mb-6">
 
-              <button class="btn btn-success btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Import CP Data</button>
-              </div>
-          </form>
+                  <button class="btn btn-success btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Import CP Data</button>
+                </div>
+              </form>
+              <p class="fs-sm">
+                This helps to import CP data you recieve from encrypted engine, it requires data in 'CSV' format. Please be carefull while using it.
+              </p>
           </div>
-          
-        </div>
-        
-        <div class="tab-pane  " id="btabs-alt-static-InactivateFDPs" role="tabpanel" aria-labelledby="btabs-alt-static-InactivateFDPs-tab" tabindex="0">
-          <div class="block-content">
-            
-           
-
+          <div class="block-content tab-pane" id="btabs-vertical-spotcheck" role="tabpanel" aria-labelledby="btabs-vertical-spotcheck-tab" tabindex="0">
+            <h4 class="fw-semibold">Upload Spotcheck Data </h4>
             <form class="row row-cols-auto g-3 align-items-center" method="post" enctype="multipart/form-data" action="{% url 'import_tpm_csv' %}">
               {% csrf_token %}
               <input type="hidden" name="data_type" value="tpm_data">
@@ -75,14 +100,12 @@
               <button class="btn btn-success btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Import TPM SC Data</button>
               </div>
           </form>
+          <p class="fs-sm">
+            This helps to import TPM Spotcheck data you recieve from encrypted engine, it requires data in 'CSV' format. Please be carefull while using it.
+          </p>
           </div>
-         
-        </div>
-        <div class="tab-pane  " id="btabs-alt-static-TPMEE" role="tabpanel" aria-labelledby="btabs-alt-static-TPMEE-tab" tabindex="0">
-          <div class="block-content">
-            
-           
-
+          <div class="block-content tab-pane" id="btabs-vertical-exclusion" role="tabpanel" aria-labelledby="btabs-vertical-exclusion-tab" tabindex="0">
+            <h4 class="fw-semibold">Upload Exclusion Data</h4>
             <form class="row row-cols-auto g-3 align-items-center" method="post" enctype="multipart/form-data" action="{% url 'import_tpm_ee_csv' %}">
               {% csrf_token %}
               <input type="hidden" name="data_type" value="tpm_data">
@@ -99,14 +122,12 @@
               <button class="btn btn-success btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Import TPM EE Data</button>
               </div>
           </form>
+          <p class="fs-sm">
+            This helps to import TPM Exclusion Assessments data you recieve from encrypted engine, it requires data in 'CSV' format. Please be carefull while using it.
+          </p>
           </div>
-         
-        </div>
-        <div class="tab-pane " id="btabs-alt-static-planVsActualReason1" role="tabpanel" aria-labelledby="btabs-alt-static-planVsActualReason1-tab" tabindex="0">
-          <div class="block-content">
-            
-
-
+          <div class="block-content tab-pane" id="btabs-vertical-update_cpdata" role="tabpanel" aria-labelledby="btabs-vertical-update_cpdata-tab" tabindex="0">
+            <h4 class="fw-semibold">Update Complete CP Data</h4>
             <form class="row row-cols-auto g-3 align-items-center" method="POST" enctype="multipart/form-data" action="{% url 'csv_import' %}" >
               {% csrf_token %}
               <input type="hidden" name="_method" value="PUT">
@@ -121,16 +142,55 @@
 
               <button class="btn btn-secondary btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Update CP Data</button>
               </div>
-          </form>
+             </form>
+             <p class="fs-sm">
+              This helps to update CP data you recieve from encrypted engine, it requires data in 'CSV' format. Please be carefull while using it as it overwrites the existing data.
+            </p>
           </div>
-          
-        </div>
-        
-        <div class="tab-pane  " id="btabs-alt-static-InactivateFDPs1" role="tabpanel" aria-labelledby="btabs-alt-static-InactivateFDPs1-tab" tabindex="0">
-          <div class="block-content">
-            
-           
+          <div class="block-content tab-pane" id="btabs-vertical-update_cpdata_tazkira" role="tabpanel" aria-labelledby="btabs-vertical-update_cpdata_tazkira-tab" tabindex="0">
+            <h4 class="fw-semibold">Update Tazkira in CP Data</h4>
+            <form class="row row-cols-auto g-3 align-items-center" method="post" enctype="multipart/form-data" action="{% url 'csv_import' %}" >
+              {% csrf_token %}
+              <input type="hidden" name="data_type" value="cp_data_non_ie">
+              <input type="hidden" name="_method" value="ID_PUT">
 
+              <div class="mb-6">
+
+                <input type="file" name="csv_file" class="form-control" required accept=".csv" id="id_file">
+
+              </div>
+              <div class="mb-6">
+
+              <button class="btn btn-danger btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Update CP Data ID Number</button>
+              </div>
+            </form>
+            <p class="fs-sm">
+              This helps to update 'id number' in CP data you recieve from encrypted engine, it requires data in 'CSV' format. Please be carefull while using it as it overwrites the existing data.
+            </p>
+          </div>
+          <div class="block-content tab-pane" id="btabs-vertical-update_cpdata_alternate" role="tabpanel" aria-labelledby="btabs-vertical-update_cpdata_alternate-tab" tabindex="0">
+            <h4 class="fw-semibold">Update Alternate data in CP Data</h4>
+            <form class="row row-cols-auto g-3 align-items-center" method="post" enctype="multipart/form-data" action="{% url 'csv_import' %}" >
+              {% csrf_token %}
+              <input type="hidden" name="data_type" value="cp_data_non_ie">
+              <input type="hidden" name="_method" value="ALTERNATE_PUT">
+
+              <div class="mb-6">
+
+                <input type="file" name="csv_file" class="form-control" required accept=".csv" id="id_file">
+
+              </div>
+              <div class="mb-6">
+
+              <button class="btn btn-danger btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Update Alternate Data </button>
+              </div>
+            </form>
+            <p class="fs-sm">
+              This helps to update alternate information in CP data you recieve from encrypted engine, it requires data in 'CSV' format. Please be carefull while using it as it overwrites the existing data.
+            </p>
+          </div>
+          <div class="block-content tab-pane" id="btabs-vertical-update_spotcheck" role="tabpanel" aria-labelledby="btabs-vertical-update_spotcheck-tab" tabindex="0">
+            <h4 class="fw-semibold">Update Spotcheck Data</h4>
             <form class="row row-cols-auto g-3 align-items-center" method="POST" enctype="multipart/form-data" action="{% url 'import_tpm_csv' %}">
               {% csrf_token %}
               <input type="hidden" name="data_type" value="tpm_data">
@@ -147,16 +207,13 @@
 
               <button class="btn btn-secondary btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Update TPM SC Data</button>
               </div>
-          </form>
+            </form>
+            <p class="fs-sm">
+              This helps to update spotcheck data you recieve from encrypted engine, it requires data in 'CSV' format. Please be carefull while using it as it overwrites the existing data.
+            </p>
           </div>
-         
-        </div>
-
-        <div class="tab-pane  " id="btabs-alt-static-TPMEE_update" role="tabpanel" aria-labelledby="btabs-alt-static-TPMEE_update-tab" tabindex="0">
-          <div class="block-content">
-            
-           
-
+          <div class="block-content tab-pane" id="btabs-vertical-update_exclusion" role="tabpanel" aria-labelledby="btabs-vertical-update_exclusion-tab" tabindex="0">
+            <h4 class="fw-semibold">Update Exlusion Data</h4>
             <form class="row row-cols-auto g-3 align-items-center" method="POST" enctype="multipart/form-data" action="{% url 'import_tpm_ee_csv' %}">
               {% csrf_token %}
               <input type="hidden" name="data_type" value="tpm_data">
@@ -173,36 +230,17 @@
 
               <button class="btn btn-secondary btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Update EE Data</button>
               </div>
-          </form>
-          </div>
-         
-        </div>
-        <div class="tab-pane " id="btabs-alt-static-CPIDUPDATE" role="tabpanel" aria-labelledby="btabs-alt-static-CPIDUPDATE-tab" tabindex="0">
-          <div class="block-content">
-            
-
-
-            <form class="row row-cols-auto g-3 align-items-center" method="post" enctype="multipart/form-data" action="{% url 'csv_import' %}" >
-              {% csrf_token %}
-              <input type="hidden" name="data_type" value="cp_data_non_ie">
-              <input type="hidden" name="_method" value="ID_PUT">
-
-              <div class="mb-6">
-
-                <input type="file" name="csv_file" class="form-control" required accept=".csv" id="id_file">
-
-              </div>
-              <div class="mb-6">
-
-              <button class="btn btn-danger btn-block" type="submit"><i class="fa fa-fw fa-check opacity-50"></i>Update CP Data ID Number</button>
-              </div>
-          </form>
+             </form>
+             <p class="fs-sm">
+              This helps to update exlusion data you recieve from encrypted engine, it requires data in 'CSV' format. Please be carefull while using it as it overwrites the existing data.
+            </p>
           </div>
           
         </div>
-        
       </div>
+      <!-- END Vertical Block Tabs Default Style -->
     </div>
+   </div>
   </div>
 </div>
 
