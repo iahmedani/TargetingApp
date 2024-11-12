@@ -1106,3 +1106,18 @@ class FinalApproval(models.Model):
     class Meta:
         verbose_name = 'Aproved List'
         verbose_name_plural = 'Aproved List'
+        
+class DroppedRecords(models.Model):
+    bs = models.ForeignKey(CPDataModel1, on_delete=models.RESTRICT, related_name='dropped_records')
+    bs_key = models.CharField(max_length=50, unique=True)
+    reason = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return self.bs.name_ben
+    
+    class Meta:
+        verbose_name = 'Dropped Records'
+        verbose_name_plural = 'Dropped Records'

@@ -53,6 +53,12 @@
                Update Exclusion Data
             </button>
           </li>
+
+          <li class="nav-item d-md-flex flex-md-column" role="presentation">
+            <button class="nav-link fs-sm text-md-start rounded-0" id="btabs-vertical-delete_records-tab" data-bs-toggle="tab" data-bs-target="#btabs-vertical-delete_records" role="tab" aria-controls="btabs-vertical-delete_records" aria-selected="false" tabindex="-1">
+               Delete Records
+            </button>
+          </li>
          
         </ul>
         <div class="tab-content col-md-8">
@@ -229,6 +235,35 @@
               <div class="mb-6">
 
               <button class="btn btn-secondary btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Update EE Data</button>
+              </div>
+             </form>
+             <p class="fs-sm">
+              This helps to update exlusion data you recieve from encrypted engine, it requires data in 'CSV' format. Please be carefull while using it as it overwrites the existing data.
+            </p>
+          </div>
+
+          <div class="block-content tab-pane" id="btabs-vertical-delete_records" role="tabpanel" aria-labelledby="btabs-vertical-delete_records-tab" tabindex="0">
+            <h4 class="fw-semibold">Delete Records</h4>
+            <form class="row row-cols-auto g-3 align-items-center" method="POST" enctype="multipart/form-data" action="{% url 'drop_records' %}">
+              {% csrf_token %}
+              <input type="hidden" name="data_type" value="tpm_data">
+              <input type="hidden" name="_method" value="PUT">
+
+
+
+              <div class="col-12">
+
+                <input type="file" name="csv_file" class="form-control" required accept=".csv" id="id_file">
+
+              </div>
+              <div class="col-12">
+
+                <input type="text" name="delete_reason" class="form-control" required placeholder="Reason for Deletion">
+
+              </div>
+              <div class="mb-2 col4">
+
+              <button class="btn btn-danger btn-block" type="submit"><i class="fa fa-fw fa-edit opacity-50"></i>Delete Records</button>
               </div>
              </form>
              <p class="fs-sm">

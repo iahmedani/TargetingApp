@@ -18,6 +18,7 @@ urlpatterns = [
     path('import-csv/', views.CSVImportView.as_view(), name='csv_import'),
     path('import-tpm-csv/', views.TPMCSVImportView.as_view(), name='import_tpm_csv'),
     path('import-tpm-ee-csv/', views.TPMEEVImportView.as_view(), name='import_tpm_ee_csv'),
+    path('drop_records/', views.CSVImportViewDropRecords.as_view(), name='drop_records'),
     
     path('sampling/', views.sampling, name='sampling'),
     path('est_sample/', views.CSVDataCountView.as_view(), name='est_sample'),

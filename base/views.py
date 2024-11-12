@@ -10,7 +10,7 @@ import time
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, JsonResponse
-from .models import CPDataModel, TPMDataModel, TPMCSVData, CSVData, Sample, CPDataModel1, Sample1, TPM_SC_Data, TPM_EE_Data,FinalApproval # Adjust the models as needed
+from .models import CPDataModel, TPMDataModel, TPMCSVData, CSVData, Sample, CPDataModel1, Sample1, TPM_SC_Data, TPM_EE_Data,FinalApproval, DroppedRecords # Adjust the models as needed
 
 import pandas as pd
 import numpy as np
@@ -296,6 +296,102 @@ class CSVImportView(View):
 
 # URL configuration remains the same:
 # path('import-csv/', CSVImportView.as_view(), name='csv_import'),
+
+class CSVImportViewDropRecords(View):
+    template_name = 'upload_csv.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        # Check if this is supposed to be a PUT request
+        if request.POST.get('_method') == 'PUT':
+            reason = request.POST.get('delete_reason')
+            # Removed duplicate 'request' parameter
+            return self._handle_file_upload(request, is_update=True, id_update=False, alternate=False, reason=reason)
+
+    def _handle_file_upload(self, request, is_update, id_update=False, alternate=False, reason=None):
+        csv_file = request.FILES.get('csv_file')
+        if not csv_file:
+            messages.error(request, 'Please upload a CSV file.')
+            return render(request, self.template_name)
+
+        try:
+            # Read CSV file
+            df = pd.read_csv(csv_file)
+            
+            # Replace '-' with '_' in column names (corrected comment)
+            df.columns = df.columns.str.replace('-', '_')
+            
+            if 'ben_id' in df.columns:
+                messages.error(request, 'Seems like wrong file is sent for process.')
+                return render(request, self.template_name)
+            
+            # Pass 'request' to 'process_dataframe' (added 'request' parameter)
+            df, error_rows = self.process_dataframe(df, is_update, id_update, alternate, reason, request)
+
+            # Generate response CSV
+            output = BytesIO()
+            df.to_csv(output, index=False)
+            output.seek(0)
+
+            # Create HTTP response
+            response = HttpResponse(output, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="import_results.csv"'
+            
+            if error_rows:
+                messages.warning(request, f'{len(error_rows)} rows had errors. Check the output CSV for details.')
+            else:
+                messages.success(request, 'All rows were processed successfully.')
+
+            return response
+
+        except Exception as e:
+            logger.error(f"Error processing CSV: {str(e)}")
+            messages.error(request, f'An error occurred while processing the CSV: {str(e)}')
+            return render(request, self.template_name)
+
+    def process_dataframe(self, df, is_update, id_update, alternate, reason, request):
+        # Add import_status column
+        df['import_status'] = ''
+
+        # Rename 'KEY' column to 'key' (uncommented the line)
+        df.rename(columns={'KEY': 'key'}, inplace=True)
+
+        error_rows = []
+
+        # Get valid field names from the model (not used but kept for future reference)
+        valid_fields = set(f.name for f in CPDataModel1._meta.get_fields())
+
+        # Process rows
+        for index, row in df.iterrows():
+            try:
+                with transaction.atomic():
+                    if is_update and id_update == False and alternate == False:
+                        try:
+                            record = CPDataModel1.objects.get(key=row['key'])
+                            obj, created = DroppedRecords.objects.get_or_create(
+                                bs=record,
+                                bs_key=record.key,
+                                defaults={
+                                    'bs_key': record.key,
+                                    'bs': record,
+                                    'reason': reason,
+                                    'created_by': request.user
+                                }
+                            )
+                            if created:
+                                df.at[index, 'import_status'] = 'Record dropped'
+                            else:
+                                df.at[index, 'import_status'] = 'Already dropped'
+                        except CPDataModel1.DoesNotExist:
+                            df.at[index, 'import_status'] = 'Not found - Update skipped'
+            except Exception as e:
+                logger.error(f"Error processing row {index}: {str(e)}")
+                df.at[index, 'import_status'] = f'Error: {str(e)}'
+                error_rows.append(index)
+
+        return df, error_rows
 
 class TPMCSVImportView(View):
     template_name = 'upload_csv.html'
@@ -1833,11 +1929,16 @@ class FinalListDataAnalysis(View):
             'SB_district': district,
         }
 
-        # Handle 'null' or None values for nahia
         if nahia and nahia.lower() != 'null':
             filters['SB_nahia'] = nahia
 
-        return CPDataModel1.objects.filter(**filters)
+        # Use Subquery for performance optimization
+        from django.db.models import Subquery
+
+        dropped_bs_ids = DroppedRecords.objects.filter(bs__isnull=False).values('bs')
+
+        return CPDataModel1.objects.filter(**filters).exclude(id__in=Subquery(dropped_bs_ids))
+
 
     def process_common_data(self, cp_data, tpm_data):
         common_data = []
