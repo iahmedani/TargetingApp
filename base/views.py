@@ -2056,15 +2056,23 @@ class FinalListDataAnalysis(View):
         return 'Status Unknown'
 
     def determine_non_common_status(self, cp):
-        if cp.vul == 'Excluded':
-            return 'Rejected: Exclusion by CP based on exlusion question'
+        if cp.assessmentType == 'Re-assessment':
+            if cp.vul == 'Yes':
+                return 'Selected: During Re-assessment, initially vulnerable by CP'
+            elif cp.vul == 'No':
+                return 'Rejected: During Re-assessment, initially not vulnerable by CP'
+            elif cp.vul == 'Excluded':
+                return 'Rejected: During Re-assessment, initially excluded by CP based on exclusion question'
+        else:
+            if cp.vul == 'Excluded':
+                return 'Rejected: Exclusion by CP based on exlusion question'
 
-        if cp.assessmentType == 'Replacement':
-            return ('Selected: During Replacement Assessment' if cp.vul == 'Yes'
-                    else 'Rejected: During Replacement Assessment')
+            if cp.assessmentType == 'Replacement':
+                return ('Selected: During Replacement Assessment' if cp.vul == 'Yes'
+                        else 'Rejected: During Replacement Assessment')
 
-        return ('Selected: During CP Verification' if cp.vul == 'Yes'
-                else 'Rejected: During CP Verification')
+            return ('Selected: During CP Verification' if cp.vul == 'Yes'
+                    else 'Rejected: During CP Verification')
 
     def get_all_cp_data(self, cp):
         cp_dict = model_to_dict(cp)
