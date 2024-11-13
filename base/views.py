@@ -2043,6 +2043,15 @@ class FinalListDataAnalysis(View):
         
         if cp.vul == 'Excluded'  and tpm.vul == 'No':
             return 'Rejected: During spotcheck, initially marked excluded during CP verification'
+        
+        if cp.assessmentType == 'Re-assessment':
+            if cp.vul == 'Yes':
+                return 'Selected: During Re-assessment, initially vulnerable by CP'
+            elif cp.vul == 'No':
+                return 'Rejected: During Re-assessment, initially not vulnerable by CP'
+            elif cp.vul == 'Excluded':
+                return 'Rejected: During Re-assessment, initially excluded by CP based on exclusion question'
+            
 
         return 'Status Unknown'
 
