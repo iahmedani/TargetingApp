@@ -2032,29 +2032,26 @@ class FinalListDataAnalysis(View):
                 return 'Rejected: During Re-assessment, initially not vulnerable by CP'
             elif cp.vul == 'Excluded':
                 return 'Rejected: During Re-assessment, initially excluded by CP based on exclusion question'
-            
-        if not tpm.HHFound:
-            return 'Rejected: Due to HH not found during spotcheck'
+        else:
+            if not tpm.HHFound:
+                return 'Rejected: Due to HH not found during spotcheck'
 
-        if cp.vul == 'Yes':
-            if tpm.vul == 'Yes':
-                return 'Selected: Vulnerable by both CP and TPM during spotcheck'
-            elif tpm.vul == 'No':
-                return 'Rejected: During spotcheck, initially selected during CP verification'
-            elif tpm.vul == 'Excluded':
-                return 'Rejected: Excluded by TPM during spotcheck based on exclusion question'
+            if cp.vul == 'Yes':
+                if tpm.vul == 'Yes':
+                    return 'Selected: Vulnerable by both CP and TPM during spotcheck'
+                elif tpm.vul == 'No':
+                    return 'Rejected: During spotcheck, initially selected during CP verification'
+                elif tpm.vul == 'Excluded':
+                    return 'Rejected: Excluded by TPM during spotcheck based on exclusion question'
 
-        if cp.vul == 'No' and tpm.vul == 'Yes':
-            return 'Selected: During spotcheck, initially rejected during CP verification'
-        
-        if cp.vul == 'Excluded'  and tpm.vul == 'Yes':
-            return 'Selected: During spotcheck, initially marked excluded during CP verification'
-        
-        if cp.vul == 'Excluded'  and tpm.vul == 'No':
-            return 'Rejected: During spotcheck, initially marked excluded during CP verification'
-        
-        
+            if cp.vul == 'No' and tpm.vul == 'Yes':
+                return 'Selected: During spotcheck, initially rejected during CP verification'
             
+            if cp.vul == 'Excluded'  and tpm.vul == 'Yes':
+                return 'Selected: During spotcheck, initially marked excluded during CP verification'
+            
+            if cp.vul == 'Excluded'  and tpm.vul == 'No':
+                return 'Rejected: During spotcheck, initially marked excluded during CP verification'
 
         return 'Status Unknown'
 
