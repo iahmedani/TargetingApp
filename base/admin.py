@@ -317,7 +317,7 @@ class DistrictAdmin(ImportExportModelAdmin,admin.ModelAdmin):
 
 @admin.register(FinalApproval)
 class FinalApprovalAdmin(admin.ModelAdmin):
-    list_display = ('get_name_ben', 'get_ben_fath', 'get_province', 'get_district', 'bs_key', 'bs')
+    list_display = ('get_name_ben', 'get_ben_fath', 'get_province', 'get_district', 'bs_key', 'bs', 'status')
     search_fields = ('name_ben', 'ben_fath', 'bs_key')
     list_filter = ('created_at', 'updated_at')
     

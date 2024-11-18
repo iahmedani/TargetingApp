@@ -11,6 +11,7 @@ urlpatterns = [
     path('import_data/', views.import_data, name='import_data'),
     path('error_check/', views.error_check, name='error_check'),
     path('final_list/', views.final_list, name='final_list'),
+    path('final_list_report/', views.final_list_report, name='final_list_report'),
     path('reports/', views.reports, name='reports'),
     path('media_upload/', views.upload_media, name='media_upload'),
     path('upload_sample/', views.upload_sample_to_moda, name='upload_sample'),
@@ -41,6 +42,7 @@ urlpatterns = [
     
     path('filal_list_locations/', views.SampledLocations.as_view(), name='filal_list_locations'),
     path('final_list_data_analysis/', views.FinalListDataAnalysis.as_view(), name='final_list_data_analysis'),
+    path('final_list_data_analysis_report/', views.FinalListDataAnalysisReport.as_view(), name='final_list_data_analysis_report'),
     path('check_keys_in_excel/', views.check_keys_in_excel, name='check_keys_in_excel'),
     path('summary_view/', views.summary_view.as_view(), name='summary_view'),
     

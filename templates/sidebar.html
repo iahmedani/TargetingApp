@@ -183,6 +183,11 @@
               <i class="nav-main-link-icon fa fa-gear"></i>
               <span class="nav-main-link-name">Prepare Final List </span>
             </a>
+            <li class="nav-main-item">
+              <a class="nav-main-link {% if '/final_list_report/' == request.path %} active {% endif %}" href="{% url 'final_list_report'%}">
+              <i class="nav-main-link-icon fa fa-gear"></i>
+              <span class="nav-main-link-name">Final List Report</span>
+            </a>
           </li>
             
           </ul>

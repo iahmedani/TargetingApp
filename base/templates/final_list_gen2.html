@@ -1,0 +1,406 @@
+{% extends "main.html" %}
+{% load static %}
+{% block styles %}
+  <!-- Page JS Plugins CSS -->
+  <link rel="stylesheet"
+        href="{% static '/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css' %}">
+  <link rel="stylesheet"
+        href="{% static '/js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css' %}">
+  <link rel="stylesheet"
+        href="{% static '/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css' %}">
+  <link rel="stylesheet"
+        href="{% static '/js/plugins/sweetalert2/sweetalert2.min.css' %}">
+  <style> 
+    .disabled-link {
+      pointer-events: none;
+      opacity: 0.6;
+      cursor: not-allowed;
+  }
+  </style>
+{% endblock styles %}
+{% block content %}
+  <div class="content">
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">{{ title }}</h3>
+      </div>
+      <div class="block-content block-content-full">
+        <div class="row">
+          <div class="col-lg-12 space-y-2">
+            <!-- Form Inline - Default Style -->
+            <form class="row row-cols-auto g-3 align-items-center"
+                  onsubmit="return false;">
+              {% csrf_token %}
+              <div class="col-3">
+                <label class="form-label form-control-sm" for="ddAreaOffice">Select AO</label>
+                <select class="form-control form-control-sm"
+                        name="ddAreaOffice"
+                        id="ddAreaOffice"
+                        required>
+                  <option>Select</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label class="form-label form-control-sm" for="province">Select Province</label>
+                <select class="form-control form-control-sm"
+                        name="province"
+                        id="ddProvinces"
+                        required>
+                  <option>Select</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label class="form-label form-control-sm" for="district">Select District</label>
+                <select class="form-control form-control-sm" name="district" id="ddDistrict">
+                  <option>Select</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label class="form-label form-control-sm" for="nahia">Select Nahia</label>
+                <select class="form-control form-control-sm"
+                        name="nahia"
+                        id="ddNahia"
+                        >
+                  <option>Select</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <button id="Analyze"
+                        class="form-control form-control-sm btn btn-primary btn-sm">Show Report</button>
+              </div>
+            </form>
+            <!-- END Form Inline - Default Style -->
+            <p class="text-danger d-none" id="FinalMessage">Inclusion error is higher than 10%. It is recommended to hold district and further discuss with the SO1 team.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+   
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">Total Data</h3>
+      </div>
+      <div class="block-content block-content-full overflow-x-auto">
+        <div class="table-responsive" id="totalData">
+          <table id="CombinedData"
+                 class="table table-striped table-sm"
+                 style="width:100%">
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">Results of sample</h3>
+      </div>
+      <div class="block-content block-content-full overflow-x-auto">
+        <div class="table-responsive" id="sampleTable">
+          <table id="SampleData"
+                 class="table table-striped table-sm"
+                 style="width:100%">
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">Results of remaining data</h3>
+      </div>
+      <div class="block-content block-content-full overflow-x-auto">
+        <div class="table-responsive" id="remaining">
+          <table id="RemaningData"
+                 class="table table-striped table-sm"
+                 style="width:100%">
+          </table>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+{% endblock content %}
+{% block scripts %}
+  <script src="https://cdn.datatables.net/v/dt/dt-2.1.8/datatables.min.js"></script>
+  <script src="{%static '/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-responsive/js/dataTables.responsive.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons/dataTables.buttons.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons-jszip/jszip.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons/buttons.print.min.js'%}"></script>
+  <script src="{%static '/js/plugins/datatables-buttons/buttons.html5.min.js'%}"></script>
+  <script src="{% static '/js/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Fetch data from the API when the page loads
+      function calculateTotalsAndPercentage(data) {
+          let totalCounts = {};
+          let totalSum = 0;
+  
+          // Iterate over each item in the data array
+          data.forEach(item => {
+              // Since 'ee' object doesn't exist, use 'total_ee_count' and 'exclusion_error' from 'item'
+              let count = item.total_ee_count || 0;
+              let exclusionError = item.exclusion_error || 0;
+  
+              // Accumulate total counts and sums
+              totalSum += count;
+              totalCounts['exclusion_error'] = (totalCounts['exclusion_error'] || 0) + exclusionError;
+          });
+  
+          // Calculate the average exclusion error percentage
+          let percentageYes = totalCounts['exclusion_error'] / data.length;
+  
+          // Round the percentage to two decimal places
+          percentageYes = Math.round(percentageYes * 100) / 100;
+  
+          return {
+              totalCounts: totalCounts,
+              totalSum: totalSum,
+              percentageYes: percentageYes
+          };
+      }
+  
+      function createTable(tableEl, data, columnsToRemove = [], filename) {
+          // Assuming responseData is an array of objects
+          if (data.length === 0) {
+              // Destroy existing DataTable if data is empty
+              if ($.fn.DataTable.isDataTable(`#${tableEl}`)) {
+                  $(`#${tableEl}`).DataTable().destroy();
+              }
+              return; // Exit the function
+          }
+  
+          const keys = Object.keys(data[0]);
+          let columns = keys.map(key => ({
+              data: key,
+              title: key.replace(/_/g, ' ') // Convert snake_case to readable format
+          }));
+  
+          // Remove columns from columnsToRemove array
+          if (columnsToRemove.length > 0) {
+              columns = columns.filter(column => !columnsToRemove.includes(column.data));
+          }
+  
+          // Destroy existing DataTable if it exists
+          if ($.fn.DataTable.isDataTable(`#${tableEl}`)) {
+              $(`#${tableEl}`).DataTable().destroy();
+          }
+  
+          $(`#${tableEl}`).DataTable({
+              data: data,
+              columns: columns,
+              title: filename,
+              buttons: [
+                  'copy',
+                  {
+                      extend: 'csv',
+                      filename: `${filename}_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}_${data[0].SB_nahia}`
+                  },
+                  {
+                      extend: 'excel',
+                      filename: `${filename}_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}_${data[0].SB_nahia}`
+                  }
+              ],
+              fixedHeader: true,
+              searching: true,
+              paging: true,
+              ordering: false,
+              footer: true
+          });
+      }
+  
+      function summaryDisplay(uiel, data) {
+          const listGroup = document.querySelector(`#${uiel}`);
+  
+          // Delete any child item in the listGroup element
+          while (listGroup.firstChild) {
+              listGroup.removeChild(listGroup.firstChild);
+          }
+  
+          for (const [key, value] of Object.entries(data)) {
+              if (typeof value === 'object') {
+                  // Handle nested objects separately
+                  for (const [subKey, subValue] of Object.entries(value)) {
+                      const listItem = document.createElement('li');
+                      listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                      listItem.innerHTML = `
+                          ${subKey.replace(/_/g, ' ')}
+                          <span class="badge rounded-pill bg-black-50">${subValue}</span>
+                      `;
+                      listGroup.appendChild(listItem);
+                  }
+              } else {
+                  const listItem = document.createElement('li');
+                  listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                  listItem.innerHTML = `
+                      ${key.replace(/_/g, ' ')}
+                      <span class="badge rounded-pill bg-black-50">${value}</span>
+                  `;
+                  listGroup.appendChild(listItem);
+              }
+          }
+      }
+  
+      function Analysis(data) {
+        // Filter data as per the selected AO, Province, District, and Nahia
+        let selectedAO = document.getElementById('ddAreaOffice').value;
+        let selectedProvince = document.getElementById('ddProvinces').value;
+        let selectedDistrict = document.getElementById('ddDistrict').value;
+        let selectedNahia = document.getElementById('ddNahia').value;
+        if (selectedNahia === 'null' || selectedNahia === undefined || selectedNahia === ""){
+          console.log("Selected Nahia is null or undefined or empty string");
+        }
+  
+          // Prepare data for POST request
+          let requestData = {
+              'area_office': selectedAO,
+              'province': selectedProvince,
+              'district': selectedDistrict,
+              'nahia': selectedNahia,
+              'error_type': 'inclusion'
+          };
+          
+          // add swal progress bar 
+
+
+
+          fetch('/final_list_data_analysis_report/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+              },
+              body: JSON.stringify(requestData)
+          })
+              .then(response => response.json())
+              .then(data => {
+                  let sample = data.common_data;
+                  let remaining = data.non_common_data;
+  
+                  const combinedData = [...sample, ...remaining];
+                  console.log(combinedData);
+  
+                  createTable('CombinedData', combinedData, columnsToRemove = ['id', 'phonenumber', 'email', 'username', 'meta_instanceID', 'meta_instanceName', '_uuid', '_version', '_xform_id'], 'FinalList');
+                  createTable('SampleData', sample, columnsToRemove = ['id', 'phonenumber', 'email', 'username', 'meta_instanceID', 'meta_instanceName', '_uuid', '_version', '_xform_id'], 'SampleResults');
+                  createTable('RemaningData', remaining, columnsToRemove = ['id', 'phonenumber', 'email', 'username', 'meta_instanceID', 'meta_instanceName', '_uuid', '_version', '_xform_id'], 'CP_Data_Results');
+  
+                  // Map combinedData to create the ApprovalData array
+                  const ApprovalData = combinedData.map(item => ({
+                      id: item['id'],
+                      status: item['status'],
+                      tpm_vul: item['tpm_vul'],
+                      HHFound: item['HHFound']
+                  }));
+  
+                  summaryDisplay('SummaryData', data.counts);
+              })
+              .catch(error => {
+                  console.error(error);
+              });
+      }
+  
+      fetch('/filal_list_locations/') // Corrected endpoint URL
+          .then(response => response.json())
+          .then(data => {
+            let counts = data.counts;
+
+            // Populate Area Office dropdown with a default "Select" option
+            let areaOfficeDropdown = document.getElementById('ddAreaOffice');
+            areaOfficeDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+            let areaOffices = [...new Set(counts.map(item => item.cp_id__SB_ao))];
+            areaOffices.forEach(ao => {
+                let option = new Option(ao, ao);
+                areaOfficeDropdown.appendChild(option);
+            });
+
+            // Event listener for Area Office dropdown
+            areaOfficeDropdown.addEventListener('change', function () {
+                let selectedAO = this.value;
+
+                // Filter provinces based on selected Area Office
+                let filteredProvinces = [...new Set(counts
+                    .filter(item => item.cp_id__SB_ao === selectedAO)
+                    .map(item => item.cp_id__SB_province)
+                    .filter(province => province !== null))];
+
+                // Populate Provinces dropdown with a default "Select" option
+                let provincesDropdown = document.getElementById('ddProvinces');
+                provincesDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+                filteredProvinces.forEach(province => {
+                    let option = new Option(province, province);
+                    provincesDropdown.appendChild(option);
+                });
+
+                // Clear the lower-level dropdowns and input fields
+                document.getElementById('ddDistrict').innerHTML = '<option value="">Select</option>';
+                document.getElementById('ddNahia').innerHTML = '<option value="">Select</option>';
+                //document.getElementById('totalRecords').value = '';
+                {% comment %} document.getElementById('sampleSize').value = ''; {% endcomment %}
+            });
+
+            // Event listener for Provinces dropdown
+            document.getElementById('ddProvinces').addEventListener('change', function () {
+                let selectedAO = document.getElementById('ddAreaOffice').value;
+                let selectedProvince = this.value;
+
+                // Filter districts based on selected Province
+                let filteredDistricts = [...new Set(counts
+                    .filter(item => item.cp_id__SB_ao === selectedAO && item.cp_id__SB_province === selectedProvince)
+                    .map(item => item.cp_id__SB_district)
+                    .filter(district => district !== null))];
+
+                // Populate District dropdown with a default "Select" option
+                let districtsDropdown = document.getElementById('ddDistrict');
+                districtsDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+                filteredDistricts.forEach(district => {
+                    let option = new Option(district, district);
+                    districtsDropdown.appendChild(option);
+                });
+
+                // Clear the Nahia dropdown and input fields
+                document.getElementById('ddNahia').innerHTML = '<option value="">Select</option>';
+                //document.getElementById('totalRecords').value = '';
+                document.getElementById('sampleSize').value = '';
+            });
+
+            // Event listener for District dropdown
+            document.getElementById('ddDistrict').addEventListener('change', function () {
+                let selectedAO = document.getElementById('ddAreaOffice').value;
+                let selectedProvince = document.getElementById('ddProvinces').value;
+                let selectedDistrict = this.value;
+
+                // Filter Nahias based on selected District
+                let filteredNahias = counts
+                    .filter(item => item.cp_id__SB_ao === selectedAO && item.cp_id__SB_province === selectedProvince && item.cp_id__SB_district === selectedDistrict)
+                    .map(item => ({ nahia: item.cp_id__SB_nahia}));
+
+                // Populate Nahia dropdown with a default "Select" option
+                let nahiaDropdown = document.getElementById('ddNahia');
+                nahiaDropdown.innerHTML = '<option value="">Select</option>';  // Default option
+                filteredNahias.forEach(nahiaData => {
+                    let option = new Option(nahiaData.nahia, nahiaData.nahia);
+                    nahiaDropdown.appendChild(option);
+                });
+
+            });
+            analysisel = document.getElementById('Analyze');
+            analysisel.addEventListener('click', function () {
+            
+              console.log(data)
+              
+              Analysis(data);
+
+
+            });
+        })
+          .catch(error => console.error('Error fetching data:', error));
+  
+  });
+  
+  
+
+  </script>
+{% endblock scripts %}

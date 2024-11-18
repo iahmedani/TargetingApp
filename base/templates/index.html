@@ -90,7 +90,8 @@
                       <th>Total SC</th>
                       <th>Inclusion Error</th>
                       <th>Total EE</th>
-                      <th>Exlusion Error</th>
+                      <th>Exlusion</th>
+                      <th>Approved</th>
                   </tr>
               </thead>
               <tbody>
@@ -129,6 +130,7 @@
             dataType: 'json',
             success: function (data) {
                 // Populate DataTable with the data
+                {% comment %} console.log(data); {% endcomment %}
                 $('#summaryTable').DataTable({
                   data: data.counts, // Assign the JSON data to the DataTable
                   columns: [
@@ -147,7 +149,12 @@
                       { data: 'total_ee_count' },
                       { data: 'exclusion_error', render: function (data, type, row) {
                           return data ? data.toFixed(2) + '%' : 'N/A';
-                      }}  // Custom rendering for exclusion_error
+                      }},  // Custom rendering for exclusion_error
+                      {
+                        data:'approved_count', render: function (data, type, row) {
+                          return data ? data : 'N/A';
+                        }
+                      }
                   ],
                   dom: 'Bfrtip', // Enables export buttons
                   buttons: [
