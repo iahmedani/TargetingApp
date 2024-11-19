@@ -343,8 +343,12 @@ class FinalApprovalAdmin(admin.ModelAdmin):
         return super().get_queryset(request).order_by('bs__name_ben')
     
     
+@admin.register(TPM_SC_Data)
+class TPM_SC_DataAdmin(admin.ModelAdmin):
+    list_display = ( 'ben_id', 'SB_ao', 'SB_province', 'SB_district', 'SB_nahia', 'SB_cfac_name')
+    search_fields = ('ben_id', 'SB_ao', 'SB_province', 'SB_district', 'SB_cfac_name')
     
     
     
 
-admin.site.register([MediaFilesType,TPM_SC_Data,TPM_EE_Data])
+admin.site.register([MediaFilesType,TPM_EE_Data])
