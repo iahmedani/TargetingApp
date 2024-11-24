@@ -193,17 +193,23 @@ cursor: not-allowed;
               data: data,
               columns: columns,
               title: filename,
-              buttons: [
-                  'copy',
-                  {
-                      extend: 'csv',
+              layout: {
+          
+                top1Start: {
+                    buttons: [{
+                      'extend':'copy',
+                    },{
+                      extend:'csv',
                       filename: `${filename}_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}_${data[0].SB_nahia}`
-                  },
-                  {
-                      extend: 'excel',
+                    },{
+                      
+                      extend:'excel',
                       filename: `${filename}_${data[0].SB_ao}_${data[0].SB_province}_${data[0].SB_district}_${data[0].SB_nahia}`
-                  }
-              ],
+                    }
+                    ]
+                },
+      
+            },
               fixedHeader: true,
               searching: true,
               paging: true,
