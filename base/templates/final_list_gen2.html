@@ -1,22 +1,22 @@
 {% extends "main.html" %}
 {% load static %}
 {% block styles %}
-  <!-- Page JS Plugins CSS -->
-  <link rel="stylesheet"
-        href="{% static '/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css' %}">
-  <link rel="stylesheet"
-        href="{% static '/js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css' %}">
-  <link rel="stylesheet"
-        href="{% static '/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css' %}">
-  <link rel="stylesheet"
-        href="{% static '/js/plugins/sweetalert2/sweetalert2.min.css' %}">
-  <style> 
-    .disabled-link {
-      pointer-events: none;
-      opacity: 0.6;
-      cursor: not-allowed;
-  }
-  </style>
+ <!-- Page JS Plugins CSS -->
+ <link rel="stylesheet"
+ href="{% static '/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css' %}">
+<link rel="stylesheet"
+ href="{% static '/js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css' %}">
+<link rel="stylesheet"
+ href="{% static '/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css' %}">
+<link rel="stylesheet"
+ href="{% static '/js/plugins/sweetalert2/sweetalert2.min.css' %}">
+<style> 
+.disabled-link {
+pointer-events: none;
+opacity: 0.6;
+cursor: not-allowed;
+}
+</style>
 {% endblock styles %}
 {% block content %}
   <div class="content">
@@ -120,18 +120,18 @@
   </div>
 {% endblock content %}
 {% block scripts %}
-  <script src="https://cdn.datatables.net/v/dt/dt-2.1.8/datatables.min.js"></script>
-  <script src="{%static '/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js'%}"></script>
-  <script src="{%static '/js/plugins/datatables-responsive/js/dataTables.responsive.min.js'%}"></script>
-  <script src="{%static '/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js'%}"></script>
-  <script src="{%static '/js/plugins/datatables-buttons/dataTables.buttons.min.js'%}"></script>
-  <script src="{%static '/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js'%}"></script>
-  <script src="{%static '/js/plugins/datatables-buttons-jszip/jszip.min.js'%}"></script>
-  <script src="{%static '/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js'%}"></script>
-  <script src="{%static '/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js'%}"></script>
-  <script src="{%static '/js/plugins/datatables-buttons/buttons.print.min.js'%}"></script>
-  <script src="{%static '/js/plugins/datatables-buttons/buttons.html5.min.js'%}"></script>
-  <script src="{% static '/js/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-2.1.8/datatables.min.js"></script>
+<script src="{%static '/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-responsive/js/dataTables.responsive.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons/dataTables.buttons.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-jszip/jszip.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons/buttons.print.min.js'%}"></script>
+<script src="{%static '/js/plugins/datatables-buttons/buttons.html5.min.js'%}"></script>
+<script src="{% static '/js/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // Fetch data from the API when the page loads
