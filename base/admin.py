@@ -2,7 +2,7 @@ import csv
 from django.http import HttpResponse
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
-from .models import CPDataModel1, TargetingForms, TPMCSVData, Sample1, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District, MediaFilesType, TPM_SC_Data, TPM_EE_Data, FinalApproval
+from .models import CPDataModel1, TargetingForms, TPMCSVData, Sample1, ModaUser, ModaProjects, CFACList, CP_list, TPM_list, Province, VillageList, District, MediaFilesType, TPM_SC_Data, TPM_EE_Data, FinalApproval, DroppedRecords
 from django.utils.translation import ngettext
 from import_export import resources
 
@@ -349,6 +349,9 @@ class TPM_SC_DataAdmin(admin.ModelAdmin):
     search_fields = ('ben_id', 'SB_ao', 'SB_province', 'SB_district', 'SB_cfac_name')
     
     
-    
+@admin.register(DroppedRecords)
+class DroppedRecordsAdmin(admin.ModelAdmin):
+    list_display = ( 'bs', 'bs_key', 'bs_key', 'reason')
+    search_fields = ('created_at', 'bs', 'bs_key', 'bs_key', 'reason') 
 
 admin.site.register([MediaFilesType,TPM_EE_Data])
