@@ -504,21 +504,26 @@ class TPMCSVImportView(View):
                     if is_update:
                         try:
                             obj = TPM_SC_Data.objects.get(key=valid_data['key'])
+                            _Sample = Sample1.objects.get(cp_id__key=valid_data['SB_moda_key'])
+                            
                             for key, value in valid_data.items():
                                 setattr(obj, key, value)
+                                obj.sample = _Sample
                             obj.save()
                             df.at[index, 'import_status'] = 'Updated'
                         except TPM_SC_Data.DoesNotExist:
                             df.at[index, 'import_status'] = 'Not found - Update skipped'
                     else:
                         ben_id = valid_data['ben_id'].split('_')[1]
-                        _Sample = Sample1.objects.get(ben_id=ben_id)
-                        obj, created = TPM_SC_Data.objects.get_or_create(
-                            key=valid_data['key'],
-                            sample=_Sample,
-                            defaults=valid_data
-                        )
-                        df.at[index, 'import_status'] = 'Created' if created else 'Already exists'
+                        # _Sample = Sample1.objects.get(ben_id=ben_id)
+                        _Sample = Sample1.objects.get(cp_id__key=valid_data['SB_moda_key'])
+                        if _Sample:
+                            obj, created = TPM_SC_Data.objects.get_or_create(
+                                key=valid_data['key'],
+                                sample=_Sample,
+                                defaults=valid_data
+                            )
+                            df.at[index, 'import_status'] = 'Created' if created else 'Already exists'
             except Exception as e:
                 logger.error(f"Error processing row {index}: {str(e)}")
                 df.at[index, 'import_status'] = f'Error: {str(e)}'
